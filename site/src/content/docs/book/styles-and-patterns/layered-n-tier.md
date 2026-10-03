@@ -1,0 +1,58 @@
+---
+title: "Layered / N-Tier"
+description: "经典的分层架构、它的依赖规则，以及让分层腐烂的那些漏洞。"
+sidebar:
+  order: 240
+  label: "Layered / N-Tier"
+  group:
+    label: "第4章 · Styles & Patterns"
+---
+
+分层是书里最老的把戏。你把系统切成水平的薄片——表现层、业务逻辑层、数据访问层，上面可能再加个服务层——然后宣布一条简单的规则：每一层只能依赖它正下方的那一层。
+
+这条规则就是整个架构。其他的都是注释。
+
+它之所以重要，是因为它给了你一套问责的词汇。UI 出了问题，看表现层；SQL 跑得慢，看数据层。对一个做业务系统的小团队来说，这往往就够了。没人会迷路，代码的形状和心智模型一致，而这个心智模型能装进一个人的脑子里。
+
+但依赖规则是承诺，不是编译器检查。而承诺是会腐烂的。
+
+## 依赖规则
+
+规则是这么说的：第 N 层只认识第 N-1 层，不反向认识，也不许跳层。表现层调业务层，业务层调数据层，谁都不许插队。
+
+实际操作中，要看层与层之间到底在传什么。当你的"业务实体"和 Entity Framework 的模型是同一个类，又被直接序列化成 JSON 吐给 API 时，你并没有三层。你只有一层，穿了三件衣服。编译器看不出区别，因为根本没有区别。
+
+真正的层有自己的类型。领域层定义 `Order`，数据层把自己的 `OrderRow` 映射成这个 `Order`，API 层再把 `Order` 映射成 `OrderDto`。三遍映射看着像浪费，直到某天数据库表结构变了，你才发现只有一层需要改。
+
+```csharp
+// 领域层：对 EF 和 HTTP 一无所知
+public sealed record Order(Guid Id, string CustomerName, IReadOnlyList<OrderLine> Lines, Money Total);
+
+// 数据层：把自己的持久化模型映射成领域类型
+public sealed class OrderRepository(AppDbContext db) : IOrderRepository
+{
+    public async Task<Order> GetByIdAsync(Guid id, CancellationToken ct)
+    {
+        var row = await db.OrderRows
+            .Include(r => r.Lines)
+            .SingleOrDefaultAsync(r => r.Id == id, ct)
+            ?? throw new OrderNotFoundException(id);
+
+        return row.ToDomain(); // 映射住在数据层，这是它的地盘
+    }
+}
+```
+
+注意 `IOrderRepository` 这个接口是谁定义的：领域层。实现住在数据层。依赖的方向朝下。这个方向就是一切。
+
+## 它在哪里烂掉
+
+分层的腐烂方式是可以预测的。
+
+第一，漏水的层。有人要在 UI 里取一小块数据库里的数据，于是"就这一次"绕过业务层直连数据库。然后又有下一次。一年之内，表现层直接查库，业务层变成透传，架构图成了虚构文学。每一个捷径，都是投给废除规则的一票。
+
+第二，贫血的耦合。业务层最后变成一袋事务脚本——`OrderService` 里五十个方法，每个都是 repository 调用的薄包装——因为真正的逻辑没地方住。层与层之间按流程分了家，没按职责分家。你付了架构的仪式感，没拿到架构的好处。
+
+第三，测试的谎言。团队宣称"分层是可单元测试的"，但层与层之间通过具体类、用 DI 容器硬连线。要给测试替掉某一层，需要的是当初没人写的那些接口。
+
+**Trade-off:** 分层便宜、好讲，所以它能活到今天。但依赖规则只靠纪律维持，而纪律是 deadline 到来时第一个被花掉的东西。如果你的团队说不出用什么机制防止跳层——代码评审、依赖检查测试、物理上的包隔离——那你就没有分层架构，你只有一个愿望。

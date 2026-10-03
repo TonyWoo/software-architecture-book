@@ -1,0 +1,137 @@
+---
+title: "Aggregates, Entities & Value Objects"
+description: "一致性边界、聚合根的规矩，以及用 C# record 写值对象的 Order/OrderLine 实战。"
+sidebar:
+  order: 330
+  label: "Aggregates, Entities & Value Objects"
+  group:
+    label: "第5章 · Domain Modeling"
+---
+
+对象图是无限的。订单有订单行，订单行有商品，商品有供应商，供应商有地址……如果你允许一次事务里随便改这张网上的任何节点，迟早有人在你更新订单行的时候改了商品的税率，而你的不变量检查还在睡大觉。
+
+**聚合**就是你画的一条线：线里面，一次事务、一起存、一起保证一致；线外面，只能看，不能直接改。这条线不是技术划分，是业务的一致性边界 —— 哪些东西必须「要么一起对，要么一起错」。
+
+## 实体与值对象：先分清身份
+
+**实体**有身份。两个 `Customer` 对象即使所有字段都一样，只要 ID 不同，就是两个人。身份贯穿生命周期，属性可以变，人还是那个人。
+
+**值对象**没有身份，只有值。`Money(100, "CNY")` 和另一个 `Money(100, "CNY")` 就是同一个东西，可以互换。值对象应该是不可变的：你不「改」一个金额，你用一个新的金额替换它。不可变消灭了一整类「谁改了我的对象」的 bug。
+
+C# 的 `record` 几乎是为值对象量身定做的：值语义的相等、简洁的不可变声明，一个关键字解决：
+
+```csharp
+// 值对象：没有身份，不可变，相等只看值。
+public sealed record Money(decimal Amount, string Currency)
+{
+    public static Money Zero(string currency) => new(0m, currency);
+
+    public static Money operator +(Money a, Money b)
+    {
+        // 不同币种不能直接相加：这是业务规则，不是类型体操。
+        if (a.Currency != b.Currency)
+            throw new DomainException($"Cannot add {a.Currency} to {b.Currency}.");
+
+        return new Money(a.Amount + b.Amount, a.Currency);
+    }
+}
+
+public sealed record Sku(string Value);
+```
+
+## 聚合根的规矩
+
+每个聚合有一个**聚合根** —— 唯一对外暴露的入口。规矩很简单，也很严格：
+
+1. 外部只能通过聚合根改聚合内部。订单行没有独立的仓储，你想加行，走 `order.AddLine(...)`。
+2. 聚合之间只许通过 ID 引用，不许直接持有对方的对象引用。`Order` 存 `CustomerId`，不存 `Customer`。
+3. 一次事务只改一个聚合。需要跨聚合的「一致性」，用领域事件最终一致，而不是分布式事务。
+
+违反这些规矩的代价很具体：聚合越画越大，加载一次订单拖出半个数据库；两个聚合互相引用，删一个级联出一场灾难。
+
+## 实战：Order / OrderLine
+
+订单是不变量的典型：行项目数量必须为正，同一个 SKU 不能出现两行（要改数量走改数量的方法），订单总额永远等于各行小计之和 —— 这个「之和」不能存在数据库列里等人去同步，它必须每次算出来。聚合根把这些规矩焊死在代码里：
+
+```csharp
+// 聚合根：Order。所有对订单的修改都经过它。
+public sealed class Order
+{
+    public Guid Id { get; }
+    public CustomerId CustomerId { get; } // 只存 ID，不直接引用 Customer 聚合。
+
+    private readonly List<OrderLine> _lines = new();
+    public IReadOnlyList<OrderLine> Lines => _lines;
+
+    public Order(Guid id, CustomerId customerId)
+    {
+        Id = id;
+        CustomerId = customerId;
+    }
+
+    public void AddLine(Sku sku, int quantity, Money unitPrice)
+    {
+        // 不变量 1：数量必须为正。
+        if (quantity <= 0)
+            throw new DomainException("Quantity must be positive.");
+
+        // 不变量 2：同一 SKU 只允许一行，改数量请走 ChangeQuantity。
+        if (_lines.Any(l => l.Sku == sku))
+            throw new DomainException($"SKU {sku.Value} already exists; change its quantity instead.");
+
+        _lines.Add(new OrderLine(sku, quantity, unitPrice));
+    }
+
+    // 总额永远现场计算，不存、不缓存、不等人同步。
+    public Money Total(string currency) =>
+        _lines.Aggregate(Money.Zero(currency),
+            (total, line) => total + line.LineTotal);
+}
+
+// OrderLine 是聚合内部实体：有身份（行号），但没有独立生命周期。
+public sealed class OrderLine
+{
+    public int LineNumber { get; }
+    public Sku Sku { get; }
+    public int Quantity { get; private set; }
+    public Money UnitPrice { get; }
+
+    internal OrderLine(Sku sku, int quantity, Money unitPrice)
+    {
+        Sku = sku;
+        Quantity = quantity;
+        UnitPrice = unitPrice;
+    }
+
+    public Money LineTotal => new(UnitPrice.Amount * Quantity, UnitPrice.Currency);
+}
+```
+
+注意 `OrderLine` 的构造函数是 `internal` 的：聚合之外连 `new` 都不许，只能求聚合根办事。这就是「入口唯一」在代码里的样子。
+
+持久化时，`Money` 这种值对象不需要自己的表。EF Core 的 Owned Type 正好表达「它是父实体的一部分」：
+
+```csharp
+// EF Core 配置：Money 作为 OrderLine 的内嵌值对象，没有独立表。
+protected override void OnModelCreating(ModelBuilder builder)
+{
+    builder.Entity<Order>(b =>
+    {
+        b.HasKey(o => o.Id);
+        b.HasMany(typeof(OrderLine), "_lines"); // 通过后备字段映射私有集合。
+    });
+
+    builder.Entity<OrderLine>(b =>
+    {
+        b.OwnsOne(l => l.UnitPrice, m =>
+        {
+            m.Property(p => p.Amount).HasColumnName("UnitPriceAmount");
+            m.Property(p => p.Currency).HasColumnName("UnitPriceCurrency");
+        });
+        b.OwnsOne(l => l.Sku, s =>
+            s.Property(p => p.Value).HasColumnName("Sku"));
+    });
+}
+```
+
+**Trade-off:** 聚合的大小是个永恒的两难。聚合画大了，一次加载拖出太多数据，并发冲突变多 —— 两个人同时改同一个大聚合的不同部分，照样打架。画小了，本该原子保证的不变量被迫拆成最终一致，业务就得接受「中间状态」。经验法则：从小的开始，只把真正必须同生共死的东西圈进来。当你发现自己在为「跨聚合一致性」写补偿逻辑时，先问一句：这俩当初是不是就不该分开？

@@ -1,0 +1,284 @@
+---
+title: "Classic Cases (Commerce, Feed, Payments)"
+description: "三个完整的架构设计实战：电商、信息流、支付——需求、决策、结构、数据选择，以及 10 倍规模时要推翻什么。"
+sidebar:
+  order: 690
+  label: "Classic Cases (Commerce, Feed, Payments)"
+  group:
+    label: "第10章 · Practice & Communication"
+---
+
+下面三个案例是架构师面试和真实项目里反复出现的题目。每个都按同一套路走：需求与驱动因素、关键决策与权衡、结构草图、数据与集成选择、10 倍规模时要重新审视什么。注意顺序——决定永远从驱动因素开始，而不是从技术开始。
+
+## 案例一：电商系统
+
+## 需求与驱动因素
+
+一家区域零售商要做线上商城。功能清单很标准：商品目录、搜索、购物车、下单、支付、订单跟踪、退货。真正的驱动因素藏在数字里：
+
+- **峰值是常态的 20 倍。** 平时每秒几十单，大促（双十一类）每秒上千单。架构必须为峰值设计，而不是为平均值。
+- **钱不能错。** 库存超卖和重复扣款是红线，比慢 200 毫秒严重得多。
+- **团队 15 人。** 没有平台组，没有 SRE 团队。运维复杂度是硬约束——选你半夜能修的东西。
+- **变化快。** 促销规则每月变，营销团队要自己配，不能每次都发版。
+
+## 关键决策与权衡
+
+**决策 1：单体优先，模块化单体。** 15 人团队拆微服务，等于给每个人发一套分布式系统的坑。选 ASP.NET Core 模块化单体：按订单、商品、促销、用户划分模块，模块间只通过接口调用，数据库可以先共享、表按模块前缀隔离。部署是一个进程，开发是一套代码。
+
+*权衡：* 牺牲了独立扩缩容和独立部署，换来调试简单、事务简单、部署简单。大促时整个单体横向扩——浪费一点机器，省下无数个分布式事务的坑。等某个模块真的成为瓶颈或需要独立团队时，再拆。
+
+**决策 2：库存扣减用悲观锁 + 预扣库存。** 超卖是红线，所以库存走数据库行锁，不走"先查后减"的竞态写法。大促前把热销品库存预扣到独立的"库存预留"表，下单只减预留数，支付成功再真正扣减。
+
+*权衡：* 行锁在高并发下会排队，吞吐有上限。用"预扣"把锁的粒度从整行库存变成预留池，排队变短。代价是多了一次对账逻辑——预留过期要回滚，这是用复杂度换正确性，值得。
+
+**决策 3：促销规则做成规则引擎，不是 if-else。** 营销要自己配规则，"满 300 减 50"、"第二件半价"、"新用户首单 8 折"，还要叠加和互斥。规则存数据库，管理后台可视化配置，订单模块在结算时加载规则求值。
+
+*权衡：* 规则引擎的学习和调试成本高于硬编码，但硬编码的促销逻辑是经典的技术债黑洞——三个月后没人敢动。规则求值要做沙箱和超时保护，防止一条配错的规则拖慢所有结算。
+
+## 结构草图
+
+```csharp
+// 模块化单体：模块间只依赖接口，不直接引用实现。
+// 注释说明每个模块的职责边界。
+
+// 订单模块对外暴露的接口（商品、促销模块都只能调这个）
+public interface IOrderService
+{
+    // 创建订单：只做校验 + 库存预留，不碰支付
+    Task<Order> CreateOrderAsync(CreateOrderRequest request);
+    // 支付回调：确认扣减库存，发布 OrderPaid 事件
+    Task ConfirmPaymentAsync(string orderId, string paymentId);
+}
+
+// 库存预留：把行锁竞争从库存行转移到预留池
+public interface IInventoryReservation
+{
+    // 预留成功返回 reservationId，失败抛 InsufficientStock
+    Task<Guid> ReserveAsync(string sku, int quantity, TimeSpan ttl);
+    Task CommitAsync(Guid reservationId);   // 支付成功：真正扣减
+    Task ReleaseAsync(Guid reservationId);  // 过期/取消：归还
+}
+
+// 促销规则：数据驱动，营销后台可配
+public record PromotionRule(
+    string Id,
+    string Name,
+    Func<Cart, bool> Condition,   // 什么时候生效
+    Func<Cart, decimal> Discount, // 怎么算优惠
+    int Priority,                 // 叠加顺序
+    bool Exclusive);              // 是否互斥
+```
+
+事件只在模块边界用：`OrderPaid` 发布出去，积分、通知、数仓各自订阅。模块内部调用走接口——同一个进程里用消息队列是脱裤子放屁，还丢了事务。
+
+## 数据与集成
+
+- **主库 PostgreSQL。** 订单、库存、用户要 ACID，一个库搞定。商品目录读多写少，单独做 Redis 缓存，缓存失效走"更新库后删缓存 + 短 TTL"双保险。
+- **搜索用 OpenSearch。** 商品搜索的分词、纠错、排序，关系库做不好也不该做。商品变更通过 CDC（变更数据捕获）同步到索引，延迟秒级可接受。
+- **支付走外部网关**（Stripe/支付宝类），自己只存支付单号和状态。**绝不自己存卡号**——PCI 合规是深不见底的坑，花钱买网关是最便宜的选择。
+- **文件（商品图）扔对象存储**，CDN 加速。别把图片塞数据库，这是 2005 年的错误，2026 年别再犯。
+
+## 10 倍规模时重新审视
+
+- **拆订单模块。** 下单链路成为独立瓶颈时，把订单和库存从单体拆成独立服务——那时团队也该有 40 人了，拆得起。
+- **读写分离 + 分库分表。** 订单表按时间/用户分区，读走从库。但记住：分片一旦做了就回不去，不到真瓶颈别动手。
+- **库存预留池分片。** 按 SKU 哈希把预留池打散，单点排队变成多点并行。
+- **促销规则求值下沉。** 规则量大了之后，结算时的规则求值从同步改异步预计算——用户加购时就把可用优惠算好存下来，结算只做校验。
+
+**Trade-off:** 这个设计的灵魂是"用机器换人"。横向扩单体浪费机器，但 15 人团队最贵的是人的时间，不是云账单。等你有了 10 倍流量，你也有了 10 倍团队——那时再为拆分付学费。用今天的简单，换明天的选择权。
+
+## 案例二：社交信息流系统
+
+## 需求与驱动因素
+
+一个兴趣社区 App：用户发帖、关注、刷信息流、点赞评论。驱动因素和电商完全不同：
+
+- **读是写的 1000 倍。** 发帖是小事，几千万人同时刷才是大事。架构围绕读优化。
+- **延迟是体验。** 信息流 300 毫秒内必须出来，慢了用户就划走了。正确性可以妥协（少一条帖子没人会死），延迟不行。
+- **关系是数据。** "我关注的人发了什么"是核心查询，关注关系是系统里最热的数据。
+- **热点极端不均匀。** 大 V 发一条，几百万粉丝的信息流都要更新；普通用户发一条，只有几十个人关心。
+
+## 关键决策与权衡
+
+**决策 1：推拉结合（fan-out on write + pull on read）。** 纯推（写扩散）：大 V 发帖要写几百万个收件箱，一次发帖拖垮写入。纯拉：刷信息流时要实时聚合所有关注人的帖子，读延迟爆炸。结合：普通用户发帖用推——直接写进粉丝的时间线缓存；大 V 发帖用拉——只存帖子，粉丝刷的时候实时拉取大 V 的帖子再合并。
+
+*权衡：* 用复杂度换两端的最优。大 V 的判定阈值（比如粉丝 > 1 万）是运营参数，可调。合并逻辑要处理去重和排序，这是这个架构里最绕的一段代码，值得写最多的测试。
+
+**决策 2：时间线存 Redis Sorted Set，不存关系库。** 信息流是"按时间排序的帖子 ID 列表"，这正是 Sorted Set 的天职：score 是时间戳，member 是帖子 ID，取最新 N 条是 O(log n)。关系库只存帖子正文和元数据，Redis 只存 ID 列表。
+
+*权衡：* Redis 是内存，贵。但时间线只存 ID（每条几十字节），几千万人也吃得下。帖子正文走关系库 + CDN 缓存。冷数据（三个月前的帖子）从 Redis 淘汰，刷历史时回源到关系库——慢一点，没人天天翻三个月前的信息流。
+
+**决策 3：点赞计数用近似 + 定期对账。** 点赞数不需要强一致——显示 1024 还是 1025 没人会在意。用 Redis 计数器累加，每分钟批量写回关系库。对账任务每小时跑一次，修正漂移。
+
+*权衡：* 用精确性换写入吞吐。热门帖子的点赞写入是典型的热点行更新，直接打库会把行锁打爆。但**关注关系**和**帖子归属**必须强一致——"我取关了他还刷到他的帖子"是体验事故，"点赞数差 3"是四舍五入。分清楚什么能 approximate，什么是架构师的基本功。
+
+## 结构草图
+
+```csharp
+// 信息流服务：推拉结合的核心逻辑
+
+public interface ITimelineService
+{
+    // 刷信息流：合并"推来的"和"现拉的"
+    Task<IReadOnlyList<Post>> GetTimelineAsync(string userId, string? cursor, int count);
+    // 发帖：决定推还是存，供粉丝拉
+    Task<Post> PublishPostAsync(string authorId, string content);
+}
+
+public class TimelineService : ITimelineService
+{
+    private const int CelebrityThreshold = 10_000; // 粉丝数阈值：超过就是大V
+
+    public async Task<Post> PublishPostAsync(string authorId, string content)
+    {
+        var post = await _postStore.SaveAsync(authorId, content);
+        var followerCount = await _graph.GetFollowerCountAsync(authorId);
+
+        if (followerCount > CelebrityThreshold)
+        {
+            // 大V：只记"某大V在某时间发了帖"，粉丝刷的时候现拉
+            await _celebrityIndex.AddAsync(authorId, post.Id, post.CreatedAt);
+        }
+        else
+        {
+            // 普通用户：推模式，直接写进每个粉丝的时间线
+            var followers = await _graph.GetFollowersAsync(authorId);
+            await _timelineCache.PushToManyAsync(followers, post.Id, post.CreatedAt);
+        }
+        return post;
+    }
+
+    public async Task<IReadOnlyList<Post>> GetTimelineAsync(
+        string userId, string? cursor, int count)
+    {
+        // 1. 从 Redis 取推来的帖子 ID（Sorted Set 按时间倒序）
+        var pushed = await _timelineCache.GetRangeAsync(userId, cursor, count);
+        // 2. 现拉关注的大V的新帖
+        var celebrities = await _graph.GetFollowedCelebritiesAsync(userId);
+        var pulled = await _celebrityIndex.GetNewerThanAsync(celebrties: celebrities,
+            since: await _timelineCache.GetLastMergeTimeAsync(userId));
+        // 3. 合并、去重、按时间排序，取前 N 个，再回源取正文
+        var merged = MergeDedup(pushed, pulled).Take(count);
+        return await _postStore.GetManyAsync(merged);
+    }
+}
+```
+
+注意 `GetLastMergeTimeAsync` 这个细节：拉模式需要知道"上次合并到什么时候"，否则每次都全量拉大 V 的历史。这个水位线存在 Redis 里，随用户走。
+
+## 数据与集成
+
+- **关系图谱（谁关注谁）存图数据库或关系库的邻接表。** 关注关系是强一致数据，量相对小（边数远小于帖子数），PostgreSQL 的邻接表 + 索引够用到很大规模。
+- **帖子正文存 PostgreSQL**（结构化、可搜索），**图片/视频走对象存储 + CDN**。视频转码是异步任务，扔给消息队列慢慢做——发帖接口不等转码完成就返回，"处理中"状态由客户端轮询。
+- **Redis Cluster 存时间线和计数器**，按用户 ID 分片。热点 key（大 V 的计数器）用本地缓存 + 短 TTL 挡一层。
+- **推荐流（"你可能感兴趣"）独立服务**，走离线计算 + 在线排序，和关注流分开。这是另一个系统，别和核心信息流耦合。
+
+## 10 倍规模时重新审视
+
+- **推模式的分片写入。** 普通用户的粉丝也可能到几十万，单次推写几十万个 Redis key 会超时。改成分片批量 + 异步队列慢慢推，粉丝看到延迟几秒可接受。
+- **多级缓存。** 时间线加一层本地进程缓存（Caffeine 类），挡住重复刷新的读。
+- **读写地域化。** 用户跨大洲时，时间线缓存按地域部署，写走中心、读走边缘。冲突？信息流没有冲突，只有延迟——这是它比电商好做 10 倍的原因。
+- **大 V 阈值动态化。** 固定阈值在 10 倍规模下会失灵，改成按"发帖频率 × 粉丝数"的综合分数动态判定推还是拉。
+
+**Trade-off:** 这个设计的灵魂是"承认不一致"。信息流系统里，精确是奢侈品，延迟是必需品。架构师的工作不是消灭不一致，而是决定*哪里*可以不一致、*多久*可以不一致，并把这些决定写下来——因为产品经理迟早会问"为什么点赞数对不上"，你最好有 ADR 回答他。
+
+## 案例三：支付系统
+
+## 需求与驱动因素
+
+为电商平台做自营支付网关：接多种支付方式（卡、钱包、银行转账），处理支付、退款、对账。驱动因素一句话：**钱错一分都是事故**。
+
+- **一致性压倒一切。** 延迟高 500 毫秒没人投诉，重复扣款一次就上新闻。在这里，CAP 里选 C。
+- **可审计。** 每一分钱从哪来、到哪去，必须能重放、能对账。监管和财务会查，查的时候你拿不出来就是灾难。
+- **外部依赖不可靠。** 银行网关超时、掉单、对账文件迟到——把"对方会犯错"当作设计输入。
+- **不能丢、不能重。** 网络重试是常态，同一笔支付可能被提交五次，系统必须只执行一次。
+
+## 关键决策与权衡
+
+**决策 1：幂等键是第一公民。** 每个支付请求带客户端生成的幂等键（`Idempotency-Key`），服务端用唯一索引保证同一键只执行一次。重试、超时重发、用户连点两次——全部被幂等键消化。这是整个系统最重要的三行代码。
+
+*权衡：* 客户端必须配合生成稳定的键（订单号 + 支付尝试号），这是跨团队的契约，要写进集成文档。键的存储要和业务数据同事务，否则"执行了但没记键"会造成重复扣款。
+
+**决策 2：状态机 + 事件溯源记账。** 支付单是一个严格的状态机：`待支付 → 支付中 → 成功/失败 → 已退款/部分退款`，非法跃迁直接拒绝。资金变动不直接改余额，而是记账事件流（借/贷），余额是事件的折叠。每一笔钱都有完整的事件链，可重放、可审计。
+
+*权衡：* 事件溯源的学习曲线陡，查询当前状态要折叠事件（用快照缓解）。但换来的是：对账变成"重放事件流对比"，差一分钱都能定位到具体事件。财务系统几百年都这么记账，不是没有原因的。
+
+**决策 3：与外部网关的交互全部异步 + 对账兜底。** 调用银行网关走"发起 → 轮询/回调确认 → 对账文件核对"三层。网关超时不代表失败——可能是"对方执行了但没回你"。所以超时后不能直接标记失败，要进"未知"状态，由对账任务最终确认。
+
+*权衡：* 用户看到的支付结果有延迟（"处理中"状态），体验打折。但替代方案——超时就判失败——会导致"用户被扣了钱，我们显示失败，用户再付一次"的双重扣款。在支付里，慢而准永远胜过快而错。
+
+## 结构草图
+
+```csharp
+// 支付核心：幂等 + 状态机 + 事件记账
+
+public enum PaymentStatus
+{
+    Pending,      // 待支付：订单已创建，未发起网关调用
+    Processing,   // 支付中：已发网关，等确认（可停留很久）
+    Succeeded,    // 成功：终态
+    Failed,       // 失败：终态，可重新发起（新幂等键）
+    Unknown,      // 未知：网关超时，等对账裁决（关键状态！）
+    Refunded,     // 已退款：终态
+}
+
+// 状态跃迁表：非法跃迁直接抛异常，代码即文档
+public static class PaymentTransitions
+{
+    private static readonly Dictionary<PaymentStatus, PaymentStatus[]> _allowed = new()
+    {
+        [PaymentStatus.Pending]    = new[] { PaymentStatus.Processing, PaymentStatus.Failed },
+        [PaymentStatus.Processing] = new[] { PaymentStatus.Succeeded, PaymentStatus.Failed, PaymentStatus.Unknown },
+        [PaymentStatus.Unknown]    = new[] { PaymentStatus.Succeeded, PaymentStatus.Failed }, // 只有对账能裁决
+        [PaymentStatus.Succeeded]  = new[] { PaymentStatus.Refunded },
+        [PaymentStatus.Failed]     = Array.Empty<PaymentStatus>(), // 终态：重付走新单
+        [PaymentStatus.Refunded]   = Array.Empty<PaymentStatus>(),
+    };
+
+    public static void EnsureAllowed(PaymentStatus from, PaymentStatus to)
+    {
+        if (!_allowed[from].Contains(to))
+            throw new InvalidPaymentTransitionException(from, to);
+    }
+}
+
+public interface IPaymentService
+{
+    // 幂等键唯一索引保证：同键重复调用直接返回上次结果，不重新执行
+    Task<Payment> PayAsync(string idempotencyKey, PaymentRequest request);
+}
+
+// 记账事件：钱只通过事件流动，余额是折叠出来的
+public record LedgerEvent(
+    Guid EventId,
+    string PaymentId,
+    string DebitAccount,    // 借方科目
+    string CreditAccount,   // 贷方科目
+    decimal Amount,
+    DateTime OccurredAt);
+```
+
+`Unknown` 状态是整段代码里最重要的设计。大多数支付 bug 都来自"超时了，算成功还是失败"的二选一——正确答案是"不知道，等对账告诉我"。给"不知道"一个正式的状态，系统就诚实了。
+
+## 数据与集成
+
+- **支付库独立，与业务库物理隔离。** 钱的数据不跟商品、订单挤一个库——权限、备份、审计要求都不同。PostgreSQL，同步复制，宁可慢。
+- **幂等键表**和支付单同库同事务，用唯一约束做并发守卫。这是数据库在替你做分布式锁，别自己造轮子。
+- **对账三路：** 我方账（事件流） vs 网关账（对账文件） vs 银行账（结算单）。三方对不上就报警，人工介入。对账任务是独立的后台服务，每天跑，失败重试、留痕。
+- **通知下游用 outbox 模式。** 支付成功要通知订单、积分、风控——先把事件写进本库的 outbox 表（同事务），再由 relay 发布到消息队列。防止"钱扣了，通知丢了"。
+- **密钥和证书走 KMS/HSM**，应用服务器上不落盘。这是合规红线，不是优化项。
+
+## 10 倍规模时重新审视
+
+- **按商户/币种分片。** 支付单表按商户 ID 分片，对账任务也按分片并行。但注意：分片后"全平台资金汇总"变成跨片查询，要走数仓，不要在线算。
+- **网关调用连接池 + 熔断。** 10 倍流量下，银行网关先成为瓶颈。熔断器防止网关抖动拖垮你的线程池，降级策略是"排队等待"，不是"直接失败"。
+- **事件流归档。** 账本事件只增不减，三年前的事件折叠一次存快照，在线只保留热数据。审计要查历史？从归档重放，慢但全。
+- **多活部署。** 支付是公司的现金流，单机房是不可接受的。但多活下的幂等和状态机要重新验证——"同键双写"在跨机房复制延迟下是真实风险，用中心化的键仲裁服务守住。
+
+**Trade-off:** 这个设计的灵魂是"悲观"。默认网络会失败、对方会犯错、重试会重复——然后让每一层都为此准备答案。电商为峰值设计，信息流为延迟设计，支付为*正确*设计。三个系统，三种灵魂——这就是为什么架构没有银弹，只有驱动因素。
+
+## 三个案例的共同课
+
+回头看，三个案例用的是同一套动作：先写驱动因素，再做决定，每个决定写下代价，最后问"10 倍时会断在哪"。技术选型（PostgreSQL 还是 MongoDB、推还是拉）只是动作的输出，不是动作本身。
+
+另一个共同点：每个设计都有一个"灵魂"——电商用机器换人，信息流承认不一致，支付保持悲观。好的架构都有灵魂，坏的架构只有技术清单。下次你评审一个设计，先问它的灵魂是什么。如果作者答不上来，设计还没完成。

@@ -1,0 +1,82 @@
+---
+title: "Replication & Partitioning"
+description: "读副本、分片键，以及扩展出去之后应用能做的承诺会发生什么变化。"
+sidebar:
+  order: 400
+  label: "Replication & Partitioning"
+  group:
+    label: "第6章 · Data & Persistence"
+---
+
+## 读扩展：复制
+
+复制数据有两个理由。第一是活下去：节点挂了，副本让你继续活着。第二是快：读副本把读负载摊到多台机器上。听起来都像免费的，都不是。
+
+读副本的定义就是落后。复制延迟不是 bug，是物理。一旦你把读路由到副本，你就接受了一个事实：用户写完数据，紧接着读回来可能是旧的。有时候这无所谓——商品目录、排行榜快照。有时候这就是工单："我改了地址，怎么又变回去了。" 设计读路径时要把延迟算进去。关键的读——用户刚写完的那个东西——走主库，其他的再去副本。
+
+故障转移是另一笔账。把副本提为主库，意味着应用的连接拓扑会在它脚下发生变化。如果你的代码假设连接字符串只有一个且永远不变，那故障转移就是一次停机。连接处理、重试逻辑、健康检查，这些不是数据库的事，是应用的事，复制逼着你认领它们。
+
+## 写扩展：分区
+
+一台机器装不下数据或者扛不住写的时候，就分区。分片按某个键把行拆到不同节点，这个键的选择是本章最重要的决策。
+
+好的分片键有两个属性：负载分布均匀，相关数据待在一起。这两个属性天天打架。按 `UserId` 分片，负载散得漂亮，"查这个用户的所有订单"是一个分片内的查询；但"查今天下的所有订单"就要扇出到所有分片，等最慢的那个，把结果在应用代码里合并。
+
+热点分区就是键选错了的下场。按 `TenantId` 分片，你最大的租户会变成一个独占分片，热得发烫，其他分片闲着。数据库救不了你，它只会忠实地、大规模地执行你的错误决策。热点分区没有 clever 的索引能绕过去，要么重分片——那是一次带牙的迁移，要么重设计键——那是一次重写。
+
+跨分片查询是另一笔税。任何一个分片回答不了的查询都会变成 scatter-gather：你的代码扇出、收集、排序、分页。跨分片分页是特别的痛苦，以前数据库替你干的活，现在是你的 repository 层的事，测试也是你写。
+
+## 应用感受到的变化
+
+这些没有一样能留在基础设施层。复制和分区会以具体、可测试的方式漏进应用代码。
+
+```csharp
+// 仓库现在知道了拓扑。这就是扩展的代价。
+public sealed class OrderRepository
+{
+    private readonly IDbContextFactory<OrdersDbContext> _factory;
+    private readonly IShardRouter _shards;
+
+    public OrderRepository(
+        IDbContextFactory<OrdersDbContext> factory,
+        IShardRouter shards)
+    {
+        _factory = factory;
+        _shards = shards;
+    }
+
+    // 单分片读：快、一致、按分片键路由。
+    public async Task<Order?> GetByIdAsync(Guid orderId, Guid customerId)
+    {
+        await using var db = await _factory.CreateDbContextAsync();
+        db.Database.SetConnectionString(_shards.ConnectionFor(customerId));
+        return await db.Orders
+            .AsNoTracking()
+            .FirstOrDefaultAsync(o => o.Id == orderId);
+    }
+
+    // 跨分片查询：scatter-gather，合并是应用的事。
+    public async Task<List<Order>> RecentAcrossShardsAsync(int take)
+    {
+        var tasks = _shards.AllConnections().Select(async conn =>
+        {
+            await using var db = await _factory.CreateDbContextAsync();
+            db.Database.SetConnectionString(conn);
+            return await db.Orders.AsNoTracking()
+                .OrderByDescending(o => o.PlacedAt)
+                .Take(take)
+                .ToListAsync();
+        });
+
+        var pages = await Task.WhenAll(tasks);
+        return pages.SelectMany(p => p)
+            .OrderByDescending(o => o.PlacedAt)
+            .Take(take)
+            .ToList();
+    }
+}
+```
+
+看 `RecentAcrossShardsAsync`：每个分片取 N 条，内存里重排。N 小的时候它是对的，N 大的时候它在撒谎。这个谎现在是你的代码、你的测试、你的 on-call。数据库没有变慢，是你的架构终于诚实地讲出了工作到底在哪里。
+
+**Trade-off:** 复制和分区用简单性换规模和生存能力。过期读、scatter-gather 查询、热点分区、故障转移处理，全部永久搬进你的应用代码。单机真正撑不住之前——是测出来的撑不住，不是怕出来的——不要急着散开。真要散开的时候，选分片键要像选决定你半夜会不会被叫醒的东西，因为它就是。

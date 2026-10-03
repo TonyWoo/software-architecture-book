@@ -81,6 +81,10 @@ def main():
         def refx(m):
             return f"[^{sid}-{m.group(1)}]"
         body = re.sub(r"\[\^(\w[\w-]*)\]", refx, body)
+        # image paths: source files reference ../../images/ relative to
+        # manuscript/<chapter>/; the single-file manuscript.md lives at the
+        # repo root, so rewrite to images/ for the export only.
+        body = body.replace("](../../images/", "](images/")
         body = shift_headings(body, depth)
 
         if not first_node and unit in ("part", "chapter", "section"):

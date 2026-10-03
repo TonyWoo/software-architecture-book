@@ -1,0 +1,9 @@
+# Software Architecture
+
+Learn to make decisions that survive change, teams & scale.
+
+Full documentation (discoverable current pages, one document): https://example.com/llms-full.txt
+
+## Pages
+
+- [book](https://example.com/book/llms.txt)

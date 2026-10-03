@@ -1,0 +1,72 @@
+---
+title: "Failure Modes, Retries & Idempotency"
+description: "部分故障是分布式系统的常态——没有幂等性的重试，会把常态变成灾难。"
+---
+
+## 部分故障才是常态
+
+在单机上，故障是二元的：要么工作，要么崩溃。在分布式系统里，故障是部分的，这改变了一切。节点 A 能连上 B 但连不上 C。你的请求可能已经到达服务端、已经处理完，然后*响应*在回来的路上丢了——于是客户端重试，服务端又处理了一遍。超时告诉你的不是"没发生"，而是"我不知道"。这是根本的不对称：超时是信息的缺席，不是否定的答案。
+
+设计必须按这个来。每一次远程调用，都是"可能已经执行了未知次数"的调用。"精确一次"是会议上卖的概念；生产环境里真正的选项只有至多一次（可能没发生）和至少一次（可能发生两次）。你必须按至少一次来构建系统，然后让"两次"变得无害。整个游戏就这一条，工具叫幂等。
+
+## 重试风暴与退避的纪律
+
+对故障的 naive 反应是：再试一次。对一个正在挣扎的系统的 naive 反应是：所有客户端一起、立刻、再试一次。这就是重试风暴，它能把一次局部故障变成全面宕机。服务端慢是因为过载，一千个客户端同时用即时重试去锤它——相当于火灾时所有人挤同一个出口。
+
+重试必须有纪律：指数退避（等 1 秒、再 2 秒、再 4 秒……）、抖动（随机化，避免所有客户端步调一致地重试）、客户端超时必须*短于*重试总预算、熔断器（服务明显挂了就别再打了）。Polly 在 .NET 里全都给了你，没有理由再手写重试循环。但记住：在非幂等接口上配一个行为良好的重试策略，只是用一种体面的方式把客户的钱扣两次。退避限制爆炸半径，幂等消除爆炸半径。
+
+还有一条经常被忽略的纪律：重试预算。给每次请求设定总的时间或次数上限，超了就认失败、快速返回错误，而不是无限续命。一个没有上限的重试，等于把一次下游抖动变成上游的线程池耗尽。快速失败是诚实的设计——调用方拿到明确的错误可以降级，拿到一个永远不返回的请求只能一起死。
+
+## 幂等键：最重要的工具
+
+幂等键是客户端生成的唯一令牌，随请求一起发出，一般放在 `Idempotency-Key` 这样的头里。服务端存下这个键和第一次执行的结果。重试带着同一个键来时，服务端直接返回存好的结果，不再执行。扣款、发邮件、建订单——不管网络把请求投递了几次，实际效果至多一次。
+
+这是分布式系统设计里最重要的模式。每个跨越网络边界的变更接口都应该接受它。实现成本低，和重试天然配合，把恐怖的"到底发生没发生"问题变成一次查表。客户端按"逻辑操作"生成键（每个操作一个键，而不是每次尝试一个键——那就白做了），服务端把键当作工作的单位。
+
+```csharp
+// .NET 8：幂等键中间件草图——重试在构造上就是安全的。
+public sealed class IdempotencyMiddleware
+{
+    private readonly RequestDelegate _next;
+    private readonly IDistributedCache _cache;
+
+    public IdempotencyMiddleware(RequestDelegate next, IDistributedCache cache)
+        => (_next, _cache) = (next, cache);
+
+    public async Task InvokeAsync(HttpContext context)
+    {
+        if (!context.Request.Headers.TryGetValue("Idempotency-Key", out var key))
+        {
+            await _next(context); // 没带键：放行，风险自负
+            return;
+        }
+
+        var cacheKey = $"idem:{key}";
+        var stored = await _cache.GetStringAsync(cacheKey);
+        if (stored is not null)
+        {
+            context.Response.StatusCode = 200;
+            await context.Response.WriteAsync(stored); // 重放第一次的结果
+            return;
+        }
+
+        // 截获响应体，让重试可以重放结果而不必重新执行。
+        var buffer = new MemoryStream();
+        var originalBody = context.Response.Body;
+        context.Response.Body = buffer;
+        try
+        {
+            await _next(context);
+            buffer.Position = 0;
+            var result = await new StreamReader(buffer).ReadToEndAsync();
+            await _cache.SetStringAsync(cacheKey, result,
+                new DistributedCacheEntryOptions { AbsoluteExpirationRelativeToNow = TimeSpan.FromHours(24) });
+            buffer.Position = 0;
+            await buffer.CopyToAsync(originalBody);
+        }
+        finally { context.Response.Body = originalBody; }
+    }
+}
+```
+
+**Trap:** 没有幂等性的重试不是韧性，是故障放大器。你写的每一条重试策略都在假设接口是幂等的——去验证这个假设，别靠许愿。从这一章只带走一件事：先给每个变更 API 加上幂等键，再去加任何重试。

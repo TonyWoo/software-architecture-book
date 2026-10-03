@@ -1,0 +1,1 @@
+import{s as e}from"./client.CU7KQ2-m.js";function t(e){let t=e.querySelectorAll(`ol`);return t.forEach(e=>e.setAttribute(`role`,`list`)),()=>{t.forEach(e=>e.removeAttribute(`role`))}}e(`[data-steps]`,t);
