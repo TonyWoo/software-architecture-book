@@ -1,0 +1,23 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam defaultFontName "Noto Sans CJK SC"
+
+' 反例：改旧代码加分支
+class DiscountCalculator {
+  +calculate(type : string) : decimal
+}
+note right of DiscountCalculator : 每加一种折扣\n都要改这个方法\nif/else 越堆越多
+
+' 正例：加新类扩展
+interface IDiscountPolicy {
+  +apply(price : decimal) : decimal
+}
+class RegularPolicy implements IDiscountPolicy
+class VipPolicy implements IDiscountPolicy
+class OrderService {
+  -policy : IDiscountPolicy
+  +checkout() : decimal
+}
+OrderService --> IDiscountPolicy
+note right of OrderService : 新折扣 = 新类\n旧代码一个字不动
+@enduml

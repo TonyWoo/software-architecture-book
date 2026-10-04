@@ -1,0 +1,26 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam defaultFontName "Noto Sans CJK SC"
+
+' 反例：说谎的继承
+class File {
+  +read() : string
+  +write(data : string)
+}
+class ReadOnlyFile extends File {
+  +write(data : string)
+}
+note right of ReadOnlyFile : write() 抛异常\n"我是 File" 是个谎言\n调用者处处要防着它
+
+' 正例：诚实的抽象
+interface Readable {
+  +read() : string
+}
+interface Writable {
+  +write(data : string)
+}
+class ReadOnlyFile2 implements Readable
+class ReadWriteFile implements Readable
+class ReadWriteFile implements Writable
+note right of ReadWriteFile : 子类型真能\n替换父类型\n调用者不用提心吊胆
+@enduml

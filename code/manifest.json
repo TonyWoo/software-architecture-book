@@ -35,12 +35,6 @@
     "first_line": "// 把权衡写进代码：Polly 策略精确声明了",
     "lines": 13
   },
-  "030-architectural-thinking/020-architecture-decision-records-adrs-01": {
-    "source": "030-architectural-thinking/020-architecture-decision-records-adrs.md",
-    "index": 1,
-    "first_line": "// 最小的 ADR 模型：决策是数据，而不只是文档。",
-    "lines": 25
-  },
   "030-architectural-thinking/030-fitness-functions-01": {
     "source": "030-architectural-thinking/030-fitness-functions.md",
     "index": 1,
@@ -412,5 +406,23 @@
     "index": 1,
     "first_line": "// 沟通的最小单位：一次评审发言的模板。",
     "lines": 17
+  },
+  "040-design-principles/010-solid-cohesion-and-coupling-04": {
+    "source": "040-design-principles/010-solid-cohesion-and-coupling.md",
+    "index": 4,
+    "first_line": "// 反例：ReadOnlyFile 谎称自己是 File，Write 时抛异常。",
+    "lines": 25
+  },
+  "040-design-principles/010-solid-cohesion-and-coupling-05": {
+    "source": "040-design-principles/010-solid-cohesion-and-coupling.md",
+    "index": 5,
+    "first_line": "// 反例：胖接口逼着 Robot 实现\"吃午饭\"。",
+    "lines": 24
+  },
+  "040-design-principles/010-solid-cohesion-and-coupling-06": {
+    "source": "040-design-principles/010-solid-cohesion-and-coupling.md",
+    "index": 6,
+    "first_line": "// 反例：业务代码直接依赖 SQL 实现，换数据库要改业务层。",
+    "lines": 26
   }
 }

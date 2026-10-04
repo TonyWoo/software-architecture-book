@@ -1,0 +1,21 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam defaultFontName "Noto Sans CJK SC"
+
+' 反例：职责混杂
+class Report {
+  +calculate() : decimal
+  +generatePdf() : byte[]
+}
+note right of Report : 两个改变的理由\n业务规则变了要改它\n输出格式变了也要改它
+
+' 正例：职责分离
+class ReportCalculator {
+  +calculate() : decimal
+}
+class PdfGenerator {
+  +generate(data : decimal) : byte[]
+}
+ReportCalculator ..> PdfGenerator : 使用 >
+note right of PdfGenerator : 各只有一个\n改变的理由
+@enduml

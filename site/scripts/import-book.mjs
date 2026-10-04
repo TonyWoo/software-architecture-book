@@ -3,7 +3,7 @@
 // 用法：node scripts/import-book.mjs   （site/ 目录下，默认导入中文 C# 版到 book/）
 // 双版本：BOOK_SRC=/tmp/manuscript-java BOOK_DEST=book-java node scripts/import-book.mjs
 // 由 `prebuild` 自动调用，保证构建永远用最新书稿
-// 输出 82 页：前言 1 + 10 章 × 8（导读 + 5 节 + 本章要点 + 战争故事）+ 落地页 1
+// 输出 82 页：前言 1 + 11 章 × 8（导读 + 5 节 + 本章要点 + 战争故事）+ 落地页 1
 // ============================================================
 import { readdirSync, readFileSync, writeFileSync, rmSync, mkdirSync, existsSync } from 'node:fs';
 import { join, dirname } from 'node:path';
@@ -190,9 +190,9 @@ function main() {
   );
 
   console.log(`import-book: [${BOOK_DEST}] 生成 ${pages} 页`);
-  // 前言 1 + 10 章 × 8（导读 + 5 节 + 本章要点 + 战争故事）+ 落地页 1 = 82
-  if (pages !== 82) {
-    console.error(`页数不对：期望 82，实际 ${pages}`);
+  // 前言 1 + 11 章 × 8（导读 + 5 节 + 本章要点 + 战争故事）+ 落地页 1 = 82
+  if (pages !== 90) {
+    console.error(`页数不对：期望 90，实际 ${pages}`);
     process.exit(1);
   }
 }

@@ -1,13 +1,13 @@
 ---
 id: practice-and-communication
-title: "第 10 章 实践与沟通"
+title: "第 11 章 实践与沟通"
 unit: chapter
 role: body
 status: draft
 synopsis: 架构的生死取决于你如何练习它、如何沟通它——图、决策、评审，以及把开发者变成架构师的习惯。
 ---
 
-![本章插画](../../images/ch10-abstract.png)
+![本章插画](../../images/ch11-abstract.png)
 
 大多数系统不是被设计坏的，而是被*悄悄*设计坏的——一个又一个没有文档的决定，诞生在走廊的闲聊里，藏在某个开发者的脑子里。然后这个开发者离职了，那些悄悄的决定就开始大声地崩坏。
 

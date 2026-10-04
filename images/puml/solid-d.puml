@@ -1,0 +1,26 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam defaultFontName "Noto Sans CJK SC"
+
+' 反例：高层依赖低层细节
+class OrderService {
+  -repo : SqlOrderRepository
+}
+class SqlOrderRepository {
+  +save(order : Order)
+}
+OrderService --> SqlOrderRepository
+note right of SqlOrderRepository : 换数据库 = 改业务代码\n高层被低层细节绑架
+
+' 正例：依赖抽象
+class OrderService2 {
+  -repo : IOrderRepository
+}
+interface IOrderRepository {
+  +save(order : Order)
+}
+class SqlOrderRepository2 implements IOrderRepository
+class MongoOrderRepository implements IOrderRepository
+OrderService2 --> IOrderRepository
+note right of IOrderRepository : 高层和低层都依赖抽象\n换数据库只需换实现类
+@enduml

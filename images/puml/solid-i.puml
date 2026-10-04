@@ -1,0 +1,25 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam defaultFontName "Noto Sans CJK SC"
+
+' 反例：臃肿接口
+interface IWorker {
+  +work()
+  +eat()
+}
+class Human implements IWorker
+class Robot implements IWorker
+note right of Robot : 机器人被逼着\n实现"吃午饭"\n依赖了它不用的方法
+
+' 正例：接口拆分
+interface IWorkable {
+  +work()
+}
+interface IEatable {
+  +eat()
+}
+class Human2 implements IWorkable
+class Human2 implements IEatable
+class Robot2 implements IWorkable
+note right of Robot2 : 客户端只依赖\n它真正调用的东西
+@enduml
