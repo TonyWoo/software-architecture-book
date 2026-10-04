@@ -59,3 +59,28 @@ pandoc manuscript.md -o software-architecture.pdf \
 
 10 章 × 每章 5 节 = 50 节，外加每章导读与要点总结、前言。章节标题严格按既定结构，
 一字未改。
+
+## Nimbus 文档站
+
+`site/` 是用 Cloudflare Nimbus（Astro 文档站脚手架）搭的在线文档站，
+书稿的在线阅读版。构建前会自动从最新书稿重新导入，所以站点永远和
+`manuscript/` 保持一致（含纯中文标题与每章黑白插画）。
+
+```bash
+cd site
+npm install          # 首次
+npm run dev          # 本地预览 http://localhost:4321
+npm run build        # 构建：先自动跑 scripts/import-book.mjs 再 astro build，产物在 site/dist/
+```
+
+导入脚本 `site/scripts/import-book.mjs`：
+
+- 把 `manuscript/` 转成 `src/content/docs/book/` 下 82 个页面
+  （卷首 1 + 前言 1 + 10 章 × 8：导读、本章 5 节、本章要点、战争故事）
+- 把 `images/ch01-abstract.png` … `ch10-abstract.png` 拷到 `public/images/`
+  并改写引用路径；页数不对会直接报错中断构建
+- 由 `prebuild` 自动调用，`npm run build` 前无需手动跑
+
+CI：`.github/workflows/nimbus.yml` 在 push 到 `main`（且改动涉及书稿、
+插画或 `site/`）时自动构建，把 `site/dist/` 上传为 artifact（保留 30 天）。
+只构建、不部署——部署到 Cloudflare 或 GitHub Pages 等主人选定目标后再接。

@@ -1,9 +1,9 @@
 ---
-title: "Preface"
+title: "前言"
 description: "这本书写给谁，以及怎么读。"
 sidebar:
   order: 10
-  label: "Preface"
+  label: "前言"
   group:
     label: "开篇"
 ---

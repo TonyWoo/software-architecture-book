@@ -1,1 +1,0 @@
-import{s as e}from"./client.CU7KQ2-m.js";e(`[data-dialog-close]`,e=>{let t=()=>e.closest(`dialog`)?.close();return e.addEventListener(`click`,t),()=>e.removeEventListener(`click`,t)});

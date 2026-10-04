@@ -11,15 +11,15 @@ Learn to make decisions that survive change, teams & scale.
 
 ## 章节
 
-- [第1章 · Foundations & Role](./foundations-and-role/)
-- [第2章 · Architectural Thinking](./architectural-thinking/)
-- [第3章 · Design Principles](./design-principles/)
-- [第4章 · Styles & Patterns](./styles-and-patterns/)
-- [第5章 · Domain Modeling](./domain-modeling/)
-- [第6章 · Data & Persistence](./data-and-persistence/)
-- [第7章 · Distributed Systems](./distributed-systems/)
-- [第8章 · Integration & APIs](./integration-and-apis/)
-- [第9章 · Evolution & Production](./evolution-and-production/)
-- [第10章 · Practice & Communication](./practice-and-communication/)
+- [第1章 · 第 1 章 地基与角色](./foundations-and-role/)
+- [第2章 · 第 2 章 架构思维](./architectural-thinking/)
+- [第3章 · 第 3 章 设计原则](./design-principles/)
+- [第4章 · 第 4 章 风格与模式](./styles-and-patterns/)
+- [第5章 · 第 5 章 领域建模](./domain-modeling/)
+- [第6章 · 第 6 章 数据与持久化](./data-and-persistence/)
+- [第7章 · 第 7 章 分布式系统](./distributed-systems/)
+- [第8章 · 第 8 章 集成与 API](./integration-and-apis/)
+- [第9章 · 第 9 章 演进与生产](./evolution-and-production/)
+- [第10章 · 第 10 章 实践与沟通](./practice-and-communication/)
 
 [前言](./preface/)

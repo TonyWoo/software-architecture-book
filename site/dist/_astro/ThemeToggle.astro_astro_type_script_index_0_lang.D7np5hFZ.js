@@ -1,1 +1,0 @@
-import{s as e}from"./client.CU7KQ2-m.js";function t(e){function t(){let e=document.documentElement.getAttribute(`data-mode`)===`dark`;try{localStorage.setItem(`ui-mode`,e?`light`:`dark`)}catch{}window.__nbApplyTheme?.()}return window.__nbApplyTheme?.(),e.addEventListener(`click`,t),()=>e.removeEventListener(`click`,t)}e(`[data-nb-theme-toggle]`,t);

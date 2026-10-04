@@ -1,7 +1,7 @@
 // ============================================================
 // import-book.mjs —— 把 ../manuscript/ 的书稿导入为 nimbus 站点页面
 // 用法：node scripts/import-book.mjs   （site/ 目录下）
-// 输出：src/content/docs/book/ 下 72 个 .md 页面（前言+10章×7页）
+// 输出：src/content/docs/book/ 下 82 个 .md 页面（卷首 1 + 前言 1 + 10 章 × 8）
 // 由 `prebuild` 自动调用，保证构建永远用最新书稿
 // ============================================================
 import { readdirSync, readFileSync, writeFileSync, rmSync, mkdirSync, existsSync } from 'node:fs';
@@ -10,7 +10,26 @@ import { fileURLToPath } from 'node:url';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const MANUSCRIPT_DIR = join(ROOT, '..', 'manuscript');
+const IMAGES_DIR = join(ROOT, '..', 'images');
+const PUBLIC_IMAGES_DIR = join(ROOT, 'public', 'images');
 const OUT_DIR = join(ROOT, 'src', 'content', 'docs', 'book');
+
+// 章节插画：images/ch01-abstract.png … ch10-abstract.png 拷到 public/images/，
+// 正文里的 ../../images/xxx 改写为 /images/xxx（public 目录映射到站点根）
+function copyChapterImages() {
+  mkdirSync(PUBLIC_IMAGES_DIR, { recursive: true });
+  let n = 0;
+  for (let i = 1; i <= 10; i++) {
+    const name = `ch${String(i).padStart(2, '0')}-abstract.png`;
+    const src = join(IMAGES_DIR, name);
+    if (existsSync(src)) {
+      writeFileSync(join(PUBLIC_IMAGES_DIR, name), readFileSync(src));
+      n++;
+    }
+  }
+  console.log(`import-book: 拷贝章节插画 ${n} 张`);
+}
+const fixImagePaths = (body) => body.replace(/\.\.\/\.\.\/images\//g, '/images/');
 
 // ---- 极简 YAML 头解析（字段都是单行 key: value，值可能带引号） ----
 function parseHead(text) {
@@ -63,6 +82,7 @@ function frontmatter({ title, description, order, label, group }) {
 
 function main() {
   const book = readBookMeta();
+  copyChapterImages();
   rmSync(OUT_DIR, { recursive: true, force: true });
   mkdirSync(OUT_DIR, { recursive: true });
 
@@ -78,7 +98,7 @@ function main() {
   const write = (relPath, fm, body) => {
     const full = join(OUT_DIR, relPath);
     mkdirSync(dirname(full), { recursive: true });
-    writeFileSync(full, fm + demoteH1(body).replace(/\s+$/, '') + '\n');
+    writeFileSync(full, fm + demoteH1(fixImagePaths(body)).replace(/\s+$/, '') + '\n');
     pages++;
   };
 
@@ -89,15 +109,16 @@ function main() {
       .sort((a, b) => (sortKey(a) < sortKey(b) ? -1 : 1));
 
     if (g === '010-front-matter') {
-      // 前言组：_index.md 为空壳（role: front），跳过；preface 单独成页
+      // 前言组：_index.md（卷首）与 010-preface.md（前言）各成一页
       for (const f of files) {
         const { head, body } = parseHead(readFileSync(join(MANUSCRIPT_DIR, g, f), 'utf8'));
         if (!body.trim()) {
           console.log(`skip 空页面: ${g}/${f}`);
           continue;
         }
+        const fslug = f === '_index.md' ? 'foreword' : stripNum(f).replace(/\.md$/, '');
         write(
-          'preface.md',
+          `${fslug}.md`,
           frontmatter({ title: head.title, description: head.synopsis, order: order += 10, group: '开篇' }),
           body,
         );
@@ -144,8 +165,9 @@ function main() {
   );
 
   console.log(`import-book: 生成 ${pages} 页`);
-  if (pages !== 72) {
-    console.error(`页数不对：期望 72，实际 ${pages}`);
+  // 卷首 1 + 前言 1 + 10 章 × 8（导读 + 5 节 + 本章要点 + 战争故事）= 82
+  if (pages !== 82) {
+    console.error(`页数不对：期望 82，实际 ${pages}`);
     process.exit(1);
   }
 }

@@ -1,0 +1,51 @@
+# 自动构建 Nimbus 文档站
+#
+# push 到 main 时触发：从最新书稿（manuscript/）重新导入，
+# 构建 Nimbus 静态站，把 site/dist 打包成 artifact 供下载。
+# 注意：只构建、不部署。部署目标（Cloudflare / GitHub Pages）
+# 等主人选定后再接。
+
+name: nimbus-site
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'manuscript/**'
+      - 'images/**'
+      - 'book.yaml'
+      - 'site/**'
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: site
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: site/package-lock.json
+
+      - run: npm ci
+
+      # prebuild 会自动跑 node scripts/import-book.mjs，
+      # 保证站点永远用最新书稿（含纯中文标题）
+      - run: npm run build
+
+      - name: 检查页面数（卷首 1 + 前言 1 + 10 章 × 8 = 82）
+        run: |
+          n=$(find src/content/docs/book -name '*.md' | wc -l)
+          echo "book pages: $n"
+          test "$n" -eq 82
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: nimbus-dist
+          path: site/dist
+          retention-days: 30
