@@ -5,7 +5,7 @@ sidebar:
   order: 540
   label: "共识：Raft 直观理解"
   group:
-    label: "第7章 · 第 7 章 分布式系统"
+    label: "Java 版 · 第7章 · 第 7 章 分布式系统"
 ---
 
 ## 为什么需要共识

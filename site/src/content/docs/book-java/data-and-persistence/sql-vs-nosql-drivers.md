@@ -5,7 +5,7 @@ sidebar:
   order: 440
   label: "SQL 与 NoSQL 的选型依据"
   group:
-    label: "第6章 · 第 6 章 数据与持久化"
+    label: "Java 版 · 第6章 · 第 6 章 数据与持久化"
 ---
 
 ## 按访问模式做决定

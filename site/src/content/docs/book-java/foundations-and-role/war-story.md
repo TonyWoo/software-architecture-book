@@ -5,7 +5,7 @@ sidebar:
   order: 90
   label: "战争故事"
   group:
-    label: "第1章 · 第 1 章 地基与角色"
+    label: "Java 版 · 第1章 · 第 1 章 地基与角色"
 ---
 
 ## 上线前夜，没人拍板

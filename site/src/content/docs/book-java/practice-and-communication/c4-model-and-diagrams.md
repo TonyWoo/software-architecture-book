@@ -5,7 +5,7 @@ sidebar:
   order: 750
   label: "C4 模型与架构图"
   group:
-    label: "第10章 · 第 10 章 实践与沟通"
+    label: "Java 版 · 第10章 · 第 10 章 实践与沟通"
 ---
 
 ## 图为什么总是失败

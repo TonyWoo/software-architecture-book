@@ -5,7 +5,7 @@ sidebar:
   order: 810
   label: "战争故事"
   group:
-    label: "第10章 · 第 10 章 实践与沟通"
+    label: "Java 版 · 第10章 · 第 10 章 实践与沟通"
 ---
 
 ## 评审桌上没人说话的那次

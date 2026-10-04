@@ -5,7 +5,7 @@ sidebar:
   order: 580
   label: "第 8 章 集成与 API · 本章导读"
   group:
-    label: "第8章 · 第 8 章 集成与 API"
+    label: "Java 版 · 第8章 · 第 8 章 集成与 API"
 ---
 
 ![本章插画](/software-architecture-book/images/ch08-abstract.png)

@@ -5,7 +5,7 @@ sidebar:
   order: 660
   label: "第 9 章 演进与生产 · 本章导读"
   group:
-    label: "第9章 · 第 9 章 演进与生产"
+    label: "C# 版 · 第9章 · 第 9 章 演进与生产"
 ---
 
 ![本章插画](/software-architecture-book/images/ch09-abstract.png)

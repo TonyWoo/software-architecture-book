@@ -14,6 +14,8 @@ const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 // BOOK_DEST 指定站点输出子目录（默认 book；Java 版用 book-java）
 const MANUSCRIPT_DIR = process.env.BOOK_SRC || join(ROOT, '..', 'manuscript');
 const BOOK_DEST = process.env.BOOK_DEST || 'book';
+// 侧边栏分组前缀，让 C# / Java 两版在导航里一眼区分
+const VERSION_LABEL = BOOK_DEST === 'book-java' ? 'Java 版' : 'C# 版';
 const IMAGES_DIR = join(ROOT, '..', 'images');
 const PUBLIC_IMAGES_DIR = join(ROOT, 'public', 'images');
 const OUT_DIR = join(ROOT, 'src', 'content', 'docs', BOOK_DEST);
@@ -139,7 +141,7 @@ function main() {
         const fslug = f === '_index.md' ? 'foreword' : stripNum(f).replace(/\.md$/, '');
         write(
           `${fslug}.md`,
-          frontmatter({ title: head.title, description: head.synopsis, order: order += 10, group: '开篇' }),
+          frontmatter({ title: head.title, description: head.synopsis, order: order += 10, group: `${VERSION_LABEL} · 开篇` }),
           body,
         );
       }
@@ -151,7 +153,7 @@ function main() {
     const { head: chHead } = parseHead(readFileSync(join(MANUSCRIPT_DIR, g, idxFile), 'utf8'));
     const chNum = chapters.length + 1;
     const chSlug = gslug;
-    const groupLabel = `第${chNum}章 · ${chHead.title}`;
+    const groupLabel = `${VERSION_LABEL} · 第${chNum}章 · ${chHead.title}`;
     chapters.push({ slug: chSlug, title: chHead.title });
 
     for (const f of files) {
@@ -182,7 +184,7 @@ function main() {
       description: book.subtitle || '',
       order: -100,
       label: '全书导读',
-      group: '开篇',
+      group: `${VERSION_LABEL} · 开篇`,
     }),
     `${book.subtitle || ''}${otherVer}\n## 章节\n\n${links}\n\n[前言](./preface/)\n`,
   );

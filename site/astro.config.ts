@@ -10,10 +10,10 @@ const nimbusConfig = defineNimbusConfig({
   // canonical URLs, absolute OG image URLs, robots.txt, sitemap, and the
   // links in /llms.txt — leaving the placeholder breaks all of them.
   site: "https://tonywoo.github.io/software-architecture-book",
-  // 站点标题与描述（书稿导入后以 book/ 内容为主）
-  title: "Software Architecture",
+  // 站点标题与描述
+  title: "软件架构",
   // CHANGE_ME: a one-line description of your docs — used for meta + OG.
-  description: "Learn to make decisions that survive change, teams & scale.",
+  description: "学会做出经得起变化、团队与规模考验的决策",
   locale: "zh-CN",
   // 私有库地址；公开前 header 会显示 GitHub 图标链接
   github: "https://github.com/TonyWoo/software-architecture-book",

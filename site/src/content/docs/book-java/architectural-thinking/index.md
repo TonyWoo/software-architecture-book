@@ -5,7 +5,7 @@ sidebar:
   order: 100
   label: "第 2 章 架构思维 · 本章导读"
   group:
-    label: "第2章 · 第 2 章 架构思维"
+    label: "Java 版 · 第2章 · 第 2 章 架构思维"
 ---
 
 ![本章插画](/software-architecture-book/images/ch02-abstract.png)

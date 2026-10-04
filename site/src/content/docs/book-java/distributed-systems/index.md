@@ -5,7 +5,7 @@ sidebar:
   order: 500
   label: "第 7 章 分布式系统 · 本章导读"
   group:
-    label: "第7章 · 第 7 章 分布式系统"
+    label: "Java 版 · 第7章 · 第 7 章 分布式系统"
 ---
 
 ![本章插画](/software-architecture-book/images/ch07-abstract.png)

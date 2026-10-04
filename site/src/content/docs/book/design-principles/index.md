@@ -5,7 +5,7 @@ sidebar:
   order: 180
   label: "第 3 章 设计原则 · 本章导读"
   group:
-    label: "第3章 · 第 3 章 设计原则"
+    label: "C# 版 · 第3章 · 第 3 章 设计原则"
 ---
 
 ![本章插画](/software-architecture-book/images/ch03-abstract.png)

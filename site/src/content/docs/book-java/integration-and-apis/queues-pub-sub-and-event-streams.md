@@ -5,7 +5,7 @@ sidebar:
   order: 600
   label: "队列、发布订阅与事件流"
   group:
-    label: "第8章 · 第 8 章 集成与 API"
+    label: "Java 版 · 第8章 · 第 8 章 集成与 API"
 ---
 
 ## 三种形态，三种真相

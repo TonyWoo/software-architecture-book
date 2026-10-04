@@ -5,7 +5,7 @@ sidebar:
   order: 420
   label: "第 6 章 数据与持久化 · 本章导读"
   group:
-    label: "第6章 · 第 6 章 数据与持久化"
+    label: "Java 版 · 第6章 · 第 6 章 数据与持久化"
 ---
 
 ![本章插画](/software-architecture-book/images/ch06-abstract.png)

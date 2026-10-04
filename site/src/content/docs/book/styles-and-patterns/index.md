@@ -5,7 +5,7 @@ sidebar:
   order: 260
   label: "第 4 章 风格与模式 · 本章导读"
   group:
-    label: "第4章 · 第 4 章 风格与模式"
+    label: "C# 版 · 第4章 · 第 4 章 风格与模式"
 ---
 
 ![本章插画](/software-architecture-book/images/ch04-abstract.png)

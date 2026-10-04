@@ -5,7 +5,7 @@ sidebar:
   order: 730
   label: "战争故事"
   group:
-    label: "第9章 · 第 9 章 演进与生产"
+    label: "Java 版 · 第9章 · 第 9 章 演进与生产"
 ---
 
 （改编自真实事件。）

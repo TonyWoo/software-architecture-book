@@ -5,7 +5,7 @@ sidebar:
   order: 740
   label: "第 10 章 实践与沟通 · 本章导读"
   group:
-    label: "第10章 · 第 10 章 实践与沟通"
+    label: "Java 版 · 第10章 · 第 10 章 实践与沟通"
 ---
 
 ![本章插画](/software-architecture-book/images/ch10-abstract.png)

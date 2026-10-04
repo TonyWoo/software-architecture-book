@@ -5,7 +5,7 @@ sidebar:
   order: 220
   label: "简单之道：YAGNI、KISS、深模块"
   group:
-    label: "第3章 · 第 3 章 设计原则"
+    label: "C# 版 · 第3章 · 第 3 章 设计原则"
 ---
 
 ## YAGNI：你不会需要它

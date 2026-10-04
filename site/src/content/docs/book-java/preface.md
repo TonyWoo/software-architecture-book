@@ -5,7 +5,7 @@ sidebar:
   order: 10
   label: "前言"
   group:
-    label: "开篇"
+    label: "Java 版 · 开篇"
 ---
 
 这本书写给那个总被要求"拿个主意"的开发者。

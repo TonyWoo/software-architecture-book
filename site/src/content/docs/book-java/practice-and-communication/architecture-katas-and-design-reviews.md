@@ -5,7 +5,7 @@ sidebar:
   order: 770
   label: "架构 Kata 与设计评审"
   group:
-    label: "第10章 · 第 10 章 实践与沟通"
+    label: "Java 版 · 第10章 · 第 10 章 实践与沟通"
 ---
 
 ## Kata：给判断力做练习

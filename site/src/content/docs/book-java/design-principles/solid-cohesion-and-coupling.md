@@ -5,7 +5,7 @@ sidebar:
   order: 190
   label: "SOLID、内聚与耦合"
   group:
-    label: "第3章 · 第 3 章 设计原则"
+    label: "Java 版 · 第3章 · 第 3 章 设计原则"
 ---
 
 ## 五条规则，底下是两股力量

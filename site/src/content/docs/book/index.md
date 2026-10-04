@@ -5,7 +5,7 @@ sidebar:
   order: -100
   label: "全书导读"
   group:
-    label: "开篇"
+    label: "C# 版 · 开篇"
 ---
 学会做出经得起变化、团队与规模考验的决策
 

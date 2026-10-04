@@ -5,7 +5,7 @@ sidebar:
   order: 340
   label: "第 5 章 领域建模 · 本章导读"
   group:
-    label: "第5章 · 第 5 章 领域建模"
+    label: "Java 版 · 第5章 · 第 5 章 领域建模"
 ---
 
 ![本章插画](/software-architecture-book/images/ch05-abstract.png)

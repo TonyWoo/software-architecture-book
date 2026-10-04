@@ -5,7 +5,7 @@ sidebar:
   order: 510
   label: "CAP / PACELC：直观理解"
   group:
-    label: "第7章 · 第 7 章 分布式系统"
+    label: "Java 版 · 第7章 · 第 7 章 分布式系统"
 ---
 
 ## CAP 到底在说什么

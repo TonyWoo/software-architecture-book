@@ -5,7 +5,7 @@ sidebar:
   order: 20
   label: "第 1 章 地基与角色 · 本章导读"
   group:
-    label: "第1章 · 第 1 章 地基与角色"
+    label: "C# 版 · 第1章 · 第 1 章 地基与角色"
 ---
 
 ![本章插画](/software-architecture-book/images/ch01-abstract.png)

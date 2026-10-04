@@ -5,7 +5,7 @@ sidebar:
   order: 170
   label: "战争故事"
   group:
-    label: "第2章 · 第 2 章 架构思维"
+    label: "Java 版 · 第2章 · 第 2 章 架构思维"
 ---
 
 > 改编自真实事件。

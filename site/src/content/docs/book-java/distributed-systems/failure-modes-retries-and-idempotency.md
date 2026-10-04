@@ -5,7 +5,7 @@ sidebar:
   order: 530
   label: "故障模式、重试与幂等性"
   group:
-    label: "第7章 · 第 7 章 分布式系统"
+    label: "Java 版 · 第7章 · 第 7 章 分布式系统"
 ---
 
 ## 部分故障才是常态

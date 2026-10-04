@@ -5,7 +5,7 @@ sidebar:
   order: 470
   label: "多语言持久化"
   group:
-    label: "第6章 · 第 6 章 数据与持久化"
+    label: "Java 版 · 第6章 · 第 6 章 数据与持久化"
 ---
 
 ## 给每份工作配合适的工具

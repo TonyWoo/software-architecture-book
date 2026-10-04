@@ -5,7 +5,7 @@ sidebar:
   order: 450
   label: "复制与分区"
   group:
-    label: "第6章 · 第 6 章 数据与持久化"
+    label: "C# 版 · 第6章 · 第 6 章 数据与持久化"
 ---
 
 ## 读扩展：复制
