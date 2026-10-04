@@ -53,12 +53,12 @@ python3 export_manuscript.py /tmp/manuscript-java /tmp/manuscript-java.md
 
 # 打 PDF（export 会顺手生成 cover.tex 封页，用 --include-before-body 挂到目录前面）
 pandoc manuscript.md -o software-architecture-zh-csharp.pdf \
-  --toc --toc-depth=3 -V toc-title="目录" \
+  --toc --toc-depth=2 -V toc-title="目录" \
   --include-before-body=cover.tex \
   --pdf-engine=xelatex \
   -V CJKmainfont="Noto Sans CJK SC" -V CJKmonofont="Noto Sans Mono CJK SC"
 pandoc /tmp/manuscript-java.md -o software-architecture-zh-java-spring-boot.pdf \
-  --toc --toc-depth=3 -V toc-title="目录" \
+  --toc --toc-depth=2 -V toc-title="目录" \
   --include-before-body=/tmp/cover.tex \
   --pdf-engine=xelatex \
   -V CJKmainfont="Noto Sans CJK SC" -V CJKmonofont="Noto Sans Mono CJK SC"
