@@ -78,7 +78,7 @@ def make_cover(title, subtitle, author, contact):
         B + "vspace{0.6cm}",
         "{" + B + "large " + subtitle + B + "par}",
         B + "vspace{0.8cm}",
-        B + "includegraphics[width=0.55" + B + "textwidth]{images/cover-elephant.png}" + B + "par",
+        B + "includegraphics[width=0.55" + B + "textwidth]{images/cover-blueprint.png}" + B + "par",
         B + "vspace{0.8cm}",
         "{" + B + "Large" + B + "bfseries " + version_tex + B + "par}",
         B + "vfill",
