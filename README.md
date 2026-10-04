@@ -51,13 +51,15 @@ export LC_ALL=C.UTF-8 LANG=C.UTF-8   # locale 须为 UTF-8，否则中文参数�
 python3 export_manuscript.py                          # manuscript/ → manuscript.md
 python3 export_manuscript.py /tmp/manuscript-java /tmp/manuscript-java.md
 
-# 打 PDF
+# 打 PDF（export 会顺手生成 cover.tex 封页，用 --include-before-body 挂到目录前面）
 pandoc manuscript.md -o software-architecture-zh-csharp.pdf \
   --toc --toc-depth=3 -V toc-title="目录" \
+  --include-before-body=cover.tex \
   --pdf-engine=xelatex \
   -V CJKmainfont="Noto Sans CJK SC" -V CJKmonofont="Noto Sans Mono CJK SC"
 pandoc /tmp/manuscript-java.md -o software-architecture-zh-java-spring-boot.pdf \
   --toc --toc-depth=3 -V toc-title="目录" \
+  --include-before-body=/tmp/cover.tex \
   --pdf-engine=xelatex \
   -V CJKmainfont="Noto Sans CJK SC" -V CJKmonofont="Noto Sans Mono CJK SC"
 ```

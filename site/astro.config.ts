@@ -11,7 +11,7 @@ const nimbusConfig = defineNimbusConfig({
   // links in /llms.txt — leaving the placeholder breaks all of them.
   site: "https://tonywoo.github.io/software-architecture-book",
   // 站点标题与描述
-  title: "软件架构",
+  title: "白话软件架构设计",
   // CHANGE_ME: a one-line description of your docs — used for meta + OG.
   description: "学会做出经得起变化、团队与规模考验的决策",
   locale: "zh-CN",

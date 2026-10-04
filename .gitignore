@@ -1,0 +1,5 @@
+# 构建产物（本地生成，不提交）
+manuscript.md
+cover.tex
+site/dist/
+site/.astro/

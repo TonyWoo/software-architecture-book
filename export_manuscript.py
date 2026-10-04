@@ -61,17 +61,54 @@ def shift_headings(body, depth):
     return "\n".join(out)
 
 
+def make_cover(title, subtitle, author, contact):
+    B = chr(92)  # 反斜杠，避开多层转义
+    main_title, version = title, ""
+    if "\uff08" in title and title.endswith("\uff09"):
+        main_title, version = title.split("\uff08", 1)
+        version = version[:-1]
+    version_tex = version.replace("#", B + "#")
+    author_tex = author.replace("#", B + "#")
+    L = [
+        B + "begin{titlepage}",
+        B + "centering",
+        B + "vspace*{2.5cm}",
+        "{" + B + "fontsize{42}{52}" + B + "selectfont" + B + "bfseries " + main_title + B + "par}",
+        B + "vspace{1.2cm}",
+        "{" + B + "Large " + subtitle + B + "par}",
+        B + "vspace{2cm}",
+        "{" + B + "Large" + B + "bfseries " + version_tex + B + "par}",
+        B + "vfill",
+        "{" + B + "large \u8457" + B + "quad " + author_tex + B + "par}",
+        B + "vspace{0.4cm}",
+        "{" + B + "normalsize " + contact + B + "par}",
+        B + "vspace{1.5cm}",
+        B + "end{titlepage}",
+        "",
+    ]
+    return "\n".join(L)
+
+
 def main():
-    book_title = "软件架构"
+    book_title = "白话软件架构设计"
+    book_subtitle = ""
+    book_author = ""
+    book_contact = ""
     # 优先用装配产物里的 book.yaml（带技术栈后缀），回退到仓库根
     for yf in (MS / "book.yaml", ROOT / "book.yaml"):
         if yf.exists():
             for line in yf.read_text(encoding="utf-8").split("\n"):
                 if line.startswith("title:"):
                     book_title = line.split(":", 1)[1].strip()
+                elif line.startswith("subtitle:"):
+                    book_subtitle = line.split(":", 1)[1].strip()
+                elif line.startswith("author:"):
+                    book_author = line.split(":", 1)[1].strip()
+                elif line.startswith("contact:"):
+                    book_contact = line.split(":", 1)[1].strip()
             break
 
-    parts = [f"# {book_title}\n"]
+    parts = []
     chapter_no = 0
     first_node = True
 
@@ -122,6 +159,9 @@ def main():
 
     walk(MS, 0)
     OUT.write_text("".join(parts), encoding="utf-8")
+    cover_tex = OUT.parent / "cover.tex"
+    cover_tex.write_text(make_cover(book_title, book_subtitle, book_author, book_contact),
+                         encoding="utf-8")
     print(f"wrote {OUT} ({OUT.stat().st_size} bytes, {chapter_no} chapters)")
 
 

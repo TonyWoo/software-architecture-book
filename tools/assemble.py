@@ -76,6 +76,8 @@ def main() -> None:
     book_lines = [
         f"title: {book_meta.get('title', '')}（{label}版）",
         f"subtitle: {book_meta.get('subtitle', '')}",
+        f"author: {book_meta.get('author', '')}",
+        f"contact: {book_meta.get('contact', '')}",
     ]
     (out / "book.yaml").write_text("\n".join(book_lines) + "\n", encoding="utf-8")
 
