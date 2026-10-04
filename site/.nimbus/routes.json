@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "base": "/",
+  "base": "/software-architecture-book/",
   "knownRoutes": [
     "/",
     "/404",

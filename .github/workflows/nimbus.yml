@@ -1,9 +1,8 @@
-# 自动构建 Nimbus 文档站
+# 构建 Nimbus 文档站并部署到 GitHub Pages
 #
 # push 到 main 时触发：从最新书稿（manuscript/）重新导入，
-# 构建 Nimbus 静态站，把 site/dist 打包成 artifact 供下载。
-# 注意：只构建、不部署。部署目标（Cloudflare / GitHub Pages）
-# 等主人选定后再接。
+# 构建 Nimbus 静态站，部署到 https://tonywoo.github.io/software-architecture-book/
+# 注意：仓库必须保持公开，改回私有后 Pages 会下线（免费账号限制）。
 
 name: nimbus-site
 
@@ -15,14 +14,21 @@ on:
       - 'images/**'
       - 'book.yaml'
       - 'site/**'
+      - '.github/workflows/nimbus.yml'
   workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
 
 jobs:
   build:
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: site
     steps:
       - uses: actions/checkout@v4
 
@@ -33,19 +39,30 @@ jobs:
           cache-dependency-path: site/package-lock.json
 
       - run: npm ci
+        working-directory: site
 
       # prebuild 会自动跑 node scripts/import-book.mjs，
       # 保证站点永远用最新书稿（含纯中文标题）
       - run: npm run build
+        working-directory: site
 
       - name: 检查页面数（卷首 1 + 前言 1 + 10 章 × 8 = 82）
         run: |
           n=$(find src/content/docs/book -name '*.md' | wc -l)
           echo "book pages: $n"
           test "$n" -eq 82
+        working-directory: site
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-pages-artifact@v3
         with:
-          name: nimbus-dist
           path: site/dist
-          retention-days: 30
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

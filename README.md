@@ -82,5 +82,6 @@ npm run build        # 构建：先自动跑 scripts/import-book.mjs 再 astro b
 - 由 `prebuild` 自动调用，`npm run build` 前无需手动跑
 
 CI：`.github/workflows/nimbus.yml` 在 push 到 `main`（且改动涉及书稿、
-插画或 `site/`）时自动构建，把 `site/dist/` 上传为 artifact（保留 30 天）。
-只构建、不部署——部署到 Cloudflare 或 GitHub Pages 等主人选定目标后再接。
+插画或 `site/`）时自动构建并部署到 GitHub Pages：
+<https://tonywoo.github.io/software-architecture-book/>。
+注意：仓库须保持公开，改回私有后 Pages 会下线（免费账号限制）。

@@ -9,7 +9,7 @@ const nimbusConfig = defineNimbusConfig({
   // CHANGE_ME: your site's canonical origin (no trailing slash). Drives
   // canonical URLs, absolute OG image URLs, robots.txt, sitemap, and the
   // links in /llms.txt — leaving the placeholder breaks all of them.
-  site: "https://example.com",
+  site: "https://tonywoo.github.io/software-architecture-book",
   // 站点标题与描述（书稿导入后以 book/ 内容为主）
   title: "Software Architecture",
   // CHANGE_ME: a one-line description of your docs — used for meta + OG.
@@ -23,6 +23,8 @@ const nimbusConfig = defineNimbusConfig({
 export default defineConfig({
   // nimbus:adapter
   output: "static",
+  // GitHub Pages 项目站点：https://tonywoo.github.io/software-architecture-book/
+  base: "/software-architecture-book/",
   // Tailwind v4 via its Vite plugin (the integration Astro recommends for
   // Tailwind v4 — replaces the PostCSS plugin, which doesn't build under
   // Astro 7's Vite 8 bundler).
