@@ -1,6 +1,6 @@
 ---
 id: 060-key-takeaways
-title: "Key Takeaways"
+title: "本章要点"
 synopsis: 本章核心要点：图、决策、评审、练习，以及成为架构师的真正门槛。
 status: draft
 role: body

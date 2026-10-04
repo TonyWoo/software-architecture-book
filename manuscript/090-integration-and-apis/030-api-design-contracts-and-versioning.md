@@ -1,6 +1,6 @@
 ---
 id: api-design-contracts-and-versioning
-title: "API 设计、契约与版本管理 (API Design, Contracts & Versioning)"
+title: "API 设计、契约与版本管理"
 synopsis: 契约是给陌生人的承诺——设计时就拿出承诺该有的样子，别轻易撕毁。
 status: draft
 role: body

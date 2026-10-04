@@ -1,6 +1,6 @@
 ---
 id: preface
-title: Preface
+title: "前言"
 synopsis: 这本书写给谁，以及怎么读。
 status: draft
 role: front

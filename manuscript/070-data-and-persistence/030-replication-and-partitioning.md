@@ -1,6 +1,6 @@
 ---
 id: 030-replication-and-partitioning
-title: "复制与分区 (Replication & Partitioning)"
+title: "复制与分区"
 synopsis: 读副本、分片键，以及扩展出去之后应用能做的承诺会发生什么变化。
 status: draft
 role: body

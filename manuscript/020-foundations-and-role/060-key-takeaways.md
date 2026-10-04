@@ -1,6 +1,6 @@
 ---
 id: key-takeaways
-title: Key Takeaways
+title: "本章要点"
 synopsis: 本章核心结论：架构是难改的决策，用可测量的约束驱动，并由少数驱动力说了算。
 status: draft
 role: body

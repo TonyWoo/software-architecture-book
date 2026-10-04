@@ -1,6 +1,6 @@
 ---
 id: 030-slis-slos-error-budgets
-title: "SLI / SLO / 错误预算 (SLIs / SLOs / Error Budgets)"
+title: "SLI / SLO / 错误预算"
 synopsis: 把"又快又稳"翻译成可衡量的目标，用错误预算在可靠性和速度之间做政策性权衡。
 status: draft
 role: body

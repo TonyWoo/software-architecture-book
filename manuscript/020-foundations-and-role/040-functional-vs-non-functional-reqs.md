@@ -1,6 +1,6 @@
 ---
 id: functional-vs-non-functional-reqs
-title: "功能需求与非功能需求 (Functional vs Non-Functional Reqs)"
+title: "功能需求与非功能需求"
 synopsis: 行为是系统做什么，约束是系统必须扛住什么——约束才是架构师真正的活。
 status: draft
 role: body

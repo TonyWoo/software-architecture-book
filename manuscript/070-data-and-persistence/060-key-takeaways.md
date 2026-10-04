@@ -1,6 +1,6 @@
 ---
 id: 060-key-takeaways
-title: Key Takeaways
+title: "本章要点"
 synopsis: 本章核心结论速览：所有权、选型、扩展、一致性、克制。
 status: draft
 role: body

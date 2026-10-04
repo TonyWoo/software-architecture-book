@@ -1,6 +1,6 @@
 ---
 id: 030-failure-modes-retries-and-idempotency
-title: "故障模式、重试与幂等性 (Failure Modes, Retries & Idempotency)"
+title: "故障模式、重试与幂等性"
 synopsis: 部分故障是分布式系统的常态——没有幂等性的重试，会把常态变成灾难。
 status: draft
 role: body

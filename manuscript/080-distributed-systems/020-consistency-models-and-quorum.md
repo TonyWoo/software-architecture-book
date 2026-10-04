@@ -1,6 +1,6 @@
 ---
 id: 020-consistency-models-and-quorum
-title: "一致性模型与仲裁 (Consistency Models & Quorum)"
+title: "一致性模型与仲裁"
 synopsis: 强一致、最终一致、因果一致、读写己写——以及决定你实际拿到哪一种的仲裁数学。
 status: draft
 role: body

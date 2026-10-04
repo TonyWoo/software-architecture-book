@@ -1,6 +1,6 @@
 ---
 id: ubiquitous-language
-title: "通用语言 (Ubiquitous Language)"
+title: "通用语言"
 synopsis: 开发和业务专家说同一种语言 —— 含糊的词语如何变成真实的 bug，以及一次向领域词语靠拢的重命名。
 status: draft
 role: body

@@ -1,6 +1,6 @@
 ---
 id: 020-observability-logs-metrics-traces
-title: "可观测性：日志、指标、追踪 (Observability (Logs, Metrics, Traces))"
+title: "可观测性：日志、指标、追踪"
 synopsis: 日志、指标、链路告诉你系统在干什么；先把结构化、基数和上下文做对。
 status: draft
 role: body

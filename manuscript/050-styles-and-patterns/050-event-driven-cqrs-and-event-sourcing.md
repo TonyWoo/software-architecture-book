@@ -1,6 +1,6 @@
 ---
 id: 050-event-driven-cqrs-and-event-sourcing
-title: "事件驱动、命令查询职责分离与事件溯源 (Event-Driven, CQRS & Event Sourcing)"
+title: "事件驱动、命令查询职责分离与事件溯源"
 synopsis: 以事件为系统脊梁、CQRS 读写分离、事件溯源的机制与代价，附 C# 草图。
 status: draft
 role: body

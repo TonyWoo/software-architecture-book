@@ -1,6 +1,6 @@
 ---
 id: sync-rest-grpc-vs-async
-title: "同步（REST、gRPC）vs 异步 (Sync (REST, gRPC) vs Async)"
+title: "同步（REST、gRPC）vs 异步"
 synopsis: 同步调用真正的代价不是延迟——是时间耦合，而且它会复利。
 status: draft
 role: body

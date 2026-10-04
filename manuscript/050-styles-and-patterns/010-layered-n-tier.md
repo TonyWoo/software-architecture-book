@@ -1,6 +1,6 @@
 ---
 id: 010-layered-n-tier
-title: "分层架构 / N 层架构 (Layered / N-Tier)"
+title: "分层架构 / N 层架构"
 synopsis: 经典的分层架构、它的依赖规则，以及让分层腐烂的那些漏洞。
 status: draft
 role: body

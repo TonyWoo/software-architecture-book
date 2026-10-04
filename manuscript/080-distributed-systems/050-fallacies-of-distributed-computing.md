@@ -1,6 +1,6 @@
 ---
 id: 050-fallacies-of-distributed-computing
-title: "分布式计算的谬误 (Fallacies of Distributed Computing)"
+title: "分布式计算的谬误"
 synopsis: 八个经典谬论，每一个都对应一种生产事故——停止相信它们，你的设计会彻底改变。
 status: draft
 role: body

@@ -1,6 +1,6 @@
 ---
 id: war-story
-title: "War Story"
+title: "战争故事"
 synopsis: 上线前夜三个技术选型打架、没人拍板——改编自真实事件。
 status: draft
 role: body

@@ -1,6 +1,6 @@
 ---
 id: war-story
-title: "War Story"
+title: "战争故事"
 synopsis: 一次支付重写精准踩中了半年前被否决的方案留下的坑——而当初的否决理由，没有任何人写下来。
 status: draft
 role: body

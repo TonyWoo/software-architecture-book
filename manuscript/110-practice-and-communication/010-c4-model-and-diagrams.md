@@ -1,6 +1,6 @@
 ---
 id: 010-c4-model-and-diagrams
-title: "C4 模型与架构图 (C4 Model & Diagrams)"
+title: "C4 模型与架构图"
 synopsis: C4 模型的四个缩放层级，以及画出真正能被人读懂的图的纪律。
 status: draft
 role: body

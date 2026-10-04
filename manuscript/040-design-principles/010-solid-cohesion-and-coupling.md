@@ -1,6 +1,6 @@
 ---
 id: solid-cohesion-and-coupling
-title: "SOLID、内聚与耦合 (SOLID, Cohesion & Coupling)"
+title: "SOLID、内聚与耦合"
 synopsis: 把五个 SOLID 规则讲成依赖管理，内聚与耦合才是底下真正的两股力量。
 status: draft
 role: body

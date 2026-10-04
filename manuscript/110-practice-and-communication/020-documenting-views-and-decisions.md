@@ -1,6 +1,6 @@
 ---
 id: 020-documenting-views-and-decisions
-title: "视图与决策的文档化 (Documenting Views & Decisions)"
+title: "视图与决策的文档化"
 synopsis: 面向不同干系人的视图、作为决策日志的 ADR，以及让文档活在代码旁边的办法。
 status: draft
 role: body

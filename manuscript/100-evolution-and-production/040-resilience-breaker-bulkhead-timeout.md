@@ -1,6 +1,6 @@
 ---
 id: 040-resilience-breaker-bulkhead-timeout
-title: "韧性：熔断器、舱壁与超时 (Resilience (Breaker, Bulkhead, Timeout))"
+title: "韧性：熔断器、舱壁与超时"
 synopsis: 用熔断器快速失败、用舱壁隔离故障、用超时限定等待——三种保命模式。
 status: draft
 role: body

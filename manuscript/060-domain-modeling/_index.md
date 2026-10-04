@@ -1,6 +1,6 @@
 ---
 id: domain-modeling
-title: "第 5 章 领域建模 (Domain Modeling)"
+title: "第 5 章 领域建模"
 unit: chapter
 role: body
 status: draft

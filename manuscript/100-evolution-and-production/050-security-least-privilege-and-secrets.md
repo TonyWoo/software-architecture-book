@@ -1,6 +1,6 @@
 ---
 id: 050-security-least-privilege-and-secrets
-title: "安全、最小权限与密钥管理 (Security, Least Privilege & Secrets)"
+title: "安全、最小权限与密钥管理"
 synopsis: 把安全当架构做：服务最小权限、密钥远离代码与配置文件、威胁建模前置。
 status: draft
 role: body

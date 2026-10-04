@@ -1,6 +1,6 @@
 ---
 id: 040-classic-cases-commerce-feed-payments
-title: "经典案例：电商、Feed 流、支付 (Classic Cases (Commerce, Feed, Payments))"
+title: "经典案例：电商、Feed 流、支付"
 synopsis: 三个完整的架构设计实战：电商、信息流、支付——需求、决策、结构、数据选择，以及 10 倍规模时要推翻什么。
 status: draft
 role: body

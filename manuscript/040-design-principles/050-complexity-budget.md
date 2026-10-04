@@ -1,6 +1,6 @@
 ---
 id: complexity-budget
-title: "复杂度预算 (Complexity Budget)"
+title: "复杂度预算"
 synopsis: 每个系统能负担的复杂度都是有限的——花在能让你赢的地方。
 status: draft
 role: body

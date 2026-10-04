@@ -1,6 +1,6 @@
 ---
 id: quality-attributes-and-ilities
-title: "质量属性 (Quality Attributes & -ilities)"
+title: "质量属性"
 synopsis: -ilities 是系统必须"成为"什么；量化不了的 -ility 是愿望，不是需求。
 status: draft
 role: body

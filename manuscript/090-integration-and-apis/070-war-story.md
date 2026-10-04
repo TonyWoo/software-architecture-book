@@ -1,6 +1,6 @@
 ---
 id: war-story
-title: "War Story"
+title: "战争故事"
 synopsis: 业务逻辑塞进网关，网关长成第二个单体——改条规则要发网关的真实事故改编。
 status: draft
 role: body

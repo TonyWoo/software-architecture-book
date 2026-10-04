@@ -1,6 +1,6 @@
 ---
 id: war-story
-title: "War Story"
+title: "战争故事"
 synopsis: 邮件模板的领域模型精美绝伦，定价引擎却还是个存储过程 —— 一个关于战略缺席的真实故事。
 status: draft
 role: body

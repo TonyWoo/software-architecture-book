@@ -1,6 +1,6 @@
 ---
 id: 010-cap-pacelc-intuition
-title: "CAP / PACELC：直观理解 (CAP / PACELC Intuition)"
+title: "CAP / PACELC：直观理解"
 synopsis: CAP 说的是分区发生时你保不住一致性和可用性——而 PACELC 说，分区场景只是故事的一半。
 status: draft
 role: body

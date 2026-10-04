@@ -1,6 +1,6 @@
 ---
 id: war-story
-title: "War Story"
+title: "战争故事"
 synopsis: 绞杀到一半的系统双跑了三年，新旧两套都没人敢下线。
 status: draft
 role: body

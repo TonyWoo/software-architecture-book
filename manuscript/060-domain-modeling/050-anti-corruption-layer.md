@@ -1,6 +1,6 @@
 ---
 id: anti-corruption-layer
-title: "防腐层 (Anti-Corruption Layer)"
+title: "防腐层"
 synopsis: 用翻译层把你的模型和祖传/外部模型隔开 —— C# 实战，以及这笔钱什么时候值得花。
 status: draft
 role: body

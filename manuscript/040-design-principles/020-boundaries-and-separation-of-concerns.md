@@ -1,6 +1,6 @@
 ---
 id: boundaries-and-separation-of-concerns
-title: "边界与关注点分离 (Boundaries & Separation of Concerns)"
+title: "边界与关注点分离"
 synopsis: 边界是什么、画在哪里，以及为什么"变化"才是唯一诚实的向导。
 status: draft
 role: body

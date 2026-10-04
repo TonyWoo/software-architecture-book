@@ -1,6 +1,6 @@
 ---
 id: key-takeaways
-title: Key Takeaways
+title: "本章要点"
 synopsis: 本章五个值得带进每次设计评审的观点。
 status: draft
 role: body

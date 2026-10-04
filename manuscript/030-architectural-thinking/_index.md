@@ -1,6 +1,6 @@
 ---
 id: architectural-thinking
-title: "第 2 章 架构思维 (Architectural Thinking)"
+title: "第 2 章 架构思维"
 synopsis: 权衡、ADR、适应度函数、技术债和康威定律——架构师的思维工具箱。
 status: draft
 role: body

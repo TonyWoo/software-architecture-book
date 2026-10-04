@@ -1,6 +1,6 @@
 ---
 id: war-story
-title: "War Story"
+title: "战争故事"
 synopsis: 把用户 ID 塞进 Prometheus 的 label 里，高基数指标如何在两周内炸掉监控后端和云账单。
 status: draft
 role: body

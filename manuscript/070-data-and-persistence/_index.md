@@ -1,6 +1,6 @@
 ---
 id: data-and-persistence
-title: "第 6 章 数据与持久化 (Data & Persistence)"
+title: "第 6 章 数据与持久化"
 synopsis: 谁拥有你的数据，数据住在哪里，以及它如何在真实世界里活下去。
 unit: chapter
 role: body

@@ -1,6 +1,6 @@
 ---
 id: key-takeaways
-title: Key Takeaways
+title: "本章要点"
 synopsis: 本章核心结论一览：分类、边界、聚合、语言、防腐。
 status: draft
 role: body

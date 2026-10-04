@@ -1,6 +1,6 @@
 ---
 id: 060-key-takeaways
-title: Key Takeaways
+title: "本章要点"
 synopsis: 让系统在生产环境里活下去的五个纪律，提炼版。
 status: draft
 role: body

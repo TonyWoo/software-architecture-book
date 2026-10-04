@@ -1,6 +1,6 @@
 ---
 id: 040-technical-debt-and-evolutionary-pressure
-title: "技术债与演进压力 (Technical Debt & Evolutionary Pressure)"
+title: "技术债与演进压力"
 synopsis: 债是带利息的杠杆——学会审慎地借、记账、赶在复利失控前还。
 status: draft
 role: body

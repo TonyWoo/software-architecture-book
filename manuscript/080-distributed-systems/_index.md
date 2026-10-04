@@ -1,6 +1,6 @@
 ---
 id: distributed-systems
-title: "第 7 章 分布式系统 (Distributed Systems)"
+title: "第 7 章 分布式系统"
 synopsis: 当一台机器变成多台，你过去所有的假设都会失效——这一章讲该怎么想。
 status: draft
 role: body

@@ -1,6 +1,6 @@
 ---
 id: 030-fitness-functions
-title: "适应度函数 (Fitness Functions)"
+title: "适应度函数"
 synopsis: 把你的架构规则自动化，让它们熬过人员流动、工期压力和善意的走捷径。
 status: draft
 role: body

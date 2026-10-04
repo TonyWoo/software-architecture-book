@@ -1,6 +1,6 @@
 ---
 id: evolution-and-production
-title: "第 9 章 演进与生产 (Evolution & Production)"
+title: "第 9 章 演进与生产"
 unit: chapter
 role: body
 status: draft

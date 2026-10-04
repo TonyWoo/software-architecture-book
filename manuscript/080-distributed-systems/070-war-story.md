@@ -1,6 +1,6 @@
 ---
 id: war-story
-title: "War Story"
+title: "战争故事"
 synopsis: 一次普通的下游抖动，因为没有幂等性的重试，被放大成十倍流量——故障放大器本器。
 status: draft
 role: body

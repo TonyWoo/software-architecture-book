@@ -1,6 +1,6 @@
 ---
 id: 060-key-takeaways
-title: "Key Takeaways"
+title: "本章要点"
 synopsis: 五种风格压缩成真正重要的几个决策。
 status: draft
 role: body

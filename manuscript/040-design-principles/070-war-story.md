@@ -1,6 +1,6 @@
 ---
 id: war-story
-title: "War Story"
+title: "战争故事"
 synopsis: 一个"为了将来可能扩展"提前抽象的真实事故：三天改掉一个本该半天交付的需求，写完五个类三个接口才发现抽象轴全猜错了。
 status: draft
 role: body

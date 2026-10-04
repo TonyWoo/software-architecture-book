@@ -1,6 +1,6 @@
 ---
 id: 060-key-takeaways
-title: "Key Takeaways"
+title: "本章要点"
 synopsis: 本章核心结论一览：分区时选边，平时付延迟，永远假设部分故障。
 status: draft
 role: body

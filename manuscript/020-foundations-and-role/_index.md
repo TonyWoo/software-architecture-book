@@ -1,6 +1,6 @@
 ---
 id: foundations-and-role
-title: "第 1 章 地基与角色 (Foundations & Role)"
+title: "第 1 章 地基与角色"
 synopsis: 架构到底是什么、谁来做决策，以及约束与质量属性如何塑造每一次结构选择。
 status: draft
 role: body

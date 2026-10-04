@@ -1,6 +1,6 @@
 ---
 id: key-takeaways
-title: Key Takeaways
+title: "本章要点"
 synopsis: 本章核心结论一览：耦合、契约与通信的取舍清单。
 status: draft
 role: body

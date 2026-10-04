@@ -1,6 +1,6 @@
 ---
 id: what-architecture-actually-is
-title: "架构到底是什么 (What Architecture Actually Is)"
+title: "架构到底是什么"
 synopsis: 架构是那组难以更改的设计决策；结构是你传达这些决策的方式。
 status: draft
 role: body

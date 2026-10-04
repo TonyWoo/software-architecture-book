@@ -1,6 +1,6 @@
 ---
 id: 020-sql-vs-nosql-drivers
-title: "SQL 与 NoSQL 的选型依据 (SQL vs NoSQL Drivers)"
+title: "SQL 与 NoSQL 的选型依据"
 synopsis: 按访问模式、一致性需求和运维现实选存储，不按 hype 选。
 status: draft
 role: body

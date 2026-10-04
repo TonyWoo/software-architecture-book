@@ -1,6 +1,6 @@
 ---
 id: architect-vs-senior-vs-tech-lead
-title: "架构师、高级工程师与技术负责人 (Architect vs Senior vs Tech Lead)"
+title: "架构师、高级工程师与技术负责人"
 synopsis: 三个角色，三种不同的职责与决策权——以及界线模糊时会出什么问题。
 status: draft
 role: body

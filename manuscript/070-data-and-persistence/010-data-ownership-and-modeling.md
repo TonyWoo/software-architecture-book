@@ -1,6 +1,6 @@
 ---
 id: 010-data-ownership-and-modeling
-title: "数据所有权与数据建模 (Data Ownership & Modeling)"
+title: "数据所有权与数据建模"
 synopsis: 一条数据一个写入者，以及共享数据库如何悄悄把你的架构变回单体。
 status: draft
 role: body

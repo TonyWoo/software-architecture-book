@@ -1,6 +1,6 @@
 ---
 id: war-story
-title: "War Story"
+title: "战争故事"
 synopsis: 十人小团队硬上微服务：本地跑不起来、部署靠人肉，发布日全员通宵。
 status: draft
 role: body

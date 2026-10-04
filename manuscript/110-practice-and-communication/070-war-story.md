@@ -1,6 +1,6 @@
 ---
 id: war-story
-title: "War Story"
+title: "战争故事"
 synopsis: 一次评审走过场、复盘没人敢说话的真实事故改编：同一个坑半年踩两次，以及本章哪两个习惯能拦住它。
 status: draft
 role: body

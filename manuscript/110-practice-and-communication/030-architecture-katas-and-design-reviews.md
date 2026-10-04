@@ -1,6 +1,6 @@
 ---
 id: 030-architecture-katas-and-design-reviews
-title: "架构 Kata 与设计评审 (Architecture Katas & Design Reviews)"
+title: "架构 Kata 与设计评审"
 synopsis: 锻炼架构判断力的刻意练习，以及如何开一场能抓错而不是伤人的设计评审。
 status: draft
 role: body

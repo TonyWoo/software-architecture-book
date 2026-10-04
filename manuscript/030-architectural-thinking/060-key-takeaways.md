@@ -1,6 +1,6 @@
 ---
 id: 060-key-takeaways
-title: "Key Takeaways"
+title: "本章要点"
 synopsis: 把开发者变成架构师的五个习惯。
 status: draft
 role: body
