@@ -43,8 +43,14 @@ bookwriter 的导出止于 Markdown；PDF/EPUB 是 Pandoc 的工作：
 
 ```bash
 cd ~/workspace/software-architecture-book
-pandoc manuscript.md -o software-architecture.pdf --pdf-engine=xelatex -V CJKmainfont="Noto Sans CJK SC"
+export LC_ALL=C.UTF-8 LANG=C.UTF-8   # 环境 locale 须为 UTF-8，否则中文参数会被吞成 U+FFFD
+python3 export_manuscript.py
+pandoc manuscript.md -o software-architecture.pdf \
+  --toc --toc-depth=3 -V toc-title="目录" \
+  --pdf-engine=xelatex \
+  -V CJKmainfont="Noto Sans CJK SC" -V CJKmonofont="Noto Sans Mono CJK SC"
 ```
+产物：153 页 PDF，含"目录"页与 34 个 PDF 书签；零缺字警告。
 
 本机未安装 pandoc（也无 dotnet 用于编译 C# 示例），故只交付源码与 Markdown 手稿，
 未做 PDF 构建与代码编译验证。
