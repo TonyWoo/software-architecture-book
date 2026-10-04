@@ -1,6 +1,6 @@
 ---
 id: styles-and-patterns
-title: "Styles & Patterns"
+title: "第 4 章 风格与模式 (Styles & Patterns)"
 synopsis: 五大架构风格、各自的代价，以及如何选择而不跟风。
 status: draft
 role: body

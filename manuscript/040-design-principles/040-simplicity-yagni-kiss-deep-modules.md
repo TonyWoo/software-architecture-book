@@ -1,6 +1,6 @@
 ---
 id: simplicity-yagni-kiss-deep-modules
-title: Simplicity (YAGNI, KISS, Deep Modules)
+title: "简单之道：YAGNI、KISS、深模块 (Simplicity (YAGNI, KISS, Deep Modules))"
 synopsis: 别为想象中的未来造东西；要深模块不要浅模块；简单不等于容易。
 status: draft
 role: body

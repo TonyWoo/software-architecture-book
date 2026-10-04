@@ -1,6 +1,6 @@
 ---
 id: 020-modular-monolith
-title: "Modular Monolith"
+title: "模块化单体 (Modular Monolith)"
 synopsis: 一次部署、硬性的模块边界——大多数团队的正确默认选项，附 C# 隔离示例。
 status: draft
 role: body

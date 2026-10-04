@@ -33,7 +33,7 @@
 
 <p class=" chapter-number ">Chapter 1</p>
 
-# Foundations & Role
+# 第 1 章 地基与角色 (Foundations & Role)
 
 
 ![本章插画](images/ch01-abstract.png)
@@ -58,7 +58,7 @@
 
 <div class=" page-break "></div>
 
-## What Architecture Actually Is
+## 架构到底是什么 (What Architecture Actually Is)
 
 
 问十个开发者"软件架构是什么"，你会得到十一个答案，而且错法都一样：把架构和结构、和图纸、和框架搞混了。装满方框和箭头的文件夹不是架构，那只是架构的画像，就像户型图只是房子的画像。
@@ -120,7 +120,7 @@ var adr4 = new ArchitectureDecision(
 
 <div class=" page-break "></div>
 
-## Architect vs Senior vs Tech Lead
+## 架构师、高级工程师与技术负责人 (Architect vs Senior vs Tech Lead)
 
 
 这三个头衔老被搞混，因为同一个人经常戴不止一顶帽子。但职责是不同的，没人知道谁决定什么的时候，决策要么被做两遍，要么没人做。两种都很贵。
@@ -187,7 +187,7 @@ var rights = new DecisionRight[]
 
 <div class=" page-break "></div>
 
-## Quality Attributes & -ilities
+## 质量属性 (Quality Attributes & -ilities)
 
 
 功能需求告诉你系统做什么。质量属性——那些 "-ility"——告诉你它必须做得多好，以及在什么样的折磨之下。两个系统可以实现完全相同的功能，却是完全不同的架构，因为它们的 -ility 不同。原型和支付系统不是靠功能区分的，是靠可用性、安全性和可审计性区分的。
@@ -269,7 +269,7 @@ public sealed class LatencyBudgetTests
 
 <div class=" page-break "></div>
 
-## Functional vs Non-Functional Reqs
+## 功能需求与非功能需求 (Functional vs Non-Functional Reqs)
 
 
 功能需求描述行为："用户可以下单。"非功能需求描述对行为的约束："下单 99 分位延迟必须低于 800ms，且任何订单都不许被重复扣款。"
@@ -343,7 +343,7 @@ public sealed class Order
 
 <div class=" page-break "></div>
 
-## Stakeholders, Constraints & Drivers
+## 干系人、约束与驱动因素 (Stakeholders, Constraints & Drivers)
 
 
 架构决策从来不是在真空中做的。每个结构背后都站着一群人、一些动不了的现实，以及两三个真正说了算的驱动力。看不见这三样东西的架构师，设计出来的东西会在第一次评审会上被现实撕碎。
@@ -478,7 +478,7 @@ var drivers = new ArchitecturalDriver[]
 
 <p class=" chapter-number ">Chapter 2</p>
 
-# Architectural Thinking
+# 第 2 章 架构思维 (Architectural Thinking)
 
 
 ![本章插画](images/ch02-abstract.png)
@@ -505,7 +505,7 @@ var drivers = new ArchitecturalDriver[]
 
 <div class=" page-break "></div>
 
-## Trade-off Analysis (No Free Lunch)
+## 权衡分析：没有免费的午餐 (Trade-off Analysis (No Free Lunch))
 
 
 软件架构里没有免费的午餐。你做的每一个决策，都在买进一些东西，同时也在付出另一些东西。微服务买来的是独立部署，付出的是运维复杂度。同步调用买来的是简单，付出的是可用性耦合。关系型数据库买来的是事务，付出的是横向扩展的痛苦。
@@ -575,7 +575,7 @@ var retryPolicy = Policy
 
 <div class=" page-break "></div>
 
-## Architecture Decision Records (ADRs)
+## 架构决策记录 (Architecture Decision Records (ADRs))
 
 
 每个项目都有一座坟场，埋着没人能解释的决策。为什么这个是微服务、那个不是？为什么这里用 Postgres、那里用 Mongo？为什么账单模块直连那台上古主机？
@@ -677,7 +677,7 @@ ADR 写的是**下一个决策**，不是**上一个**。评审时翻一翻，�
 
 <div class=" page-break "></div>
 
-## Fitness Functions
+## 适应度函数 (Fitness Functions)
 
 
 每个架构都有规矩。展示层不许碰数据库。不许依赖已废弃的模块。消息必须向后兼容。
@@ -756,7 +756,7 @@ public class ArchitectureFitnessTests
 
 <div class=" page-break "></div>
 
-## Technical Debt & Evolutionary Pressure
+## 技术债与演进压力 (Technical Debt & Evolutionary Pressure)
 
 
 Ward Cunningham 提出了"技术债"这个比喻，行业花了三十年误解它。技术债不是烂代码的同义词。技术债是*杠杆*：你现在用走捷径借来时间，以后用更慢的改动、更难的调试连本带息还回去。
@@ -829,7 +829,7 @@ public static class DebtRegister
 
 <div class=" page-break "></div>
 
-## Conway's Law & Team Topology
+## 康威定律与团队拓扑 (Conway's Law & Team Topology)
 
 
 1967 年，Melvin Conway 发现：组织设计出来的系统，会镜像组织自身的沟通结构。三个后端团队加一个前端团队的公司，会以令人沮丧的可靠性，造出三个后端服务加一个前端。这就是康威定律，它不是建议，是重力。
@@ -961,7 +961,7 @@ public static class OrganizationTopology
 
 <p class=" chapter-number ">Chapter 3</p>
 
-# Design Principles
+# 第 3 章 设计原则 (Design Principles)
 
 
 ![本章插画](images/ch03-abstract.png)
@@ -986,7 +986,7 @@ public static class OrganizationTopology
 
 <div class=" page-break "></div>
 
-## SOLID, Cohesion & Coupling
+## SOLID、内聚与耦合 (SOLID, Cohesion & Coupling)
 
 
 ## 五条规则，底下是两股力量
@@ -1102,7 +1102,7 @@ public class OrderProcessor
 
 <div class=" page-break "></div>
 
-## Boundaries & Separation of Concerns
+## 边界与关注点分离 (Boundaries & Separation of Concerns)
 
 
 ## 边界是变化到此为止的地方
@@ -1169,7 +1169,7 @@ public class PlaceOrderUseCase
 
 <div class=" page-break "></div>
 
-## Dependency Inversion / Ports & Adapters
+## 依赖倒置 / 端口与适配器 (Dependency Inversion / Ports & Adapters)
 
 
 ## 依赖抽象，而不是具体
@@ -1239,7 +1239,7 @@ public sealed class SmtpNotificationAdapter : INotificationPort
 
 <div class=" page-break "></div>
 
-## Simplicity (YAGNI, KISS, Deep Modules)
+## 简单之道：YAGNI、KISS、深模块 (Simplicity (YAGNI, KISS, Deep Modules))
 
 
 ## YAGNI：你不会需要它
@@ -1312,7 +1312,7 @@ public class InvoiceReport
 
 <div class=" page-break "></div>
 
-## Complexity Budget
+## 复杂度预算 (Complexity Budget)
 
 
 ## 复杂度是有限资源
@@ -1471,7 +1471,7 @@ public sealed class AuditLog
 
 <p class=" chapter-number ">Chapter 4</p>
 
-# Styles & Patterns
+# 第 4 章 风格与模式 (Styles & Patterns)
 
 
 ![本章插画](images/ch04-abstract.png)
@@ -1496,7 +1496,7 @@ public sealed class AuditLog
 
 <div class=" page-break "></div>
 
-## Layered / N-Tier
+## 分层架构 / N 层架构 (Layered / N-Tier)
 
 
 分层是书里最老的把戏。你把系统切成水平的薄片——表现层、业务逻辑层、数据访问层，上面可能再加个服务层——然后宣布一条简单的规则：每一层只能依赖它正下方的那一层。
@@ -1556,7 +1556,7 @@ public sealed class OrderRepository(AppDbContext db) : IOrderRepository
 
 <div class=" page-break "></div>
 
-## Modular Monolith
+## 模块化单体 (Modular Monolith)
 
 
 模块化单体是一个可部署单元，内部由边界清晰的模块组成。每个模块拥有自己的领域逻辑、自己的持久化、自己的公开接口。模块之间只通过显式发布的接口对话，其他一律私有。
@@ -1642,7 +1642,7 @@ public static class CatalogModule
 
 <div class=" page-break "></div>
 
-## Microservices vs Monolith
+## 微服务 vs 单体 (Microservices vs Monolith)
 
 
 微服务不是一种架构。它是一种组织扩展策略，碰巧用到了网络。
@@ -1704,7 +1704,7 @@ public sealed class OrderService(IInventoryClient inventory, IPaymentClient paym
 
 <div class=" page-break "></div>
 
-## Hexagonal, Onion & Clean Architecture
+## 六边形、洋葱与整洁架构 (Hexagonal, Onion & Clean Architecture)
 
 
 六边形架构、洋葱架构、整洁架构，是同一个思想穿了三件不同的外套。我把它们当一个讲：应用核心坐在正中央，所有依赖都指向内部。核心对数据库、Web 框架、消息队列、文件系统一无所知。
@@ -1794,7 +1794,7 @@ internal sealed class SqlOrderRepository(AppDbContext db) : IOrderRepository
 
 <div class=" page-break "></div>
 
-## Event-Driven, CQRS & Event Sourcing
+## 事件驱动、命令查询职责分离与事件溯源 (Event-Driven, CQRS & Event Sourcing)
 
 
 在事件驱动系统里，组件之间不直接调用，而是宣告发生了什么。一个 `OrderPlaced` 事件发出去，关心它的——计费、发货、通知——各自反应。生产者根本不知道消费者存在。
@@ -1975,7 +1975,7 @@ public sealed class OrderAggregate
 
 <p class=" chapter-number ">Chapter 5</p>
 
-# Domain Modeling
+# 第 5 章 领域建模 (Domain Modeling)
 
 
 ![本章插画](images/ch05-abstract.png)
@@ -1998,7 +1998,7 @@ public sealed class OrderAggregate
 
 <div class=" page-break "></div>
 
-## Domain-Driven Design (Strategic)
+## 领域驱动设计（战略篇） (Domain-Driven Design (Strategic))
 
 
 大多数项目把每个功能看得一样重。登录页和决定公司赚不赚钱的定价引擎，得到的是同等规格的架构关怀。结果就是：一个漂亮、测试覆盖率极高的认证模块，栓在一个没人敢碰的定价引擎上。DDD 的战略部分，就是来纠正这个错误的。
@@ -2086,7 +2086,7 @@ public sealed class SmtpNotificationSender : INotificationSender
 
 <div class=" page-break "></div>
 
-## Bounded Contexts & Context Maps
+## 限界上下文与上下文映射图 (Bounded Contexts & Context Maps)
 
 
 来看这个词：「订单」。在销售部，它是客户的一次购买；在仓库，它是一张拣货单；在财务，它是一笔可开票事件。三个部门，同一个词，三种含义，三套规则。如果你建一个 `Order` 类同时伺候三方，你没有建模领域，你造了一个对谁都撒谎的妥协品。
@@ -2172,7 +2172,7 @@ namespace Warehouse
 
 <div class=" page-break "></div>
 
-## Aggregates, Entities & Value Objects
+## 聚合、实体与值对象 (Aggregates, Entities & Value Objects)
 
 
 对象图是无限的。订单有订单行，订单行有商品，商品有供应商，供应商有地址……如果你允许一次事务里随便改这张网上的任何节点，迟早有人在你更新订单行的时候改了商品的税率，而你的不变量检查还在睡大觉。
@@ -2313,7 +2313,7 @@ protected override void OnModelCreating(ModelBuilder builder)
 
 <div class=" page-break "></div>
 
-## Ubiquitous Language
+## 通用语言 (Ubiquitous Language)
 
 
 每个项目都有两种语言：业务专家开会时说的，和开发写在代码里的。专家说「核保」，代码里叫 `LoanManager`；专家说「承运商」，代码里叫 `Vendor`。两种语言之间隔着一层翻译，而翻译是 bug 的温床。
@@ -2392,7 +2392,7 @@ public enum DecisionKind { Approve, Conditional, Decline }
 
 <div class=" page-break "></div>
 
-## Anti-Corruption Layer
+## 防腐层 (Anti-Corruption Layer)
 
 
 你的新系统再漂亮，总要和不漂亮的东西打交道：一套二十年的 ERP，它的「客户」叫 `CUST_MSTR`，地址拆成 `ADDR1`、`ADDR2`、`ADDR3`，状态是个 1 到 9 的数字；或者一个第三方物流 API，把重量叫 `wgt`，单位有时是公斤有时是磅，看它的心情。
@@ -2529,7 +2529,7 @@ DDD 的战略部分，就是用来避这个坑的。先分类，再建模：核�
 
 <p class=" chapter-number ">Chapter 6</p>
 
-# Data & Persistence
+# 第 6 章 数据与持久化 (Data & Persistence)
 
 
 ![本章插画](images/ch06-abstract.png)
@@ -2554,7 +2554,7 @@ DDD 的战略部分，就是用来避这个坑的。先分类，再建模：核�
 
 <div class=" page-break "></div>
 
-## Data Ownership & Modeling
+## 数据所有权与数据建模 (Data Ownership & Modeling)
 
 
 ## 一条数据，一个写入者
@@ -2636,7 +2636,7 @@ public class OrderingDbContext : DbContext
 
 <div class=" page-break "></div>
 
-## SQL vs NoSQL Drivers
+## SQL 与 NoSQL 的选型依据 (SQL vs NoSQL Drivers)
 
 
 ## 按访问模式做决定
@@ -2722,7 +2722,7 @@ public class DocumentDbContext : DbContext
 
 <div class=" page-break "></div>
 
-## Replication & Partitioning
+## 复制与分区 (Replication & Partitioning)
 
 
 ## 读扩展：复制
@@ -2808,7 +2808,7 @@ public sealed class OrderRepository
 
 <div class=" page-break "></div>
 
-## Transactions, Sagas & Outbox
+## 事务、Saga 与发件箱模式 (Transactions, Sagas & Outbox)
 
 
 ## ACID 在边界处终结
@@ -2960,7 +2960,7 @@ public sealed class OutboxRelay : BackgroundService
 
 <div class=" page-break "></div>
 
-## Polyglot Persistence
+## 多语言持久化 (Polyglot Persistence)
 
 
 ## 给每份工作配合适的工具
@@ -3109,7 +3109,7 @@ public sealed class ProductCatalogService
 
 <p class=" chapter-number ">Chapter 7</p>
 
-# Distributed Systems
+# 第 7 章 分布式系统 (Distributed Systems)
 
 
 ![本章插画](images/ch07-abstract.png)
@@ -3136,7 +3136,7 @@ public sealed class ProductCatalogService
 
 <div class=" page-break "></div>
 
-## CAP / PACELC Intuition
+## CAP / PACELC：直观理解 (CAP / PACELC Intuition)
 
 
 ## CAP 到底在说什么
@@ -3193,7 +3193,7 @@ public sealed class CartWriter
 
 <div class=" page-break "></div>
 
-## Consistency Models & Quorum
+## 一致性模型与仲裁 (Consistency Models & Quorum)
 
 
 ## 保证的阶梯
@@ -3264,7 +3264,7 @@ public sealed class QuorumStore
 
 <div class=" page-break "></div>
 
-## Failure Modes, Retries & Idempotency
+## 故障模式、重试与幂等性 (Failure Modes, Retries & Idempotency)
 
 
 ## 部分故障才是常态
@@ -3345,7 +3345,7 @@ public sealed class IdempotencyMiddleware
 
 <div class=" page-break "></div>
 
-## Consensus (Raft intuition)
+## 共识：Raft 直观理解 (Consensus (Raft intuition))
 
 
 ## 为什么需要共识
@@ -3420,7 +3420,7 @@ public sealed class RaftNode
 
 <div class=" page-break "></div>
 
-## Fallacies of Distributed Computing
+## 分布式计算的谬误 (Fallacies of Distributed Computing)
 
 
 ## 这份清单的来历
@@ -3560,7 +3560,7 @@ public sealed class ResilientClient
 
 <p class=" chapter-number ">Chapter 8</p>
 
-# Integration & APIs
+# 第 8 章 集成与 API (Integration & APIs)
 
 
 ![本章插画](images/ch08-abstract.png)
@@ -3587,7 +3587,7 @@ public sealed class ResilientClient
 
 <div class=" page-break "></div>
 
-## Sync (REST, gRPC) vs Async
+## 同步（REST、gRPC）vs 异步 (Sync (REST, gRPC) vs Async)
 
 
 ## 时间耦合才是真正的代价
@@ -3682,7 +3682,7 @@ public class CouponService : Coupon.CouponBase
 
 <div class=" page-break "></div>
 
-## Queues, Pub/Sub & Event Streams
+## 队列、发布订阅与事件流 (Queues, Pub/Sub & Event Streams)
 
 
 ## 三种形态，三种真相
@@ -3781,7 +3781,7 @@ Kafka 火的时候，一切消息都进 Kafka：命令、事件、通知，甚�
 
 <div class=" page-break "></div>
 
-## API Design, Contracts & Versioning
+## API 设计、契约与版本管理 (API Design, Contracts & Versioning)
 
 
 ## 契约是给陌生人的承诺
@@ -3872,7 +3872,7 @@ app.MapGet("/v2/orders/{id}", async (Guid id, OrderStore store) =>
 
 <div class=" page-break "></div>
 
-## Choreography vs Orchestration
+## 编舞与编排 (Choreography vs Orchestration)
 
 
 ## 谁来指挥业务流程
@@ -3975,7 +3975,7 @@ public class FulfillmentOrchestrator
 
 <div class=" page-break "></div>
 
-## Gateway, Mesh & Discovery
+## 网关、服务网格与服务发现 (Gateway, Mesh & Discovery)
 
 
 ## 边缘是面镜子
@@ -4145,7 +4145,7 @@ app.Run();
 
 <p class=" chapter-number ">Chapter 9</p>
 
-# Evolution & Production
+# 第 9 章 演进与生产 (Evolution & Production)
 
 
 ![本章插画](images/ch09-abstract.png)
@@ -4170,7 +4170,7 @@ app.Run();
 
 <div class=" page-break "></div>
 
-## Evolutionary Architecture & Strangler
+## 演进式架构与绞杀者模式 (Evolutionary Architecture & Strangler)
 
 
 架构不是一个阶段。项目里不存在"做架构"这个环节——画完图、签完字，就把代码交给施工队。架构就是系统在每一个时刻的*样子*，而它每天都在变。唯一的问题是：你是主动地改变它，还是任由它烂掉。
@@ -4249,7 +4249,7 @@ public sealed class EndpointBasedRouter : IStranglerRouter
 
 <div class=" page-break "></div>
 
-## Observability (Logs, Metrics, Traces)
+## 可观测性：日志、指标、追踪 (Observability (Logs, Metrics, Traces))
 
 
 你看不见的东西，你就架构不了。在生产环境里，你的架构图是小说，你的假设是猜测。可观测性就是一门让运行中的系统回答这个问题的纪律：你到底在干什么，为什么慢、为什么坏？
@@ -4320,7 +4320,7 @@ app.Run();
 
 <div class=" page-break "></div>
 
-## SLIs / SLOs / Error Budgets
+## SLI / SLO / 错误预算 (SLIs / SLOs / Error Budgets)
 
 
 "又快又稳。"每个产品经理都这么说。没人能真正交付它，因为它不是需求，是愿望。你没法拿愿望去问责任何人，也没法拿它做工程上的取舍。一旦你把愿望翻译成数字，真正的架构决策才成为可能。
@@ -4372,7 +4372,7 @@ SLO 通货膨胀。四十个 SLO 等于一个都没有。但更坏的是错误�
 
 <div class=" page-break "></div>
 
-## Resilience (Breaker, Bulkhead, Timeout)
+## 韧性：熔断器、舱壁与超时 (Resilience (Breaker, Bulkhead, Timeout))
 
 
 你的依赖一定会挂。不是可能，是一定。网络会分区，数据库会锁死，第三方 API 会在最要命的时刻开始吐 500。弹性不是防止故障，而是提前决定好：故障到来时，你的系统该是什么表现。
@@ -4446,7 +4446,7 @@ var response = await pipeline.ExecuteAsync(
 
 <div class=" page-break "></div>
 
-## Security, Least Privilege & Secrets
+## 安全、最小权限与密钥管理 (Security, Least Privilege & Secrets)
 
 
 安全不是上线前 bolt 上去的一个功能，它是架构问题。因为最重要的决定都是结构性的：信任边界在哪、权限有多大、密钥住哪里。靠代码评审，救不回一个把所有钥匙发给所有服务的架构。
@@ -4575,7 +4575,7 @@ string apiKey = app.Configuration["Payments:ApiKey"];
 
 <p class=" chapter-number ">Chapter 10</p>
 
-# Practice & Communication
+# 第 10 章 实践与沟通 (Practice & Communication)
 
 
 ![本章插画](images/ch10-abstract.png)
@@ -4604,7 +4604,7 @@ string apiKey = app.Configuration["Payments:ApiKey"];
 
 <div class=" page-break "></div>
 
-## C4 Model & Diagrams
+## C4 模型与架构图 (C4 Model & Diagrams)
 
 
 ## 图为什么总是失败
@@ -4679,7 +4679,7 @@ api.Uses(queue, "发布 OrderPlaced", "AMQP");
 
 <div class=" page-break "></div>
 
-## Documenting Views & Decisions
+## 视图与决策的文档化 (Documenting Views & Decisions)
 
 
 ## 视图：一个系统，多种讲法
@@ -4755,7 +4755,7 @@ PostgreSQL。
 
 <div class=" page-break "></div>
 
-## Architecture Katas & Design Reviews
+## 架构 Kata 与设计评审 (Architecture Katas & Design Reviews)
 
 
 ## Kata：给判断力做练习
@@ -4811,7 +4811,7 @@ PostgreSQL。
 
 <div class=" page-break "></div>
 
-## Classic Cases (Commerce, Feed, Payments)
+## 经典案例：电商、Feed 流、支付 (Classic Cases (Commerce, Feed, Payments))
 
 
 下面三个案例是架构师面试和真实项目里反复出现的题目。每个都按同一套路走：需求与驱动因素、关键决策与权衡、结构草图、数据与集成选择、10 倍规模时要重新审视什么。注意顺序——决定永远从驱动因素开始，而不是从技术开始。
@@ -5212,7 +5212,7 @@ public record LedgerEvent(
 
 <div class=" page-break "></div>
 
-## Developer → Architect Path
+## 从开发者到架构师 (Developer → Architect Path)
 
 
 ## 先说清楚：架构师不是头衔

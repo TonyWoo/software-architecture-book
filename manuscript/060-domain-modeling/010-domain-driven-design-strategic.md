@@ -1,6 +1,6 @@
 ---
 id: domain-driven-design-strategic
-title: Domain-Driven Design (Strategic)
+title: "领域驱动设计（战略篇） (Domain-Driven Design (Strategic))"
 synopsis: DDD 首先是一套驯服复杂度的战略 —— 给子域分类，把建模精力投在刀刃上。
 status: draft
 role: body

@@ -1,6 +1,6 @@
 ---
 id: 040-consensus-raft-intuition
-title: "Consensus (Raft intuition)"
+title: "共识：Raft 直观理解 (Consensus (Raft intuition))"
 synopsis: Raft 的心智模型——任期、选举、日志复制——足够你推理任何分布式一致问题。
 status: draft
 role: body

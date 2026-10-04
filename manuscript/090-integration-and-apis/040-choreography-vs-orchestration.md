@@ -1,6 +1,6 @@
 ---
 id: choreography-vs-orchestration
-title: Choreography vs Orchestration
+title: "编舞与编排 (Choreography vs Orchestration)"
 synopsis: 业务流程由消息自己流转，还是由一个指挥者调度——两种组织业务逻辑的方式，两种调试人生。
 status: draft
 role: body

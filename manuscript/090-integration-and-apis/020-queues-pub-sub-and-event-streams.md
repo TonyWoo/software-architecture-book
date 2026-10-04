@@ -1,6 +1,6 @@
 ---
 id: queues-pub-sub-and-event-streams
-title: Queues, Pub/Sub & Event Streams
+title: "队列、发布订阅与事件流 (Queues, Pub/Sub & Event Streams)"
 synopsis: 三种异步消息形态，三种不同的保证——选和你的领域真相相配的那一种。
 status: draft
 role: body

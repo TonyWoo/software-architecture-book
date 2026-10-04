@@ -1,6 +1,6 @@
 ---
 id: 050-conways-law-and-team-topology
-title: "Conway's Law & Team Topology"
+title: "康威定律与团队拓扑 (Conway's Law & Team Topology)"
 synopsis: 系统终将长成组织结构图的模样——所以像设计系统一样设计组织结构图。
 status: draft
 role: body

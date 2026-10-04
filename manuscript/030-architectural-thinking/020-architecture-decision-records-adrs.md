@@ -1,6 +1,6 @@
 ---
 id: 020-architecture-decision-records-adrs
-title: "Architecture Decision Records (ADRs)"
+title: "架构决策记录 (Architecture Decision Records (ADRs))"
 synopsis: 写下你决定了什么、为什么、代价是什么——让未来的人能跟你辩论，而不是靠猜。
 status: draft
 role: body

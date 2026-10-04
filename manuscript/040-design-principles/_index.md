@@ -1,6 +1,6 @@
 ---
 id: design-principles
-title: "Design Principles"
+title: "第 3 章 设计原则 (Design Principles)"
 synopsis: 让代码库活下去的那些原则：管理依赖、划分关注点、给复杂度做预算。
 status: draft
 role: body

@@ -1,6 +1,6 @@
 ---
 id: gateway-mesh-and-discovery
-title: Gateway, Mesh & Discovery
+title: "网关、服务网格与服务发现 (Gateway, Mesh & Discovery)"
 synopsis: 边缘的横切关注点收拢到一处，服务间的通信交给边车，剩下的只是“你在哪”。
 status: draft
 role: body

@@ -1,6 +1,6 @@
 ---
 id: aggregates-entities-and-value-objects
-title: Aggregates, Entities & Value Objects
+title: "聚合、实体与值对象 (Aggregates, Entities & Value Objects)"
 synopsis: 一致性边界、聚合根的规矩，以及用 C# record 写值对象的 Order/OrderLine 实战。
 status: draft
 role: body

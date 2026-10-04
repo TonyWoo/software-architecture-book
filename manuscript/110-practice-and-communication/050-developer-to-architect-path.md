@@ -1,6 +1,6 @@
 ---
 id: 050-developer-to-architect-path
-title: "Developer → Architect Path"
+title: "从开发者到架构师 (Developer → Architect Path)"
 synopsis: 从开发者到架构师的具体成长路线：练什么、读什么、去哪里攒决策次数、如何像架构师一样沟通。
 status: draft
 role: body

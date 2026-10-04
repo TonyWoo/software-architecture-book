@@ -1,6 +1,6 @@
 ---
 id: 050-polyglot-persistence
-title: Polyglot Persistence
+title: "多语言持久化 (Polyglot Persistence)"
 synopsis: 每份工作配最合适的存储很强大，也很贵：让这种 sprawl 保持故意。
 status: draft
 role: body

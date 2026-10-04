@@ -1,6 +1,6 @@
 ---
 id: 010-trade-off-analysis-no-free-lunch
-title: "Trade-off Analysis (No Free Lunch)"
+title: "权衡分析：没有免费的午餐 (Trade-off Analysis (No Free Lunch))"
 synopsis: 每个架构决策都在买东西，也在付钱——学会把这笔交易摆到台面上。
 status: draft
 role: body

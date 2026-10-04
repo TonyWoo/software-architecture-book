@@ -1,6 +1,6 @@
 ---
 id: 040-transactions-sagas-and-outbox
-title: Transactions, Sagas & Outbox
+title: "事务、Saga 与发件箱模式 (Transactions, Sagas & Outbox)"
 synopsis: 当 ACID 走到服务边界就停了：C# 里的 saga 模式与事务性发件箱。
 status: draft
 role: body

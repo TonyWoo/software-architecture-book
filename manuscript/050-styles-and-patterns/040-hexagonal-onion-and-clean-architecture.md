@@ -1,6 +1,6 @@
 ---
 id: 040-hexagonal-onion-and-clean-architecture
-title: "Hexagonal, Onion & Clean Architecture"
+title: "六边形、洋葱与整洁架构 (Hexagonal, Onion & Clean Architecture)"
 synopsis: 三个名字同一个思想——依赖指向内部，附一个基于端口的 C# 用例。
 status: draft
 role: body

@@ -1,6 +1,6 @@
 ---
 id: bounded-contexts-and-context-maps
-title: Bounded Contexts & Context Maps
+title: "限界上下文与上下文映射图 (Bounded Contexts & Context Maps)"
 synopsis: 语言边界让一个模型只在一个范围内诚实，加上团队用来描述上下文关系的几种模式。
 status: draft
 role: body

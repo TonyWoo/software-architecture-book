@@ -1,6 +1,6 @@
 ---
 id: stakeholders-constraints-and-drivers
-title: Stakeholders, Constraints & Drivers
+title: "干系人、约束与驱动因素 (Stakeholders, Constraints & Drivers)"
 synopsis: 谁有发言权、什么动不了，以及真正塑造架构的那两三个驱动力。
 status: draft
 role: body

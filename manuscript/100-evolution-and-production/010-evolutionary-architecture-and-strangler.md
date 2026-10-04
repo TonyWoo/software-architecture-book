@@ -1,6 +1,6 @@
 ---
 id: 010-evolutionary-architecture-and-strangler
-title: Evolutionary Architecture & Strangler
+title: "演进式架构与绞杀者模式 (Evolutionary Architecture & Strangler)"
 synopsis: 架构是持续的活动而非阶段；用绞杀榕模式一块一块替换遗留系统。
 status: draft
 role: body

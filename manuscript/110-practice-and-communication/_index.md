@@ -1,6 +1,6 @@
 ---
 id: practice-and-communication
-title: "Practice & Communication"
+title: "第 10 章 实践与沟通 (Practice & Communication)"
 unit: chapter
 role: body
 status: draft

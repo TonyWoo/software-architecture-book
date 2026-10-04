@@ -1,6 +1,6 @@
 ---
 id: dependency-inversion-ports-and-adapters
-title: Dependency Inversion / Ports & Adapters
+title: "依赖倒置 / 端口与适配器 (Dependency Inversion / Ports & Adapters)"
 synopsis: 依赖抽象而非具体——端口放在领域里定义，适配器放在基础设施里实现。
 status: draft
 role: body

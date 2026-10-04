@@ -1,6 +1,6 @@
 ---
 id: integration-and-apis
-title: "Integration & APIs"
+title: "第 8 章 集成与 API (Integration & APIs)"
 synopsis: 系统之间如何对话——你在边界上选择的耦合，以及它们索取的代价。
 status: draft
 role: body
