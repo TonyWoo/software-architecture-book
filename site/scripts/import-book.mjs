@@ -14,8 +14,19 @@ const IMAGES_DIR = join(ROOT, '..', 'images');
 const PUBLIC_IMAGES_DIR = join(ROOT, 'public', 'images');
 const OUT_DIR = join(ROOT, 'src', 'content', 'docs', 'book');
 
-// 章节插画：images/ch01-abstract.png … ch10-abstract.png 拷到 public/images/，
-// 正文里的 ../../images/xxx 改写为 /images/xxx（public 目录映射到站点根）
+// 站点 base 路径（astro.config.ts 里的 base: "..."），图片引用要带上它，
+// 否则部署到 GitHub Pages 项目路径下时题图 404
+function readBase() {
+  const cfg = readFileSync(join(ROOT, 'astro.config.ts'), 'utf8');
+  const m = cfg.match(/base:\s*["']([^"']+)["']/);
+  let b = m ? m[1] : '/';
+  if (!b.endsWith('/')) b += '/';
+  return b;
+}
+const SITE_BASE = readBase();
+
+// 章节插画：images/ch01-abstract.png … ch10-abstract.png 拷到 public/images/
+// （public 目录映射到站点根，构建后位于 <base>/images/）
 function copyChapterImages() {
   mkdirSync(PUBLIC_IMAGES_DIR, { recursive: true });
   let n = 0;
@@ -29,7 +40,9 @@ function copyChapterImages() {
   }
   console.log(`import-book: 拷贝章节插画 ${n} 张`);
 }
-const fixImagePaths = (body) => body.replace(/\.\.\/\.\.\/images\//g, '/images/');
+// 正文里的 ../../images/xxx 改写为 <base>/images/xxx（Astro 不会自动给
+// markdown 里的根绝对路径加 base，必须手动带上）
+const fixImagePaths = (body) => body.replace(/\.\.\/\.\.\/images\//g, `${SITE_BASE}images/`);
 
 // ---- 极简 YAML 头解析（字段都是单行 key: value，值可能带引号） ----
 function parseHead(text) {

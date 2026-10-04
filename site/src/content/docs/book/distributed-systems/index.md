@@ -8,7 +8,7 @@ sidebar:
     label: "第7章 · 第 7 章 分布式系统"
 ---
 
-![本章插画](/images/ch07-abstract.png)
+![本章插画](/software-architecture-book/images/ch07-abstract.png)
 
 单台服务器是诚实的：它要么工作，要么宕机，出了问题你知道尸体在哪。可一旦加上第二台机器，世界就变了——网络会撒谎，时钟会吵架，"它成功了"的含金量远不如你以为。
 

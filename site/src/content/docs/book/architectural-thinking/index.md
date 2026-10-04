@@ -8,7 +8,7 @@ sidebar:
     label: "第2章 · 第 2 章 架构思维"
 ---
 
-![本章插画](/images/ch02-abstract.png)
+![本章插画](/software-architecture-book/images/ch02-abstract.png)
 
 架构不是画方框和箭头。谁都会画图。架构是做决策——而在真实世界里，每个决策都要付出代价。
 

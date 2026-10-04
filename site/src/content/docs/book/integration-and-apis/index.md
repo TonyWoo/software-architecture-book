@@ -8,7 +8,7 @@ sidebar:
     label: "第8章 · 第 8 章 集成与 API"
 ---
 
-![本章插画](/images/ch08-abstract.png)
+![本章插画](/software-architecture-book/images/ch08-abstract.png)
 
 ## Integration & APIs
 

@@ -8,7 +8,7 @@ sidebar:
     label: "第1章 · 第 1 章 地基与角色"
 ---
 
-![本章插画](/images/ch01-abstract.png)
+![本章插画](/software-architecture-book/images/ch01-abstract.png)
 
 架构不是挂在墙上的那张图。它是那组难以更改的决策：谁依赖谁、承重墙砌在哪里、无人值守时系统必须如何表现。
 

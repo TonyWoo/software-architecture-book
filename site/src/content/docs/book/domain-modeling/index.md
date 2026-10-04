@@ -8,7 +8,7 @@ sidebar:
     label: "第5章 · 第 5 章 领域建模"
 ---
 
-![本章插画](/images/ch05-abstract.png)
+![本章插画](/software-architecture-book/images/ch05-abstract.png)
 
 大多数系统失败，不是因为技术选错了，而是因为没人真正理解业务。
 

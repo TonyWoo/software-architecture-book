@@ -8,7 +8,7 @@ sidebar:
     label: "第10章 · 第 10 章 实践与沟通"
 ---
 
-![本章插画](/images/ch10-abstract.png)
+![本章插画](/software-architecture-book/images/ch10-abstract.png)
 
 大多数系统不是被设计坏的，而是被*悄悄*设计坏的——一个又一个没有文档的决定，诞生在走廊的闲聊里，藏在某个开发者的脑子里。然后这个开发者离职了，那些悄悄的决定就开始大声地崩坏。
 

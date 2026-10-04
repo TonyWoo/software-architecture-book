@@ -8,7 +8,7 @@ sidebar:
     label: "第9章 · 第 9 章 演进与生产"
 ---
 
-![本章插画](/images/ch09-abstract.png)
+![本章插画](/software-architecture-book/images/ch09-abstract.png)
 
 架构并不在部署时结束。恰恰相反，它从部署那一刻才真正开始。
 

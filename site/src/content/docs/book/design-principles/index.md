@@ -8,7 +8,7 @@ sidebar:
     label: "第3章 · 第 3 章 设计原则"
 ---
 
-![本章插画](/images/ch03-abstract.png)
+![本章插画](/software-architecture-book/images/ch03-abstract.png)
 
 设计原则不是装饰品，是生存策略。你写的每一个系统都会被改，而改它的人就是六个月后的你自己——凌晨两点，盯着一段你曾发誓只是"临时方案"的代码。
 

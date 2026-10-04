@@ -8,7 +8,7 @@ sidebar:
     label: "第4章 · 第 4 章 风格与模式"
 ---
 
-![本章插画](/images/ch04-abstract.png)
+![本章插画](/software-architecture-book/images/ch04-abstract.png)
 
 每个团队都会继承一种架构风格，不管当初有没有主动选择。问题在于，这个选择是不是深思熟虑的结果。
 
