@@ -13,11 +13,14 @@ Follows unclebob/bookwriter's bookwriter-spec.md export rules:
 - Body "#" headings are shifted by node depth.
 """
 import re
+import sys
 import pathlib
 
 ROOT = pathlib.Path(__file__).resolve().parent
-MS = ROOT / "manuscript"
-OUT = ROOT / "manuscript.md"
+# 手稿目录与输出文件可覆盖：python3 export_manuscript.py [手稿目录] [输出md]
+# 默认读 manuscript/（中文 C# 版装配产物），写 manuscript.md
+MS = pathlib.Path(sys.argv[1]) if len(sys.argv) > 1 else ROOT / "manuscript"
+OUT = pathlib.Path(sys.argv[2]) if len(sys.argv) > 2 else ROOT / "manuscript.md"
 
 
 def parse_header(path):
@@ -59,12 +62,14 @@ def shift_headings(body, depth):
 
 
 def main():
-    book_title = "Software Architecture"
-    yf = ROOT / "book.yaml"
-    if yf.exists():
-        for line in yf.read_text(encoding="utf-8").split("\n"):
-            if line.startswith("title:"):
-                book_title = line.split(":", 1)[1].strip()
+    book_title = "软件架构"
+    # 优先用装配产物里的 book.yaml（带技术栈后缀），回退到仓库根
+    for yf in (MS / "book.yaml", ROOT / "book.yaml"):
+        if yf.exists():
+            for line in yf.read_text(encoding="utf-8").split("\n"):
+                if line.startswith("title:"):
+                    book_title = line.split(":", 1)[1].strip()
+            break
 
     parts = [f"# {book_title}\n"]
     chapter_no = 0

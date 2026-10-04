@@ -1,70 +1,80 @@
-# Software Architecture — Learn to make decisions that survive change, teams & scale.
+# 软件架构 — 学会做出经得起变化、团队与规模考验的决策
 
-一本写给想成长为架构师的开发者的软件架构书。正文为简体中文，章节标题保留英文原文，
-C# / .NET 8+ 代码示例（标识符英文、注释中文）。
+一本写给想成长为架构师的开发者的软件架构书。正文为简体中文（技术术语白名单
+保留英文缩写：API、SOLID、DDD、gRPC 等），代码标识符英文、注释中文。
 
-## 格式
+两个技术栈版本，正文同源，代码各写：
 
-本书使用 [unclebob/bookwriter](https://github.com/unclebob/bookwriter)（Robert C. Martin
-的开源写作工具）的磁盘格式：一本书就是一个 Markdown 文件夹。
+| 版本 | 代码目录 | 说明 |
+|---|---|---|
+| 中文 C# 版 | `code/csharp/` | .NET 8+ 风格：Minimal API、record、依赖注入 |
+| 中文 Java 版 | `code/java/` | Java 21 + Spring Boot 3：Spring MVC、record、依赖注入 |
+
+英文版（C# / Java）已预留结构，尚未翻译。
+
+## 目录结构
 
 ```
 software-architecture-book/
-  book.yaml                 # 书名
-  images/                   # 图片（如有）
-  manuscript/
-    010-front-matter/       # 前言（role: front，不编号）
-      _index.md
-      010-preface.md
-    020-foundations-and-role/   # 第 1 章（group，unit: chapter）
-      _index.md             # 章节导读
-      010-....md            # 5 节（unit: section）
-      ...
-      060-key-takeaways.md  # 本章要点总结（unit: text）
-    030-architectural-thinking/ # 第 2 章
-    ...
-    110-practice-and-communication/ # 第 10 章
-  export_manuscript.py      # 导出脚本（按 bookwriter-spec.md 规则生成 manuscript.md）
-  manuscript.md             # 导出产物：全书单个 Markdown 手稿
+  book.yaml                 # 书名（语言级：中文标题；装配时自动加技术栈后缀）
+  content/
+    zh/                     # 中文正文唯一来源（bookwriter 磁盘格式）
+    en/                     # 英文版预留（README 说明翻译方式）
+  code/
+    csharp/                 # 69 个 C# 示例，按 manifest id 组织
+    java/                   # 69 个 Java 示例，一一对应（stubs/ 为第三方 API 编译桩）
+    manifest.json           # 正文 {{code:id}} ↔ 代码文件的对照表
+  tools/
+    assemble.py             # 按（语言，技术栈）装配 manuscript/
+    extract_code.py         # 已用过：从旧手稿抽取代码块（历史工具）
+  manuscript/               # 装配产物（默认中文 C# 版），下游构建的输入
+  export_manuscript.py      # manuscript/ → manuscript.md（单文件）
+  site/                     # Nimbus 文档站（双版本）
+  images/                   # 每章黑白抽象插画
 ```
 
-每个 `.md` 文件以 YAML 头开始（字段顺序固定：id / title / synopsis / status / role / unit），
-正文为 Pandoc Markdown：不重复标题，`#` 表示小节，代码块用 `csharp` 标签且前后空行。
+正文里的 `{{code:<id>}}` 标记在装配时被替换为对应技术栈的代码块；
+`{{stack:C#版文案|Java版文案}}` 内联标记处理技术栈专属叙述
+（如 Polly/Resilience4j、ASP.NET Core/Spring Boot）。
 
-## 阅读
-
-- 直接读 `manuscript.md`（全书单文件，约 28 万字节）。
-- 或用 bookwriter 应用打开本目录：`bw ~/workspace/software-architecture-book`
-  （bookwriter 是 Tauri 桌面应用，需按其 README 自行构建）。
-
-## 构建 PDF / EPUB
-
-bookwriter 的导出止于 Markdown；PDF/EPUB 是 Pandoc 的工作：
+## 构建
 
 ```bash
 cd ~/workspace/software-architecture-book
-export LC_ALL=C.UTF-8 LANG=C.UTF-8   # 环境 locale 须为 UTF-8，否则中文参数会被吞成 U+FFFD
-python3 export_manuscript.py
-pandoc manuscript.md -o software-architecture.pdf \
+
+# 装配手稿（默认中文 C# 版 → manuscript/）
+python3 tools/assemble.py --lang zh --stack csharp
+python3 tools/assemble.py --lang zh --stack java --out /tmp/manuscript-java
+
+# 导出单文件手稿
+export LC_ALL=C.UTF-8 LANG=C.UTF-8   # locale 须为 UTF-8，否则中文参数会被吞成 U+FFFD
+python3 export_manuscript.py                          # manuscript/ → manuscript.md
+python3 export_manuscript.py /tmp/manuscript-java /tmp/manuscript-java.md
+
+# 打 PDF
+pandoc manuscript.md -o software-architecture-zh-csharp.pdf \
+  --toc --toc-depth=3 -V toc-title="目录" \
+  --pdf-engine=xelatex \
+  -V CJKmainfont="Noto Sans CJK SC" -V CJKmonofont="Noto Sans Mono CJK SC"
+pandoc /tmp/manuscript-java.md -o software-architecture-zh-java-spring-boot.pdf \
   --toc --toc-depth=3 -V toc-title="目录" \
   --pdf-engine=xelatex \
   -V CJKmainfont="Noto Sans CJK SC" -V CJKmonofont="Noto Sans Mono CJK SC"
 ```
-产物：153 页 PDF，含"目录"页与 34 个 PDF 书签；零缺字警告。
 
-本机未安装 pandoc（也无 dotnet 用于编译 C# 示例），故只交付源码与 Markdown 手稿，
-未做 PDF 构建与代码编译验证。
+Java 示例编译验证（纯 JDK 部分；Spring/Resilience4j 等用 `stubs/` 下的
+编译桩，桩文件注明了对应的真实 Maven 坐标）：
 
-## 内容清单
-
-10 章 × 每章 5 节 = 50 节，外加每章导读与要点总结、前言。章节标题严格按既定结构，
-一字未改。
+```bash
+cd code/java
+javac -d /tmp/java-classes $(find . -name '*.java')
+```
 
 ## Nimbus 文档站
 
 `site/` 是用 Cloudflare Nimbus（Astro 文档站脚手架）搭的在线文档站，
-书稿的在线阅读版。构建前会自动从最新书稿重新导入，所以站点永远和
-`manuscript/` 保持一致（含纯中文标题与每章黑白插画）。
+双版本：`book/`（中文 C# 版）与 `book-java/`（中文 Java 版）。
+构建前会自动从最新装配手稿重新导入。
 
 ```bash
 cd site
@@ -73,10 +83,11 @@ npm run dev          # 本地预览 http://localhost:4321
 npm run build        # 构建：先自动跑 scripts/import-book.mjs 再 astro build，产物在 site/dist/
 ```
 
-导入脚本 `site/scripts/import-book.mjs`：
+导入脚本 `site/scripts/import-book.mjs`（环境变量 `BOOK_SRC` / `BOOK_DEST`
+可切换版本，默认导入中文 C# 版）：
 
-- 把 `manuscript/` 转成 `src/content/docs/book/` 下 82 个页面
-  （卷首 1 + 前言 1 + 10 章 × 8：导读、本章 5 节、本章要点、战争故事）
+- 把手稿转成 `src/content/docs/<版本>/` 下 82 个页面
+  （前言 1 + 10 章 × 8：导读、5 节、本章要点、战争故事 + 落地页 1）
 - 把 `images/ch01-abstract.png` … `ch10-abstract.png` 拷到 `public/images/`
   并改写引用路径；页数不对会直接报错中断构建
 - 由 `prebuild` 自动调用，`npm run build` 前无需手动跑
@@ -85,3 +96,8 @@ CI：`.github/workflows/nimbus.yml` 在 push 到 `main`（且改动涉及书稿�
 插画或 `site/`）时自动构建并部署到 GitHub Pages：
 <https://tonywoo.github.io/software-architecture-book/>。
 注意：仓库须保持公开，改回私有后 Pages 会下线（免费账号限制）。
+
+## 内容清单
+
+10 章 × 每章 5 节 = 50 节，外加每章导读与要点总结、前言；
+贯穿案例"好食光"、每节反模式、10 个战争故事、每章 3 道 Kata。

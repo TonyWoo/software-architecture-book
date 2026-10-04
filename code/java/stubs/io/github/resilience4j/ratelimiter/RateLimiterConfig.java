@@ -1,0 +1,31 @@
+// 编译桩：仅用于验证示例语法，对应真实依赖 io.github.resilience4j:resilience4j-ratelimiter
+package io.github.resilience4j.ratelimiter;
+
+import java.time.Duration;
+
+public class RateLimiterConfig {
+    private RateLimiterConfig() {
+    }
+
+    public static Builder custom() {
+        return new Builder();
+    }
+
+    public static class Builder {
+        public Builder limitForPeriod(int limitForPeriod) {
+            return this;
+        }
+
+        public Builder limitRefreshPeriod(Duration limitRefreshPeriod) {
+            return this;
+        }
+
+        public Builder timeoutDuration(Duration timeoutDuration) {
+            return this;
+        }
+
+        public RateLimiterConfig build() {
+            return new RateLimiterConfig();
+        }
+    }
+}

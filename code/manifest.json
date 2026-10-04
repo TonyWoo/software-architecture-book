@@ -1,0 +1,416 @@
+{
+  "020-foundations-and-role/010-what-architecture-actually-is-01": {
+    "source": "020-foundations-and-role/010-what-architecture-actually-is.md",
+    "index": 1,
+    "first_line": "// 架构决策记录（ADR）：存在 docs/adr，代码评审时强制执行",
+    "lines": 16
+  },
+  "020-foundations-and-role/020-architect-vs-senior-vs-tech-lead-01": {
+    "source": "020-foundations-and-role/020-architect-vs-senior-vs-tech-lead.md",
+    "index": 1,
+    "first_line": "public enum DecisionScope { Code, Team, Architecture }",
+    "lines": 17
+  },
+  "020-foundations-and-role/030-quality-attributes-and-ilities-01": {
+    "source": "020-foundations-and-role/030-quality-attributes-and-ilities.md",
+    "index": 1,
+    "first_line": "// 延迟预算：下单接口 p99 必须 < 800ms。",
+    "lines": 21
+  },
+  "020-foundations-and-role/040-functional-vs-non-functional-reqs-01": {
+    "source": "020-foundations-and-role/040-functional-vs-non-functional-reqs.md",
+    "index": 1,
+    "first_line": "// NFR：下单 p99 < 800ms。支付网关 p99 约 1200ms。",
+    "lines": 36
+  },
+  "020-foundations-and-role/050-stakeholders-constraints-and-drivers-01": {
+    "source": "020-foundations-and-role/050-stakeholders-constraints-and-drivers.md",
+    "index": 1,
+    "first_line": "// 架构驱动力登记：只记那两三个真正说了算的",
+    "lines": 19
+  },
+  "030-architectural-thinking/010-trade-off-analysis-no-free-lunch-01": {
+    "source": "030-architectural-thinking/010-trade-off-analysis-no-free-lunch.md",
+    "index": 1,
+    "first_line": "// 把权衡写进代码：Polly 策略精确声明了",
+    "lines": 13
+  },
+  "030-architectural-thinking/020-architecture-decision-records-adrs-01": {
+    "source": "030-architectural-thinking/020-architecture-decision-records-adrs.md",
+    "index": 1,
+    "first_line": "// 最小的 ADR 模型：决策是数据，而不只是文档。",
+    "lines": 25
+  },
+  "030-architectural-thinking/030-fitness-functions-01": {
+    "source": "030-architectural-thinking/030-fitness-functions.md",
+    "index": 1,
+    "first_line": "using System.Reflection;",
+    "lines": 31
+  },
+  "030-architectural-thinking/040-technical-debt-and-evolutionary-pressure-01": {
+    "source": "030-architectural-thinking/040-technical-debt-and-evolutionary-pressure.md",
+    "index": 1,
+    "first_line": "// 债的登记表写成代码：可查询、可评审、丢不了。",
+    "lines": 29
+  },
+  "030-architectural-thinking/050-conways-law-and-team-topology-01": {
+    "source": "030-architectural-thinking/050-conways-law-and-team-topology.md",
+    "index": 1,
+    "first_line": "// 组织结构图即架构断言：",
+    "lines": 31
+  },
+  "040-design-principles/010-solid-cohesion-and-coupling-01": {
+    "source": "040-design-principles/010-solid-cohesion-and-coupling.md",
+    "index": 1,
+    "first_line": "// 两个改变的理由：计算逻辑和报表格式。",
+    "lines": 18
+  },
+  "040-design-principles/010-solid-cohesion-and-coupling-02": {
+    "source": "040-design-principles/010-solid-cohesion-and-coupling.md",
+    "index": 2,
+    "first_line": "public interface IDiscountPolicy",
+    "lines": 24
+  },
+  "040-design-principles/010-solid-cohesion-and-coupling-03": {
+    "source": "040-design-principles/010-solid-cohesion-and-coupling.md",
+    "index": 3,
+    "first_line": "// 低内聚、高耦合：Order 什么都懂——支付、邮件、库存。",
+    "lines": 30
+  },
+  "040-design-principles/020-boundaries-and-separation-of-concerns-01": {
+    "source": "040-design-principles/020-boundaries-and-separation-of-concerns.md",
+    "index": 1,
+    "first_line": "// 没有边界：领域逻辑和某个具体的数据库 API 结了婚。",
+    "lines": 31
+  },
+  "040-design-principles/030-dependency-inversion-ports-and-adapters-01": {
+    "source": "040-design-principles/030-dependency-inversion-ports-and-adapters.md",
+    "index": 1,
+    "first_line": "// --- 核心：端口。由领域拥有，按领域的需求塑形。 ---",
+    "lines": 34
+  },
+  "040-design-principles/040-simplicity-yagni-kiss-deep-modules-01": {
+    "source": "040-design-principles/040-simplicity-yagni-kiss-deep-modules.md",
+    "index": 1,
+    "first_line": "// 容易：顺手、复制粘贴、正在悄悄分叉。",
+    "lines": 14
+  },
+  "040-design-principles/040-simplicity-yagni-kiss-deep-modules-02": {
+    "source": "040-design-principles/040-simplicity-yagni-kiss-deep-modules.md",
+    "index": 2,
+    "first_line": "// 浅：活儿都是调用者在干。这个\"模块\"只是个薄包装，",
+    "lines": 22
+  },
+  "040-design-principles/050-complexity-budget-01": {
+    "source": "040-design-principles/050-complexity-budget.md",
+    "index": 1,
+    "first_line": "// 偶然复杂度：一个函数就能干的事，非要上个框架。",
+    "lines": 23
+  },
+  "040-design-principles/050-complexity-budget-02": {
+    "source": "040-design-principles/050-complexity-budget.md",
+    "index": 2,
+    "first_line": "// 预算花得值：复杂度集中在差异化点上。",
+    "lines": 33
+  },
+  "050-styles-and-patterns/010-layered-n-tier-01": {
+    "source": "050-styles-and-patterns/010-layered-n-tier.md",
+    "index": 1,
+    "first_line": "// 领域层：对 EF 和 HTTP 一无所知",
+    "lines": 16
+  },
+  "050-styles-and-patterns/020-modular-monolith-01": {
+    "source": "050-styles-and-patterns/020-modular-monolith.md",
+    "index": 1,
+    "first_line": "// Catalog.Contracts —— 被其他模块引用，只装契约，零逻辑",
+    "lines": 9
+  },
+  "050-styles-and-patterns/020-modular-monolith-02": {
+    "source": "050-styles-and-patterns/020-modular-monolith.md",
+    "index": 2,
+    "first_line": "// Catalog 模块本体 —— 其他一切都是 internal",
+    "lines": 16
+  },
+  "050-styles-and-patterns/020-modular-monolith-03": {
+    "source": "050-styles-and-patterns/020-modular-monolith.md",
+    "index": 3,
+    "first_line": "// Catalog 的装配入口 —— 除 Contracts 外唯一的公开接缝",
+    "lines": 11
+  },
+  "050-styles-and-patterns/030-microservices-vs-monolith-01": {
+    "source": "050-styles-and-patterns/030-microservices-vs-monolith.md",
+    "index": 1,
+    "first_line": "// 陷阱的缩影：同步调用链，零自治",
+    "lines": 14
+  },
+  "050-styles-and-patterns/040-hexagonal-onion-and-clean-architecture-01": {
+    "source": "050-styles-and-patterns/040-hexagonal-onion-and-clean-architecture.md",
+    "index": 1,
+    "first_line": "// 核心：端口。归应用层所有，在外部实现。",
+    "lines": 11
+  },
+  "050-styles-and-patterns/040-hexagonal-onion-and-clean-architecture-02": {
+    "source": "050-styles-and-patterns/040-hexagonal-onion-and-clean-architecture.md",
+    "index": 2,
+    "first_line": "// 核心：用例。只依赖端口和领域实体。",
+    "lines": 12
+  },
+  "050-styles-and-patterns/040-hexagonal-onion-and-clean-architecture-03": {
+    "source": "050-styles-and-patterns/040-hexagonal-onion-and-clean-architecture.md",
+    "index": 3,
+    "first_line": "// 外圈：适配器。住在基础设施项目里。",
+    "lines": 15
+  },
+  "050-styles-and-patterns/050-event-driven-cqrs-and-event-sourcing-01": {
+    "source": "050-styles-and-patterns/050-event-driven-cqrs-and-event-sourcing.md",
+    "index": 1,
+    "first_line": "// 写侧：命令，带着完整的领域逻辑处理",
+    "lines": 19
+  },
+  "050-styles-and-patterns/050-event-driven-cqrs-and-event-sourcing-02": {
+    "source": "050-styles-and-patterns/050-event-driven-cqrs-and-event-sourcing.md",
+    "index": 2,
+    "first_line": "// 读侧：投影，又笨又快",
+    "lines": 11
+  },
+  "050-styles-and-patterns/050-event-driven-cqrs-and-event-sourcing-03": {
+    "source": "050-styles-and-patterns/050-event-driven-cqrs-and-event-sourcing.md",
+    "index": 3,
+    "first_line": "// 极简事件存储草图：只追加，按聚合分流",
+    "lines": 51
+  },
+  "060-domain-modeling/010-domain-driven-design-strategic-01": {
+    "source": "060-domain-modeling/010-domain-driven-design-strategic.md",
+    "index": 1,
+    "first_line": "// 核心子域：运费定价。公司在这里赢，也在这里输。",
+    "lines": 29
+  },
+  "060-domain-modeling/010-domain-driven-design-strategic-02": {
+    "source": "060-domain-modeling/010-domain-driven-design-strategic.md",
+    "index": 2,
+    "first_line": "// 通用子域：通知。已经被解决的问题，不许在这里创新。",
+    "lines": 10
+  },
+  "060-domain-modeling/020-bounded-contexts-and-context-maps-01": {
+    "source": "060-domain-modeling/020-bounded-contexts-and-context-maps.md",
+    "index": 1,
+    "first_line": "namespace Sales",
+    "lines": 36
+  },
+  "060-domain-modeling/030-aggregates-entities-and-value-objects-01": {
+    "source": "060-domain-modeling/030-aggregates-entities-and-value-objects.md",
+    "index": 1,
+    "first_line": "// 值对象：没有身份，不可变，相等只看值。",
+    "lines": 16
+  },
+  "060-domain-modeling/030-aggregates-entities-and-value-objects-02": {
+    "source": "060-domain-modeling/030-aggregates-entities-and-value-objects.md",
+    "index": 2,
+    "first_line": "// 聚合根：Order。所有对订单的修改都经过它。",
+    "lines": 51
+  },
+  "060-domain-modeling/030-aggregates-entities-and-value-objects-03": {
+    "source": "060-domain-modeling/030-aggregates-entities-and-value-objects.md",
+    "index": 3,
+    "first_line": "// EF Core 配置：Money 作为 OrderLine 的内嵌值对象，没有独立表。",
+    "lines": 20
+  },
+  "060-domain-modeling/040-ubiquitous-language-01": {
+    "source": "060-domain-modeling/040-ubiquitous-language.md",
+    "index": 1,
+    "first_line": "// 改名之前：程序员的词语。Process 到底干了什么？没人说得清。",
+    "lines": 10
+  },
+  "060-domain-modeling/040-ubiquitous-language-02": {
+    "source": "060-domain-modeling/040-ubiquitous-language.md",
+    "index": 2,
+    "first_line": "// 改名之后：领域的词语。每个名字都能在信贷手册里找到出处。",
+    "lines": 24
+  },
+  "060-domain-modeling/050-anti-corruption-layer-01": {
+    "source": "060-domain-modeling/050-anti-corruption-layer.md",
+    "index": 1,
+    "first_line": "// 祖传 ERP 的形状：原样保留，一行都不许「顺手改」。",
+    "lines": 47
+  },
+  "070-data-and-persistence/010-data-ownership-and-modeling-01": {
+    "source": "070-data-and-persistence/010-data-ownership-and-modeling.md",
+    "index": 1,
+    "first_line": "// Ordering 限界上下文：拥有 Order，把 Product 数据当作本地投影来借用。",
+    "lines": 38
+  },
+  "070-data-and-persistence/020-sql-vs-nosql-drivers-01": {
+    "source": "070-data-and-persistence/020-sql-vs-nosql-drivers.md",
+    "index": 1,
+    "first_line": "// 同一个概念，两种存储形状。配置本身就是决策。",
+    "lines": 42
+  },
+  "070-data-and-persistence/030-replication-and-partitioning-01": {
+    "source": "070-data-and-persistence/030-replication-and-partitioning.md",
+    "index": 1,
+    "first_line": "// 仓库现在知道了拓扑。这就是扩展的代价。",
+    "lines": 44
+  },
+  "070-data-and-persistence/040-transactions-sagas-and-outbox-01": {
+    "source": "070-data-and-persistence/040-transactions-sagas-and-outbox.md",
+    "index": 1,
+    "first_line": "// 编排式 saga：流程顺序和补偿计划住在同一个地方。",
+    "lines": 49
+  },
+  "070-data-and-persistence/040-transactions-sagas-and-outbox-02": {
+    "source": "070-data-and-persistence/040-transactions-sagas-and-outbox.md",
+    "index": 2,
+    "first_line": "// 发件箱：事件和领域变更在同一个事务里持久化。",
+    "lines": 56
+  },
+  "070-data-and-persistence/050-polyglot-persistence-01": {
+    "source": "070-data-and-persistence/050-polyglot-persistence.md",
+    "index": 1,
+    "first_line": "// 三种存储，各司其职——以及三份运维合同。",
+    "lines": 49
+  },
+  "080-distributed-systems/010-cap-pacelc-intuition-01": {
+    "source": "080-distributed-systems/010-cap-pacelc-intuition.md",
+    "index": 1,
+    "first_line": "// .NET 8：按操作选择一致性或可用性，而不是按系统一刀切。",
+    "lines": 17
+  },
+  "080-distributed-systems/020-consistency-models-and-quorum-01": {
+    "source": "080-distributed-systems/020-consistency-models-and-quorum.md",
+    "index": 1,
+    "first_line": "// .NET 8：仲裁读——正确性来自读仲裁必然与写仲裁交叠。",
+    "lines": 23
+  },
+  "080-distributed-systems/030-failure-modes-retries-and-idempotency-01": {
+    "source": "080-distributed-systems/030-failure-modes-retries-and-idempotency.md",
+    "index": 1,
+    "first_line": "// .NET 8：幂等键中间件草图——重试在构造上就是安全的。",
+    "lines": 43
+  },
+  "080-distributed-systems/040-consensus-raft-intuition-01": {
+    "source": "080-distributed-systems/040-consensus-raft-intuition.md",
+    "index": 1,
+    "first_line": "// .NET 8：这是心智模型，不是实现——要知道这些状态转换意味着什么。",
+    "lines": 33
+  },
+  "080-distributed-systems/050-fallacies-of-distributed-computing-01": {
+    "source": "080-distributed-systems/050-fallacies-of-distributed-computing.md",
+    "index": 1,
+    "first_line": "// .NET 8：不相信谬论的调用长这样——超时、退避、抖动、熔断，一天都不缺。",
+    "lines": 34
+  },
+  "090-integration-and-apis/010-sync-rest-grpc-vs-async-01": {
+    "source": "090-integration-and-apis/010-sync-rest-grpc-vs-async.md",
+    "index": 1,
+    "first_line": "// REST：最通用的问题——“这张券存在吗？”",
+    "lines": 7
+  },
+  "090-integration-and-apis/010-sync-rest-grpc-vs-async-02": {
+    "source": "090-integration-and-apis/010-sync-rest-grpc-vs-async.md",
+    "index": 2,
+    "first_line": "// gRPC：类型化的契约——生成客户端，二进制传输",
+    "lines": 19
+  },
+  "090-integration-and-apis/020-queues-pub-sub-and-event-streams-01": {
+    "source": "090-integration-and-apis/020-queues-pub-sub-and-event-streams.md",
+    "index": 1,
+    "first_line": "// 命令消费者：一个活儿，一个工人。幂等是你的活儿，框架替不了。",
+    "lines": 23
+  },
+  "090-integration-and-apis/020-queues-pub-sub-and-event-streams-02": {
+    "source": "090-integration-and-apis/020-queues-pub-sub-and-event-streams.md",
+    "index": 2,
+    "first_line": "builder.Services.AddMassTransit(x =>",
+    "lines": 14
+  },
+  "090-integration-and-apis/030-api-design-contracts-and-versioning-01": {
+    "source": "090-integration-and-apis/030-api-design-contracts-and-versioning.md",
+    "index": 1,
+    "first_line": "// v1：最初的承诺。这个形状从此再也不动，动它就是破坏性变更。",
+    "lines": 12
+  },
+  "090-integration-and-apis/030-api-design-contracts-and-versioning-02": {
+    "source": "090-integration-and-apis/030-api-design-contracts-and-versioning.md",
+    "index": 2,
+    "first_line": "// 消费者侧的宽容读取：未知字段忽略，缺失的可选字段给默认值。",
+    "lines": 18
+  },
+  "090-integration-and-apis/040-choreography-vs-orchestration-01": {
+    "source": "090-integration-and-apis/040-choreography-vs-orchestration.md",
+    "index": 1,
+    "first_line": "// 编排者：订单履约流程的主人。",
+    "lines": 39
+  },
+  "090-integration-and-apis/050-gateway-mesh-and-discovery-01": {
+    "source": "090-integration-and-apis/050-gateway-mesh-and-discovery.md",
+    "index": 1,
+    "first_line": "// Program.cs：一个薄网关。只做路由和入口策略，业务逻辑一律不碰。",
+    "lines": 23
+  },
+  "100-evolution-and-production/010-evolutionary-architecture-and-strangler-01": {
+    "source": "100-evolution-and-production/010-evolutionary-architecture-and-strangler.md",
+    "index": 1,
+    "first_line": "public sealed class StranglerMiddleware",
+    "lines": 37
+  },
+  "100-evolution-and-production/020-observability-logs-metrics-traces-01": {
+    "source": "100-evolution-and-production/020-observability-logs-metrics-traces.md",
+    "index": 1,
+    "first_line": "// 别这么写：",
+    "lines": 6
+  },
+  "100-evolution-and-production/020-observability-logs-metrics-traces-02": {
+    "source": "100-evolution-and-production/020-observability-logs-metrics-traces.md",
+    "index": 2,
+    "first_line": "var builder = WebApplication.CreateBuilder(args);",
+    "lines": 16
+  },
+  "100-evolution-and-production/030-slis-slos-error-budgets-01": {
+    "source": "100-evolution-and-production/030-slis-slos-error-budgets.md",
+    "index": 1,
+    "first_line": "// 概念上：SLI = 好事件 / 总事件。",
+    "lines": 8
+  },
+  "100-evolution-and-production/040-resilience-breaker-bulkhead-timeout-01": {
+    "source": "100-evolution-and-production/040-resilience-breaker-bulkhead-timeout.md",
+    "index": 1,
+    "first_line": "using Polly;",
+    "lines": 28
+  },
+  "100-evolution-and-production/050-security-least-privilege-and-secrets-01": {
+    "source": "100-evolution-and-production/050-security-least-privilege-and-secrets.md",
+    "index": 1,
+    "first_line": "var builder = WebApplication.CreateBuilder(args);",
+    "lines": 12
+  },
+  "110-practice-and-communication/010-c4-model-and-diagrams-01": {
+    "source": "110-practice-and-communication/010-c4-model-and-diagrams.md",
+    "index": 1,
+    "first_line": "// 不可执行——只是示意 C4-as-code 记录什么：",
+    "lines": 11
+  },
+  "110-practice-and-communication/040-classic-cases-commerce-feed-payments-01": {
+    "source": "110-practice-and-communication/040-classic-cases-commerce-feed-payments.md",
+    "index": 1,
+    "first_line": "// 模块化单体：模块间只依赖接口，不直接引用实现。",
+    "lines": 29
+  },
+  "110-practice-and-communication/040-classic-cases-commerce-feed-payments-02": {
+    "source": "110-practice-and-communication/040-classic-cases-commerce-feed-payments.md",
+    "index": 2,
+    "first_line": "// 信息流服务：推拉结合的核心逻辑",
+    "lines": 47
+  },
+  "110-practice-and-communication/040-classic-cases-commerce-feed-payments-03": {
+    "source": "110-practice-and-communication/040-classic-cases-commerce-feed-payments.md",
+    "index": 3,
+    "first_line": "// 支付核心：幂等 + 状态机 + 事件记账",
+    "lines": 46
+  },
+  "110-practice-and-communication/050-developer-to-architect-path-01": {
+    "source": "110-practice-and-communication/050-developer-to-architect-path.md",
+    "index": 1,
+    "first_line": "// 沟通的最小单位：一次评审发言的模板。",
+    "lines": 17
+  }
+}

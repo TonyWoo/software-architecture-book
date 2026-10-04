@@ -1,18 +1,22 @@
 // ============================================================
-// import-book.mjs —— 把 ../manuscript/ 的书稿导入为 nimbus 站点页面
-// 用法：node scripts/import-book.mjs   （site/ 目录下）
-// 输出：src/content/docs/book/ 下 82 个 .md 页面（卷首 1 + 前言 1 + 10 章 × 8）
+// import-book.mjs —— 把手稿导入为 nimbus 站点页面
+// 用法：node scripts/import-book.mjs   （site/ 目录下，默认导入中文 C# 版到 book/）
+// 双版本：BOOK_SRC=/tmp/manuscript-java BOOK_DEST=book-java node scripts/import-book.mjs
 // 由 `prebuild` 自动调用，保证构建永远用最新书稿
+// 输出 82 页：前言 1 + 10 章 × 8（导读 + 5 节 + 本章要点 + 战争故事）+ 落地页 1
 // ============================================================
 import { readdirSync, readFileSync, writeFileSync, rmSync, mkdirSync, existsSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
-const MANUSCRIPT_DIR = join(ROOT, '..', 'manuscript');
+// 双版本：BOOK_SRC 指定手稿目录（默认 ../manuscript，即中文 C# 版），
+// BOOK_DEST 指定站点输出子目录（默认 book；Java 版用 book-java）
+const MANUSCRIPT_DIR = process.env.BOOK_SRC || join(ROOT, '..', 'manuscript');
+const BOOK_DEST = process.env.BOOK_DEST || 'book';
 const IMAGES_DIR = join(ROOT, '..', 'images');
 const PUBLIC_IMAGES_DIR = join(ROOT, 'public', 'images');
-const OUT_DIR = join(ROOT, 'src', 'content', 'docs', 'book');
+const OUT_DIR = join(ROOT, 'src', 'content', 'docs', BOOK_DEST);
 
 // 站点 base 路径（astro.config.ts 里的 base: "..."），图片引用要带上它，
 // 否则部署到 GitHub Pages 项目路径下时题图 404
@@ -66,7 +70,10 @@ const sortKey = (name) => (name === '_index.md' ? '000' : name);
 
 function readBookMeta() {
   const meta = {};
-  for (const line of readFileSync(join(ROOT, '..', 'book.yaml'), 'utf8').split('\n')) {
+  // 优先用手稿目录里的 book.yaml（装配时已带技术栈后缀），回退到仓库根
+  const cand = [join(MANUSCRIPT_DIR, 'book.yaml'), join(ROOT, '..', 'book.yaml')];
+  const f = cand.find((p) => existsSync(p));
+  for (const line of readFileSync(f, 'utf8').split('\n')) {
     const i = line.indexOf(':');
     if (i > 0) meta[line.slice(0, i).trim()] = line.slice(i + 1).trim();
   }
@@ -163,22 +170,25 @@ function main() {
     }
   }
 
-  // 落地页 book/index.md（order 最小，排最前）
+  // 落地页 index.md（order 最小，排最前），带版本互链
   const links = chapters.map((c, i) => `- [第${i + 1}章 · ${c.title}](./${c.slug}/)`).join('\n');
+  const otherVer = BOOK_DEST === 'book'
+    ? '\n\n> 本书还有另一个技术栈版本：[软件架构（Java版）](../book-java/)，正文相同，代码示例为 Java 21 + Spring Boot 3。\n'
+    : '\n\n> 本书还有另一个技术栈版本：[软件架构（C#版）](../book/)，正文相同，代码示例为 C# / .NET 8+。\n';
   write(
     'index.md',
     frontmatter({
-      title: book.title || 'Software Architecture',
+      title: book.title || '软件架构',
       description: book.subtitle || '',
       order: -100,
       label: '全书导读',
       group: '开篇',
     }),
-    `${book.subtitle || ''}\n\n## 章节\n\n${links}\n\n[前言](./preface/)\n`,
+    `${book.subtitle || ''}${otherVer}\n## 章节\n\n${links}\n\n[前言](./preface/)\n`,
   );
 
-  console.log(`import-book: 生成 ${pages} 页`);
-  // 卷首 1 + 前言 1 + 10 章 × 8（导读 + 5 节 + 本章要点 + 战争故事）= 82
+  console.log(`import-book: [${BOOK_DEST}] 生成 ${pages} 页`);
+  // 前言 1 + 10 章 × 8（导读 + 5 节 + 本章要点 + 战争故事）+ 落地页 1 = 82
   if (pages !== 82) {
     console.error(`页数不对：期望 82，实际 ${pages}`);
     process.exit(1);

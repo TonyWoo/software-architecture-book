@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "astro dev",
     "import-book": "node scripts/import-book.mjs",
-    "prebuild": "npm run import-book",
+    "prebuild": "node scripts/prebuild.mjs",
     "build": "astro build",
     "preview": "astro preview",
     "typecheck": "astro check",

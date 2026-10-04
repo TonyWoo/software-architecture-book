@@ -1,0 +1,104 @@
+---
+title: "复制与分区"
+description: "读副本、分片键，以及扩展出去之后应用能做的承诺会发生什么变化。"
+sidebar:
+  order: 450
+  label: "复制与分区"
+  group:
+    label: "第6章 · 第 6 章 数据与持久化"
+---
+
+## 读扩展：复制
+
+复制数据有两个理由。第一是活下去：节点挂了，副本让你继续活着。第二是快：读副本把读负载摊到多台机器上。听起来都像免费的，都不是。
+
+读副本的定义就是落后。复制延迟不是 缺陷，是物理。一旦你把读路由到副本，你就接受了一个事实：用户写完数据，紧接着读回来可能是旧的。有时候这无所谓——商品目录、排行榜快照。有时候这就是工单："我改了地址，怎么又变回去了。" 设计读路径时要把延迟算进去。关键的读——用户刚写完的那个东西——走主库，其他的再去副本。
+
+故障转移是另一笔账。把副本提为主库，意味着应用的连接拓扑会在它脚下发生变化。如果你的代码假设连接字符串只有一个且永远不变，那故障转移就是一次停机。连接处理、重试逻辑、健康检查，这些不是数据库的事，是应用的事，复制逼着你认领它们。
+
+## 写扩展：分区
+
+一台机器装不下数据或者扛不住写的时候，就分区。分片按某个键把行拆到不同节点，这个键的选择是本章最重要的决策。
+
+好的分片键有两个属性：负载分布均匀，相关数据待在一起。这两个属性天天打架。按 `UserId` 分片，负载散得漂亮，"查这个用户的所有订单"是一个分片内的查询；但"查今天下的所有订单"就要扇出到所有分片，等最慢的那个，把结果在应用代码里合并。
+
+热点分区就是键选错了的下场。按 `TenantId` 分片，你最大的租户会变成一个独占分片，热得发烫，其他分片闲着。数据库救不了你，它只会忠实地、大规模地执行你的错误决策。热点分区没有 巧妙 的索引能绕过去，要么重分片——那是一次带牙的迁移，要么重设计键——那是一次重写。
+
+跨分片查询是另一笔税。任何一个分片回答不了的查询都会变成 扇出收集：你的代码扇出、收集、排序、分页。跨分片分页是特别的痛苦，以前数据库替你干的活，现在是你的 仓储 层的事，测试也是你写。
+
+## 应用感受到的变化
+
+这些没有一样能留在基础设施层。复制和分区会以具体、可测试的方式漏进应用代码。
+
+```java
+package ch070;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
+// 仓库现在知道了拓扑。这就是扩展的代价。
+class ReplicationAndPartitioning01 {
+
+    // 分片路由：按 customerId 选库。
+    interface ShardRouter {
+        String connectionFor(UUID customerId);
+        List<String> allConnections();
+    }
+
+    static class OrderRepository {
+        private final OrderStore store;
+        private final ShardRouter shards;
+        private final ExecutorService pool = Executors.newCachedThreadPool();
+
+        OrderRepository(OrderStore store, ShardRouter shards) {
+            this.store = store;
+            this.shards = shards;
+        }
+
+        // 单分片读：快、一致、按分片键路由。
+        Order getById(UUID orderId, UUID customerId) {
+            String conn = shards.connectionFor(customerId);
+            return store.findById(conn, orderId);
+        }
+
+        // 跨分片查询：scatter-gather，合并是应用的事。
+        List<Order> recentAcrossShards(int take) {
+            var futures = new ArrayList<CompletableFuture<List<Order>>>();
+            for (String conn : shards.allConnections()) {
+                futures.add(CompletableFuture.supplyAsync(
+                    () -> store.recent(conn, take), pool));
+            }
+
+            return futures.stream()
+                .map(CompletableFuture::join)
+                .flatMap(List::stream)
+                .sorted((a, b) -> b.placedAt().compareTo(a.placedAt()))
+                .limit(take)
+                .toList();
+        }
+    }
+
+    interface OrderStore {
+        Order findById(String connection, UUID orderId);
+        List<Order> recent(String connection, int take);
+    }
+
+    record Order(UUID id, java.time.Instant placedAt) {}
+}
+```
+
+看 `RecentAcrossShardsAsync`：每个分片取 N 条，内存里重排。N 小的时候它是对的，N 大的时候它在撒谎。这个谎现在是你的代码、你的测试、你的 值班。数据库没有变慢，是你的架构终于诚实地讲出了工作到底在哪里。
+
+## 反模式
+
+最贵的一个反模式叫"提前散开"。数据还没上量，分片已经分了八个。理由永远是"为未来做准备"，代价永远是现在支付：每个查询都要想路由，分片键选错了想改回来是一次带牙的迁移。分片是不可逆的架构决策里，最不可逆的那种之一。
+
+第二个经典：分片键拍脑袋。按创建时间分片听起来均匀，结果最新的分片热到冒烟——因为所有人都查最新的订单。按租户分片听起来业务友好，结果最大的租户独占一个分片，负载歪到一边。键选错了，数据库会忠实地、大规模地执行你的错误。
+
+第三个：把读副本当成"另一个主库"。代码里随手读副本，然后困惑"为什么用户刚改完的数据又变回去了"。复制延迟不是 缺陷，是物理。把读副本用在它回答不了的查询上，你的客服会替你数延迟。
+
+**权衡：** 复制和分区用简单性换规模和生存能力。过期读、扇出收集 查询、热点分区、故障转移处理，全部永久搬进你的应用代码。单机真正撑不住之前——是测出来的撑不住，不是怕出来的——不要急着散开。真要散开的时候，选分片键要像选决定你半夜会不会被叫醒的东西，因为它就是。

@@ -1,13 +1,15 @@
 ---
-title: "Software Architecture"
-description: "Learn to make decisions that survive change, teams & scale."
+title: "软件架构（C#版）"
+description: "学会做出经得起变化、团队与规模考验的决策"
 sidebar:
   order: -100
   label: "全书导读"
   group:
     label: "开篇"
 ---
-Learn to make decisions that survive change, teams & scale.
+学会做出经得起变化、团队与规模考验的决策
+
+> 本书还有另一个技术栈版本：[软件架构（Java版）](../book-java/)，正文相同，代码示例为 Java 21 + Spring Boot 3。
 
 ## 章节
 
