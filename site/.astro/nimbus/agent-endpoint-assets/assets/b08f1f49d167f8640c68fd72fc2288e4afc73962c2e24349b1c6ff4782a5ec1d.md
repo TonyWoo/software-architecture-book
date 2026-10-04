@@ -1,0 +1,100 @@
+---
+title: "C4 模型与架构图"
+description: "C4 模型的四个缩放层级，以及画出真正能被人读懂的图的纪律。"
+---
+
+> Documentation Index
+> Fetch the complete documentation index at: https://tonywoo.github.io/software-architecture-book/llms.txt
+> Use this file to discover all available pages before exploring further.
+
+# C4 模型与架构图
+
+## 图为什么总是失败
+
+大多数架构图死于同一种病：想把所有东西都画进去，结果什么都没讲清楚。设计会上随手画的方框和箭头，下一个迭代就没人记得。或者反过来——一张精心绘制的杰作，别人想看细节时根本没法放大。
+
+两种死法的病根一样：这张图没有约定*层级*。读者不知道自己被允许放大到多深。
+
+C4 模型用一个想法治好了这个病：一个系统恰好有四个天然的缩放层级。Context（上下文）、Container（容器）、Component（组件）、Code（代码）。每张图都声明自己的层级。想看更细，就往下一层放大。
+
+## 第一层：Context
+
+谁用这个系统，它还跟谁打交道？人和外部系统在这里是一等公民。没有技术名词。数据库先别急着画成方框——先写名字，写清楚*关系*。
+
+当新来的开发、经理或者产品经理问"这东西到底是干嘛的"，就画这张图。如果你没法在一页纸上画出你的系统、它的用户和它的邻居，说明你还没真正理解它。这一层活得最久——它很少变，因为你的用户和系统边界变化得很慢。
+
+## 第二层：Container
+
+容器是指任何可以独立部署、独立运行的东西：Web 应用、手机 应用、API、数据库、消息队列、后台任务。技术名词第一次在这里出现。"订单 API —— Spring Boot"，"订单库 —— PostgreSQL"。
+
+这是大多数团队日常真正需要的层级。它回答：我们部署了什么，这些部件怎么通信，死了一个会怎样？如果你的值班工程师不能凭记忆在这一层复述你的系统，要么你的架构太复杂，要么你的文档太薄。
+
+## 第三层：Component
+
+在一个容器内部，有哪些主要的构建块？服务、仓储、门面、领域层——代码评审时你会为之争吵的那种结构。这一层和代码的实际组织方式贴得很近，所以腐烂得也最快。把它放在代码旁边，能生成就生成；否则就接受它会漂移的事实。
+
+## 第四层：Code
+
+类、接口、调用图。说实话？这层单独画图的情况很少。IDE *就是*这张图，而且永远是最新的。除非你在给新人讲一段特别绕的算法，或者解释某个框架的内部扩展点，否则别画。给整个系统画 UML 类图，是你应该戒掉的成人礼。
+
+## 图是用来沟通的，不是用来搞艺术的
+
+图是给想法用的用户界面。它的用户是半夜十一点在事故中读图的疲惫开发，或者想搞清楚自己功能该放哪里的新人。为他们优化。
+
+几条硬规矩，条条都值钱：
+
+- **一张图只画一个层级。** 把容器和类画在同一张图上，就是著名的"万物互联"毛线球图的诞生方式。
+- **箭头要写字。** "HTTPS"、"发布 OrderPlaced"、"读从库"。没字的箭头只说了"有事发生"，这不叫沟通。
+- **图例要写清楚。** 如果方框的形状或颜色代表不同含义，就在图上注明。没人会读心术。
+- **标题和日期。** 没日期的图是未来的谎言。三年后有人翻出来，会默认它是现状。
+- **图要贴着代码放。** 放在没人打开的 wiki 里的图，就是日记。用 Structurizr DSL、Mermaid、PlantUML 这类文本工具写图，放在仓库里，CI 自动渲染。图和会变代码住在一起，才有机会保持诚实。
+
+在确实有帮助的地方，用文本表达容器图，让工具去渲染。仓库里的一段 Structurizr DSL 碎片，胜过共享盘里一张发霉的截图：
+
+```java
+package ch110;
+
+import com.structurizr.Workspace;
+import com.structurizr.model.Container;
+import com.structurizr.model.Model;
+import com.structurizr.model.SoftwareSystem;
+
+// C4-as-code：容器、关系、技术标签写成代码，
+// 图永远和代码一起评审、一起版本化，不贴截图。
+class C4ModelAndDiagrams01 {
+
+    static Workspace commerce() {
+        var workspace = new Workspace("Commerce", "订单处理系统");
+        Model model = workspace.getModel();
+
+        SoftwareSystem shop = model.addSoftwareSystem("电商平台", "订单处理系统");
+
+        Container webApp = shop.addContainer("Web App", "React SPA", "HTTPS");
+        Container api = shop.addContainer("Order API", "Spring Boot", "HTTPS + JSON");
+        Container db = shop.addContainer("Order DB", "PostgreSQL", "SQL");
+        Container queue = shop.addContainer("Order Queue", "RabbitMQ", "AMQP");
+
+        webApp.uses(api, "提交订单", "HTTPS");
+        api.uses(db, "读写订单", "SQL");
+        api.uses(queue, "发布 OrderPlaced", "AMQP");
+
+        return workspace;
+    }
+}
+```
+
+这段示意的重点不是 API，而是图是*文本*：可 比对、可评审、可版本化——是仓库的一等公民，而不是在共享盘里腐烂的截图。
+
+## 反模式
+
+最常见的反模式叫**画图上瘾**。诱因很正当：图画得越细，动手时越有安全感。于是团队在白板前开了三周会，箭头越画越密——而用户故事一个没动，代码一行没写。画图变成了干活的替代品：看起来在推进，其实是在逃避真正的不确定性。
+
+它为什么诱人？因为画图没有代价。改代码要跑测试、处理合并冲突、面对生产；改图只需要擦掉重画。在图里一切约束都可以商量，于是设计永远完美——完美到没人敢动手，因为动手会打破完美。
+
+真实代价是时间，外加**用图的精确性伪装理解的精确性**。三周后你得到的是一张人人点头、但没人敢保证能跑的图。而真正会杀死系统的细节——锁的粒度、超时默认值、重试次数——只会在动手时浮现。图回答不了的问题，只有代码能回答。
+
+治法：图画到能对齐就停。谁动手、谁负责、第一步做什么——这三件事说清楚，就去建。图不是蓝图，是对话的草稿。
+
+**陷阱：** 用画图代替干活。一个画了三周图的团队，就是三周没去搞清楚系统真正需要什么的团队。图画到能让动手的人对齐就够了，然后去建。图错了会自己告诉你——听着，然后更新它。
+
+Source: https://tonywoo.github.io/software-architecture-book/book-java/practice-and-communication/c4-model-and-diagrams/index.mdx

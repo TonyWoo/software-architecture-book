@@ -1,0 +1,32 @@
+---
+title: "第 4 章 风格与模式 · 本章导读"
+description: "五大架构风格、各自的代价，以及如何选择而不跟风。"
+---
+
+> Documentation Index
+> Fetch the complete documentation index at: https://tonywoo.github.io/software-architecture-book/llms.txt
+> Use this file to discover all available pages before exploring further.
+
+# 第 4 章 风格与模式 · 本章导读
+
+![本章插画](/software-architecture-book/images/ch04-abstract.png)
+
+每个团队都会继承一种架构风格，不管当初有没有主动选择。问题在于，这个选择是不是深思熟虑的结果。
+
+本章走一遍你真正会遇到的五种风格：分层架构、模块化单体、微服务与单体之争、六边形架构家族、事件驱动世界。
+
+每种风格都是一组约束，而约束才是重点。风格告诉你接缝在哪里、谁依赖谁、你被禁止做什么。接缝放对了，变更就便宜；放错了，每次发布都像无麻醉手术。
+
+我会把代价说得很直白。每种风格都买了点东西，也卖了点东西。架构的艺术，就是清楚自己在做什么交易，并且把真相告诉团队。
+
+**贯穿案例 · 好食光**
+
+第四幕 · 2018 年，模块化单体。
+
+好食光上线两年，订单量涨了三十倍，代码库从"一个能跑的"变成"一个没人敢动的"。某天营销部门要上"买一赠一"，开发改了三天：下单逻辑里藏着三处价格计算，营销规则又散落在三个角落。没人说得清改哪一处不踩雷。
+
+这次他们换了打法：不按技术分层拆，按业务的限界上下文拆。`Orders`（下单）、`Catalog`（菜单）、`Marketing`（营销）、`Fulfillment`（履约）——一个上下文一个程序集。`Orders` 可以引用 `Catalog.Contracts`，但敢直接引用 `Catalog` 本体，编译失败；跨模块偷调内部类的，CI 里一道依赖检查测试拦下。边界第一次有了牙齿。
+
+代价很实在：构建从 2 分钟涨到 9 分钟，调试多跳两层接口。收获更实在：那年发布会上，团队最资浅的工程师站在台上，把"一次下单"的完整流程讲了四十分钟，全程没碰过一行营销代码。这正是本章的两个知识点：模块化单体的接缝，就是将来拆微服务时要沿着走的接缝；而下单核心对数据库一无所知——那是六边形架构的影子。
+
+Source: https://tonywoo.github.io/software-architecture-book/book/styles-and-patterns/index.mdx

@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://tonywoo.github.io/software-architecture-book/sitemap-index.xml

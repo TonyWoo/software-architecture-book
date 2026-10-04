@@ -1,0 +1,182 @@
+---
+title: "队列、发布订阅与事件流"
+description: "三种异步消息形态，三种不同的保证——选和你的领域真相相配的那一种。"
+---
+
+## 三种形态，三种真相
+
+人们说“消息队列”就像说“数据库”——好像它是同一种东西。它不是。队列、发布订阅、事件流解决的是不同的问题，做的是不同的承诺。把它们搞混，就是这么来的：在 发后即忘 的 主题 上搭账单系统，钱扣没扣全凭运气；或者让通知服务淹死在它根本不需要的有序日志里，为用不上的能力付存储账单。
+
+三种形态的根本区别只有一个：消息被投递之后会发生什么。队列会删掉它（或标记为已消费）。发布订阅在广播出去的那一刻就忘了它。事件流把它留下来，按顺序，作为一条耐久的事实。这个区别决定了其他一切：投递语义、消费模型、能回答的问题，全都从这里长出来。
+
+## 队列：一个活儿，一个工人
+
+队列是一张工作清单。生产者把任务丢进去，消费者一个个领走，一条消息、一个消费者。消费者干到一半崩了，消息回到队列，换个人再干。负载天然分散：加消费者，消化就变快；某个消费者慢，不影响其他的。
+
+队列适合命令——那些必须作为工作被完成的事。处理这笔支付，生成这份报表，压缩这张图，發这封邮件。每一条都是一个有主人的工作单元，队列的职责是保证工人死了活儿还在。这是它和发布订阅最本质的区别：队列关心“这件事有没有被做完”，不关心“有谁想知道”。
+
+它的保证很务实。至少一次 投递意味着消费者会看到一条消息一次或多次。注意措辞：不是零次或一次，是一次或多次。消息代理 宁可重复，不可丢失。于是“恰好一次”在分布式消息里是个神话——至少在消费端是。你能得到的最好结果是“至少一次 投递 + 幂等消费 = 效果上的恰好一次”。所以幂等不是优化，是使用队列的入场券。“扣 10 块钱”跑两遍，第二遍必须是空操作，而不是再扣一次。队列给你耐久和重试，幂等是你那一半的责任，推不掉。
+
+队列还有一套运维现实： poison message（一条永远处理失败的消息）会堵住消费进度，得有重试上限和死信队列；消费延迟是核心指标，堆积意味着消费者太慢或挂了；顺序只在单分区内保证，要全局有序就得牺牲并行度。这些不是细节，是你选队列那天就该知道的代价。
+
+## 发布订阅：一个事件，多种反应
+
+发布订阅是广播。生产者发布一个事件，所有感兴趣的订阅者各拿一份。生产者不知道谁在听，不关心谁在听，也不该关心。这种无知正是它的价值——这是你能买到的最干净的解耦。发布方和订阅方之间隔着一层“互不知晓”，两边可以按各自的节奏演进、发版、扩缩容。
+
+它适合领域事件——那些已经发生的事。订单已下，用户已注册，价格已变。五个不同的服务可能各自反应：账单扣款、仓库拣货、邮件发送、分析记录、风控检查。各演各的。加一个积分服务，它自己去订阅就行，订单服务一行代码都不用改，订单团队甚至不用知道积分团队的存在。这就是事件驱动架构承诺的扩展性。
+
+但发布订阅是健忘的。广播时正好挂掉的订阅者，永远错过那条消息——除非 消息代理 做了保留。它没有回放，没有“把周二之后的全给我”——如果有，那你其实搭的是流，只是管它叫 主题。还有两个常被低估的坑：跨分区的顺序是个谎言，依赖全局顺序的订阅者迟早被坑；扇出意味着每个订阅者收到每条消息的全量内容，这是个伪装过的隐私和成本问题——你真的想把订单全量数据广播给五个服务吗？
+
+所以发布订阅的纪律是：事件要小、要只描述“发生了什么”、不携带多余上下文；订阅者只拿自己需要的。事件是通知，不是数据搬运车。
+
+## 事件流：日志即真相
+事件流是一条耐久、有序的日志，记录发生过的一切。消息只追加、不删除。消费者按自己的节奏读，需要时可以倒带，新消费者可以从领域历史的开头开始读起。这是它和前两者的根本不同：队列和发布订阅活在现在，流同时活在过去。
+
+当过去很重要时，流是答案。审计追踪，事件溯源，从零重建状态的分析。凌晨三点出 缺陷，流让你可以修复代码、从头重放、重建读模型；新服务上线，把整个领域的完整历史喂给它就行，不用求老服务给你导数据。这种“时间旅行”能力，是其他形态给不了的。
+
+代价是承诺。日志是永恒的，所以你的事件 模式 也是永恒的，从第一天起就得有版本纪律——后面章节讲的契约演进在这里是生死线。保留策略是带着存储账单的业务决策：留多久？谁付钱？合规要求删数据时，不可变的 的日志怎么删？还有，“只管追加”很简单，直到你需要跨分区的事务，那时你会发现日志的简单是承重墙，动不得。流不是更高级的队列，它是另一种世界观：世界是一连串事实，而不是一堆当前状态。
+
+**代码：消费者只管幂等，管道杂务 交给框架。**一个 MassTransit 消费者草图。框架管 管道杂务——重试、并发、死信——处理器只管领域逻辑和幂等。注意这个例子处理的是命令（扣款），所以它站在队列的语义上：确保做完，而不是广播通知。
+
+```java
+package ch090;
+
+import java.math.BigDecimal;
+import java.util.UUID;
+import org.springframework.kafka.annotation.DltHandler;
+import org.springframework.kafka.annotation.KafkaListener;
+import org.springframework.kafka.annotation.RetryableTopic;
+import org.springframework.stereotype.Component;
+
+// 命令消费者：一个活儿，一个工人。幂等是你的活儿，框架替不了。
+class QueuesPubSubAndEventStreams01 {
+
+    @Component
+    static class ChargePaymentConsumer {
+        private final PaymentGateway gateway;
+        private final OrderStore orders;
+
+        ChargePaymentConsumer(PaymentGateway gateway, OrderStore orders) {
+            this.gateway = gateway;
+            this.orders = orders;
+        }
+
+        // 失败先重试 3 次（退避 1s→2s→4s），实在不行进死信主题人工看，别直接丢。
+        @RetryableTopic(attempts = 3, backoff = 1000)
+        @KafkaListener(topics = "payments.charge", groupId = "payments")
+        void consume(ChargePayment command) {
+            Order order = orders.get(command.orderId());
+
+            // at-least-once 意味着这段代码可能跑两遍。
+            // 这个守卫就是"效果上的恰好一次"，删掉它等于允许重复扣款。
+            if (order.paymentStatus() == PaymentStatus.CHARGED)
+                return;
+
+            gateway.charge(order.id(), order.total());
+            order.markCharged();
+            orders.save(order);
+        }
+
+        // 死信：重试耗尽后来这里——记日志、报警、人工介入。
+        @DltHandler
+        void handleDeadLetter(ChargePayment command) {
+            throw new UnsupportedOperationException(
+                "演示用：记录死信并报警，等待人工处理: " + command.orderId());
+        }
+    }
+
+    record ChargePayment(UUID orderId) {}
+
+    enum PaymentStatus { PENDING, CHARGED }
+
+    interface PaymentGateway {
+        void charge(UUID orderId, BigDecimal total);
+    }
+
+    interface OrderStore {
+        Order get(UUID orderId);
+        void save(Order order);
+    }
+
+    static class Order {
+        private final UUID id = UUID.randomUUID();
+        private PaymentStatus paymentStatus = PaymentStatus.PENDING;
+
+        UUID id() {
+            return id;
+        }
+
+        BigDecimal total() {
+            return BigDecimal.ZERO;
+        }
+
+        PaymentStatus paymentStatus() {
+            return paymentStatus;
+        }
+
+        void markCharged() {
+            paymentStatus = PaymentStatus.CHARGED;
+        }
+    }
+}
+```
+
+注册之后，队列就成了你的耐久层。重试策略、死信、并发都在配置里，不在业务代码里：
+
+```java
+package ch090;
+
+import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
+import org.apache.kafka.clients.admin.NewTopic;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.kafka.config.TopicBuilder;
+import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.stereotype.Component;
+
+// 消息基础设施的装配：主题、生产者，一处配好。
+class QueuesPubSubAndEventStreams02 {
+
+    @Configuration
+    static class KafkaTopics {
+        @Bean
+        NewTopic chargePayments() {
+            // 主题即契约：分区数、副本数在这里定，改它们是架构决策。
+            return TopicBuilder.name("payments.charge")
+                .partitions(6)
+                .replicas(3)
+                .build();
+        }
+    }
+
+    @Component
+    static class PaymentCommandPublisher {
+        private final KafkaTemplate<String, String> kafka;
+
+        PaymentCommandPublisher(KafkaTemplate<String, String> kafka) {
+            this.kafka = kafka;
+        }
+
+        CompletableFuture<Void> requestCharge(UUID orderId, String payload) {
+            // 键 = orderId：同一订单的命令进同一个分区，顺序有保障。
+            return kafka.send("payments.charge", orderId.toString(), payload)
+                .thenApply(r -> null);
+        }
+    }
+}
+```
+
+## 反模式
+
+反模式：只学一种消息技术，然后到处用它。
+
+Kafka 火的时候，一切消息都进 Kafka：命令、事件、通知，甚至请求-响应。RabbitMQ 熟的时候，事件流也被塞进 主题，靠"消息保留"假装它是日志。诱人：只学一套 API，只运维一个集群，"统一技术栈"在架构评审会上永远好听。
+
+代价是语义错配，而语义错配丢的是保证。用发布订阅发"扣款"命令，某个订阅者正好在发版重启——那条扣款它永远错过了，没有重放，没有死信，只有一笔没扣的钱和一句"我们以为发了"。用队列做事件广播，新服务上线想读历史？消息早被删了，你得求老服务给你导数据，所谓的"解耦"在这一刻现了原形。用流做请求-响应：消费者在日志尾巴上轮询等答案，延迟、复杂度、存储账单三样全收。
+
+还有运维账：分区、保留策略、重平衡是一套分布式日志的心智，拿它当队列使，poison message 堵住一个分区，整个消费组跟着抖。为用不上的能力付全套账单，还没买到真正需要的保证。
+
+治法：先写一句话——"这条消息的真相是什么"。是必须被做完的工作？进队列。是已经发生、爱谁听谁听的事实？进发布订阅。是明年还要回放的真相？进流。一句话写不出来，说明你还没想清楚，这时候选什么技术都是错的。
+
+**陷阱：** 把所有消息当成一种东西。发到发布订阅 主题 上的命令，丢掉了“一定会被处理”的保证，挂掉的订阅者就永远错过了那次扣款；发到队列里的领域事件，丢掉了它的观众，新服务上线时拿不到历史；明年还重要的事件，没进流就等于在你需要它的那个凌晨消失了。形态即语义——选和消息真相相配的形态，并且把每个消费者都当成“消息代理 一定会投递两次”来写，因为它迟早会的。至少一次 不是 消息代理 的缺陷，是物理定律，幂等是你唯一合法的回应。

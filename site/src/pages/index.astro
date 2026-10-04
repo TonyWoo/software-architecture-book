@@ -2,53 +2,65 @@
 import BaseLayout from "../layouts/BaseLayout.astro";
 import Header from "../components/Header.astro";
 import { config } from "virtual:nimbus/config";
-import { getIndexedEntries, withBase } from "@cloudflare/nimbus-docs/runtime";
+import { withBase } from "@cloudflare/nimbus-docs/runtime";
 
 // Prerender explicitly so the homepage stays a static route under
 // `output: "server"` — an adapter alone must add zero on-demand routes.
 export const prerender = true;
 
-// Link through each page's entry: its `url` follows the site's
-// `trailingSlash`, and a card whose page is gone drops out instead of 404ing.
-const cards = [
-  { id: "book/index", label: "全书导读", blurb: "十章 · 五十节" },
-  { id: "book/preface", label: "前言", blurb: "这本书写给谁" },
-  { id: "book/foundations-and-role/index", label: "第 1 章", blurb: "Foundations & Role" },
-];
-const entries = await getIndexedEntries();
-const links = cards.flatMap((card) => {
-  const entry = entries.find((e) => e.collection === "docs" && e.entry.id === card.id);
-  return entry ? [{ ...card, href: withBase(entry.url, import.meta.env.BASE_URL) }] : [];
-});
+const base = import.meta.env.BASE_URL;
+const csharpUrl = withBase("book/", base);
+const javaUrl = withBase("book-java/", base);
+const coverUrl = withBase("images/cover-elephant.png", base);
 ---
 
 <BaseLayout title={config.title} description={config.description}>
   <div class="flex flex-col min-h-screen">
     <Header />
-    <main id="main-content" tabindex="-1" class="flex-1 mx-auto max-w-2xl w-full px-6 py-24">
-      <h1
-        class="text-foreground leading-tight"
-        style="font-size: var(--nb-h1-size); font-weight: var(--nb-h1-weight); letter-spacing: var(--nb-h1-tracking);"
-      >
-        {config.title}
-      </h1>
-      <p class="mt-2 text-[1.0625rem] text-muted-foreground leading-relaxed">
-        {config.description}
-      </p>
-
-      {links.length > 0 && (
-        <div class="mt-8 grid grid-cols-1 gap-3 sm:grid-cols-3">
-          {links.map((link) => (
-            <a
-              href={link.href}
-              class="block rounded-lg border border-border p-4 transition-colors hover:border-border-strong no-underline"
-            >
-              <div class="font-medium text-foreground">{link.label}</div>
-              <div class="mt-0.5 text-sm text-muted-foreground">{link.blurb}</div>
-            </a>
-          ))}
+    <main id="main-content" tabindex="-1" class="flex-1 mx-auto max-w-4xl w-full px-6 py-16">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-10 items-center">
+        <!-- 封面 -->
+        <div class="flex justify-center">
+          <img
+            src={coverUrl}
+            alt="《白话软件架构设计》封面"
+            class="rounded-lg shadow-xl w-full max-w-sm"
+            loading="eager"
+          />
         </div>
-      )}
+        <!-- 标题与版本入口 -->
+        <div>
+          <h1
+            class="text-foreground leading-tight"
+            style="font-size: var(--nb-h1-size); font-weight: var(--nb-h1-weight); letter-spacing: var(--nb-h1-tracking);"
+          >
+            {config.title}
+          </h1>
+          <p class="mt-3 text-[1.0625rem] text-muted-foreground leading-relaxed">
+            {config.description}
+          </p>
+          <p class="mt-2 text-sm text-muted-foreground">
+            著 Tony Wu · tonywoo@outlook.com
+          </p>
+
+          <div class="mt-8 grid grid-cols-1 gap-3 sm:grid-cols-2">
+            <a
+              href={csharpUrl}
+              class="block rounded-lg border border-border p-5 transition-colors hover:border-border-strong no-underline"
+            >
+              <div class="font-medium text-foreground text-lg">C# 版</div>
+              <div class="mt-1 text-sm text-muted-foreground">.NET 技术栈 · 69 个示例</div>
+            </a>
+            <a
+              href={javaUrl}
+              class="block rounded-lg border border-border p-5 transition-colors hover:border-border-strong no-underline"
+            >
+              <div class="font-medium text-foreground text-lg">Java 版</div>
+              <div class="mt-1 text-sm text-muted-foreground">Spring Boot 技术栈 · 69 个示例</div>
+            </a>
+          </div>
+        </div>
+      </div>
     </main>
   </div>
 </BaseLayout>

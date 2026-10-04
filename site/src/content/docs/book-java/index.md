@@ -1,5 +1,5 @@
 ---
-title: "软件架构（Java版）"
+title: "白话软件架构设计（Java版）"
 description: "学会做出经得起变化、团队与规模考验的决策"
 sidebar:
   order: -100

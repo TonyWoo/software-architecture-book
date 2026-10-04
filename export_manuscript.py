@@ -10,7 +10,8 @@ Follows unclebob/bookwriter's bookwriter-spec.md export rules:
   very first node of the manuscript).
 - Front-matter headings get Pandoc's unnumbered marker " {-}".
 - Footnote labels are prefixed with the section id.
-- Body "#" headings are shifted by node depth.
+- Body "#" headings are shifted by node depth + 1 (so a section file's "#"
+  becomes "###", a proper subsection of its "##" section title).
 """
 import re
 import sys
@@ -77,7 +78,7 @@ def make_cover(title, subtitle, author, contact):
         B + "vspace{0.6cm}",
         "{" + B + "large " + subtitle + B + "par}",
         B + "vspace{0.8cm}",
-        B + "includegraphics[width=0.42" + B + "textwidth]{images/cover-beaver.png}",
+        B + "includegraphics[width=0.55" + B + "textwidth]{images/cover-elephant.png}" + B + "par",
         B + "vspace{0.8cm}",
         "{" + B + "Large" + B + "bfseries " + version_tex + B + "par}",
         B + "vfill",
@@ -129,7 +130,7 @@ def main():
         # manuscript/<chapter>/; the single-file manuscript.md lives at the
         # repo root, so rewrite to images/ for the export only.
         body = body.replace("](../../images/", "](images/")
-        body = shift_headings(body, depth)
+        body = shift_headings(body, depth + 1)
 
         if not first_node and unit in ("part", "chapter", "section"):
             parts.append('\n<div class=" page-break "></div>\n')

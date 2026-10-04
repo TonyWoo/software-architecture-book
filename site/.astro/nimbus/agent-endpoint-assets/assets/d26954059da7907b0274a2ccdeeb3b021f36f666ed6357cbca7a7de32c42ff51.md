@@ -1,0 +1,165 @@
+---
+title: "六边形、洋葱与整洁架构"
+description: "三个名字同一个思想——依赖指向内部，附一个基于端口的 Java 用例。"
+---
+
+> Documentation Index
+> Fetch the complete documentation index at: https://tonywoo.github.io/software-architecture-book/llms.txt
+> Use this file to discover all available pages before exploring further.
+
+# 六边形、洋葱与整洁架构
+
+六边形架构、洋葱架构、整洁架构，是同一个思想穿了三件不同的外套。我把它们当一个讲：应用核心坐在正中央，所有依赖都指向内部。核心对数据库、Web 框架、消息队列、文件系统一无所知。
+
+这不是分层方案，这是依赖纪律。框架和数据库是细节，业务规则才是宇宙中心。细节围着中心转，绝不反过来。
+
+它之所以重要，是因为框架会死、数据库会被换掉，而业务规则是资产。核心不依赖任何外部东西，你测试它就不用起数据库；把 JPA/Hibernate 换成 JdbcTemplate，把 REST 换成 gRPC，用例连眼皮都不眨。变更的成本被赶到了边缘——便宜的地方，而不是中央——贵的地方。
+
+## 依赖规则
+
+依赖指向内部。领域实体什么都不知道，用例认识实体，接口适配器认识用例，最外圈的控制器、仓储、网关认识用例。永远不许反向。
+
+画成同心圆看：实体在圆心，用例围着它们，接口适配器再往外，框架和驱动在最边缘。箭头可以从外圈穿到内圈，往外穿就是违规。
+
+让这成为可能的机制叫端口：一个由核心拥有的接口，适配器从外面来实现它。核心声明 `IOrderRepository`，基础设施项目提供 `SqlOrderRepository`。核心依赖的是自己拥有的抽象。这就是放大到架构尺度的依赖倒置原则。
+
+## Java里的端口与适配器
+
+用例是一个只干一件事的类。依赖通过构造器以端口的形式进来，处理方法只做一件事。
+
+```java
+package ch050;
+
+import java.util.Optional;
+import java.util.UUID;
+
+class HexagonalOnionAndCleanArchitecture01 {
+
+    // 核心：端口。归应用层所有，在外部实现。
+    interface OrderRepository {
+        Optional<Order> findById(OrderId id);
+        void save(Order order);
+    }
+
+    interface Clock {
+        java.time.Instant now();
+    }
+
+    record OrderId(UUID value) {}
+    record Order(OrderId id) {}
+}
+```
+
+```java
+package ch050;
+
+import java.time.Clock;
+import java.util.List;
+import java.util.UUID;
+
+class HexagonalOnionAndCleanArchitecture02 {
+
+    // 核心：用例。只依赖端口和领域实体。
+    static class PlaceOrder {
+        private final OrderRepository orders;
+        private final Clock clock; // java.time.Clock 就是 JDK 自带的时间端口，不用自己定义
+
+        PlaceOrder(OrderRepository orders, Clock clock) {
+            this.orders = orders;
+            this.clock = clock;
+        }
+
+        OrderId handle(PlaceOrderCommand cmd) {
+            var order = Order.create(cmd.customerId(), cmd.lines(), clock.instant());
+            orders.save(order);
+            return order.id();
+        }
+    }
+
+    interface OrderRepository {
+        void save(Order order);
+    }
+
+    record PlaceOrderCommand(UUID customerId, List<String> lines) {}
+    record OrderId(UUID value) {}
+
+    static class Order {
+        private final OrderId id;
+
+        private Order(OrderId id) {
+            this.id = id;
+        }
+
+        static Order create(UUID customerId, List<String> lines, java.time.Instant now) {
+            return new Order(new OrderId(UUID.randomUUID()));
+        }
+
+        OrderId id() {
+            return id;
+        }
+    }
+}
+```
+
+```java
+package ch050;
+
+import java.util.Optional;
+import java.util.UUID;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.stereotype.Repository;
+
+// 外圈：适配器。住在基础设施包里。
+class HexagonalOnionAndCleanArchitecture03 {
+
+    @Repository
+    static class SqlOrderRepository implements OrderRepository {
+        private final JdbcTemplate jdbc;
+
+        SqlOrderRepository(JdbcTemplate jdbc) {
+            this.jdbc = jdbc;
+        }
+
+        public Optional<Order> findById(OrderId id) {
+            var rows = jdbc.query("SELECT id FROM orders WHERE id = ?",
+                (rs, n) -> new Order(new OrderId(rs.getObject("id", UUID.class))),
+                id.value());
+            return rows.stream().findFirst(); // 行记录到领域对象的映射只住在这里
+        }
+
+        public void save(Order order) {
+            jdbc.update("INSERT INTO orders (id) VALUES (?)", order.id().value());
+        }
+    }
+
+    interface OrderRepository {
+        Optional<Order> findById(OrderId id);
+        void save(Order order);
+    }
+
+    record OrderId(UUID value) {}
+    record Order(OrderId id) {}
+}
+```
+
+看 `PlaceOrder` 不知道什么：没有 `DbContext`，没有 HTTP，没有配置，没有静态时钟。给它一个内存版的 `IOrderRepository` 和一个冻住的 `IClock`，所有业务规则几毫秒就测完，不用容器、不用数据库、不用网络。这种可测试性不是副作用，它是依赖规则成立的证明。
+
+装配根（通常是 `Program.cs`）负责把端口和适配器接上线。那是核心与基础设施唯一碰面的地方。
+
+## 三个名字，一种纪律
+
+六边形管核心叫"应用"，边界叫"端口"，适配器从外面插进来；洋葱画同心圆；整洁架构给圆环起名：实体、用例、接口适配器、框架。词汇不同，规则就一条：圆心里的东西，对边缘的东西一无所知。
+
+选一个你的团队愿意用的词汇，然后别再争论画哪种图。图不是架构，箭头的方向才是。
+
+## 反模式
+
+六边形最常见的烂法，是给 CRUD 也穿全套铠甲。一个纯粹的"把表单存进数据库"功能，也要接口、用例、映射、注册走一遍。新人入职三天，还没找到"真正干活"的那行代码在哪。业务规则只有一句"字段必填"，架构却有七个文件护航。
+
+它诱人，是因为对称的美感和"最佳实践"的安全感：每个用例长得一样，评审时不用思考，每行代码都有"位置"。而真实的代价是变更税：改一个字段要动四层映射，调试要跳三次接口，删一个功能要收拾一堆仪式代码。更糟的是虚假的解耦——接口只有一个实现，却声称"可替换"；测试里 模拟 了七个接口，测的还是那一句"字段必填"。
+
+记住正文里那句话：这种风格是为"领域逻辑是资产"的地方准备的。定价引擎配六边形，是投资；留言板配六边形，是交智商税。架构风格和业务复杂度必须同级，否则仪式感就是开销。
+
+**权衡：** 代价是仪式感。每次穿过边界，都要一个接口、一次映射、一行注册。对简单的 CRUD 应用，这纯属开销——为了把一行数据从表搬到屏幕，你要写三倍代码，而业务规则从来没复杂到值得保护。把这种风格用在领域逻辑是资产的地方：定价、排程、风控，任何出 缺陷 会真金白银赔钱的地方。其他地方，仪式感会给每次变更征税，却什么都买不到。
+
+Source: https://tonywoo.github.io/software-architecture-book/book-java/styles-and-patterns/hexagonal-onion-and-clean-architecture/index.mdx

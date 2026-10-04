@@ -1,0 +1,147 @@
+---
+title: "复杂度预算"
+description: "每个系统能负担的复杂度都是有限的——花在能让你赢的地方。"
+---
+
+## 复杂度是有限资源
+
+每个系统都有一笔复杂度预算。它是团队在不把整个东西搞塌的前提下，能理解、能维护、能 调试 的聪明总量。预算由团队规模、经验、工具链和领域共同决定。借不来，超了就得还：线上事故、归零的迭代速度、不敢碰代码的开发者。
+
+预算这个视角会改变问题。不再是"这个设计好不好"，而是"这个设计值不值"。分布式 saga 是个不错的设计，它值预算的百分之十吗？如果订单履约是你的竞争优势，也许值。如果只是发一封欢迎邮件，肯定不值。
+
+## 本质复杂度 vs. 偶然复杂度
+
+Fred Brooks 把复杂度分成两种。本质复杂度属于问题本身：税法是真的复杂，你的税务引擎也会复杂。偶然复杂度属于解法：你的税务引擎里的偶然复杂度，是那个手写的 ORM，是包着布尔值的四层抽象，是给一个本来没有网络分区问题的地方做微服务拆分、凭空造出来的网络分区。
+
+本质复杂度消灭不了，只能管理——隔离它、命名它、派最强的人去啃。偶然复杂度是纯浪费，猎杀它是架构师的本职工作。你加的每一层、每个服务、每个框架，在自证清白之前都是偶然复杂度。让它自证：它吸收了哪部分本质复杂度？如果答案是"没有，但以后也许有用"，删掉它。
+
+```java
+package ch040;
+
+import java.util.List;
+
+class ComplexityBudget01 {
+
+    // 偶然复杂度：一个函数就能干的事，非要上个框架。
+    // 三个接口、两个装饰器、一个工厂——就为了校验个邮箱。
+    interface ValidationRule<T> {
+        boolean isValid(T value);
+    }
+
+    interface ValidationPipeline<T> {
+        boolean run(T value);
+    }
+
+    static class EmailRule implements ValidationRule<String> {
+        public boolean isValid(String value) {
+            return value.contains("@");
+        }
+    }
+
+    static class ValidationPipelineImpl<T> implements ValidationPipeline<T> {
+        private final List<ValidationRule<T>> rules;
+
+        ValidationPipelineImpl(List<ValidationRule<T>> rules) {
+            this.rules = rules;
+        }
+
+        public boolean run(T value) {
+            return rules.stream().allMatch(r -> r.isValid(value));
+        }
+    }
+
+    // 本质复杂度，诚实地表达：规则就是规则。
+    static class EmailValidation {
+        static boolean isValid(String email) {
+            return email != null && !email.isBlank() && email.contains("@");
+        }
+    }
+}
+```
+
+## 把预算花在能让你赢的地方
+
+纪律是这样的：有意识地分配复杂度。系统里让你赢的部分——定价引擎、推荐算法、客户为之付钱的东西——拿最大头的预算。它们配得上精巧的设计、考究的抽象和最强的工程师。其他一切都用最简单的东西：无聊的 CRUD、现成的库、一张数据库表。
+
+但大多数团队的做法正好反过来。预算平均分配，或者更糟，花在基础设施的流行款上——给配置页面上事件溯源，给定时任务上 Kubernetes——而真正的业务逻辑烂在一个人人看不懂的三千行方法里。审计你的代码库就问一个问题：复杂度花哪儿了？如果花在了没差异化的地方，你被抢劫了，劫匪就是你自己的架构。
+
+```java
+package ch040;
+
+import java.io.IOException;
+import java.io.UncheckedIOException;
+import java.math.BigDecimal;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardOpenOption;
+import java.time.Instant;
+import java.util.List;
+
+class ComplexityBudget02 {
+
+    // 预算花得值：复杂度集中在差异化点上。
+    // 这个定价引擎就是业务本身，它配得上这份讲究。
+    static class DynamicPricingEngine {
+        Money quote(Order order, MarketConditions market) {
+            var base = order.lines().stream()
+                .map(l -> l.unitPrice().multiply(BigDecimal.valueOf(l.quantity())))
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+            BigDecimal demandFactor;
+            if (market.demandIndex().compareTo(new BigDecimal("0.8")) > 0) {
+                demandFactor = new BigDecimal("1.15");
+            } else if (market.demandIndex().compareTo(new BigDecimal("0.5")) > 0) {
+                demandFactor = new BigDecimal("1.05");
+            } else {
+                demandFactor = new BigDecimal("0.95");
+            }
+
+            // 枚举 switch：分支穷尽，编译器帮你检查漏了哪种会员。
+            BigDecimal loyaltyDiscount = switch (order.customer().tier()) {
+                case GOLD -> new BigDecimal("0.90");
+                case SILVER -> new BigDecimal("0.95");
+                default -> BigDecimal.ONE;
+            };
+
+            return new Money(base.multiply(demandFactor).multiply(loyaltyDiscount));
+        }
+    }
+
+    // 预算省下来：审计日志是没差异化的管道。
+    // 无聊、直白、一个方法，不上框架。
+    static class AuditLog {
+        private final Path path;
+
+        AuditLog(Path path) {
+            this.path = path;
+        }
+
+        void append(String entry) {
+            try {
+                Files.writeString(path,
+                    Instant.now() + " " + entry + System.lineSeparator(),
+                    StandardOpenOption.CREATE, StandardOpenOption.APPEND);
+            } catch (IOException e) {
+                throw new UncheckedIOException(e);
+            }
+        }
+    }
+
+    record Money(BigDecimal amount) {}
+    record OrderLine(BigDecimal unitPrice, int quantity) {}
+    record Order(List<OrderLine> lines, Customer customer) {}
+    record Customer(Tier tier) {}
+    enum Tier { GOLD, SILVER, BRONZE }
+    record MarketConditions(BigDecimal demandIndex) {}
+}
+```
+
+## 反模式
+
+最常见的错误用法是预算错配，而且永远是同一个方向：钱花在看得见的、时髦的地方，而不是赚回钱的地方。给配置页上事件溯源，给定时任务上 Kubernetes，给日志系统写一套插件架构——而核心的定价逻辑烂在一个三千行的方法里，没人敢动。
+
+诱人之处很实在：这是"展示型"复杂度。技术分享、招聘、代码评审，都能拿出来讲。一个默默把定价引擎收拾干净的改动，谁夸你？
+
+真实的代价是复式记账。展示型复杂度占的心智成本全是真的——部署、监控、升级、调试，超预算的地方最后以线上事故结账。而真正的差异化部分因为预算被挤占，只能继续在泥浆里滚——你的护城河，就这样被自己的架构偷走了。
+
+**权衡：** 复杂度预算是个判断，不是测量。没人能告诉你预算是 100 个单位、saga 花 12 个。它的价值在于逼出那场对话：这东西花我们多少，值吗？从不问这个问题的团队闭着眼花钱，在生产环境里发现透支。问了的团队——哪怕在设计评审里粗估、哪怕靠拍脑袋——最终会把复杂度集中在赚得回本的地方。预算不是一个数字，是一种习惯。

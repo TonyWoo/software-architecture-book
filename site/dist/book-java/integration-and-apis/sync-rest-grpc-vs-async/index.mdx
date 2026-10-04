@@ -1,0 +1,150 @@
+---
+title: "同步（REST、gRPC）与异步"
+description: "同步调用真正的代价不是延迟——是时间耦合，而且它会复利。"
+---
+
+## 时间耦合才是真正的代价
+
+每一次同步调用都是一场人质事件。你的服务调用另一个服务并等待返回，这一刻两个服务在时间上被绑死了：它们必须在同一时刻都活着、都健康、都够快，否则谁也别想干活。调用本身很便宜，耦合很贵。
+
+这正是大多数人看漏的地方。他们测一下往返延迟，看到 40 毫秒，就放心了。他们没想过凌晨两点支付网关挂掉时，你的结账页面会跟着挂——不是你的代码坏了，是你在等别人的代码。延迟是性能问题，时间耦合是生存问题。性能问题让你慢，生存问题让你死。
+
+更隐蔽的是，时间耦合会传染。一个服务为了“保险”给下游加超时和重试，看起来很负责，实际上是把“我必须等你”写进了系统。等的人越多，系统中同时被占住的线程、连接、内存就越多，一个慢的下游能拖垮整条调用链的上游。这不是理论，是每个经历过 级联故障 的团队都交过的学费。
+
+所以问题从来不是“同步够快吗”，而是“对方挂掉时我能不能跟着挂”。答不上来，就别用同步。
+
+## 同步：简单、清晰、脆弱
+
+同步调用有一个巨大优点：容易推理。请求，响应，结束。代码从上往下读就知道发生了什么。调试直接，编译器、类型系统、调试器都站在你这边。新人第一天就能看懂，值班的人半夜也能看懂。这种清晰度是真实的生产力，别小看它。
+
+REST over HTTP 是默认方言。它的契约是弱契约——JSON、状态码、文档，靠约定维持。好处是通用：curl 是全世界的客户端，浏览器、合作伙伴、临时脚本都能调。坏处是约定会 漂移：文档说返回数字，实际给了字符串，编译器帮不了你，线上 500 替你发现。
+
+gRPC 是更严格的那一种：二进制协议、IDL 定义的契约、生成的客户端。字段类型写错编译期就拦下，传输更快，流式调用是原生支持。代价是门槛：两边都要用支持 gRPC 的栈，调试不如 curl 一行命令痛快，浏览器直调需要额外铺垫。
+
+选型的诚实标准是：谁消费？消费方是你控制不了的——公开 API、外部合作伙伴、前端直调——选 REST，因为通用性压倒一切。两端都在你手里、都是内部服务、要性能要类型安全——选 gRPC。纠结“哪个更现代”没有意义，控制权才是答案。
+
+但无论 REST 还是 gRPC，同步链都会腐烂。A 调 B，B 调 C，C 调 D，一次请求同时占着四台机器的线程，除了等待什么都不做。延迟叠加，超时相乘，失败模式花样百出。A 给 B 设 30 秒超时，B 给 C 设 30 秒超时，C 挂了。恭喜：一个死的服务吃掉了三台活机器的所有线程。整条链退化成它最弱一环的可靠性，爆炸半径是所有人。微服务做久了的团队，最后都会给调用链定规矩：超时预算逐层递减、熔断器、舱壁隔离——这些不是优化，是给同步调用买的保险，而保费本身就说明这东西有多贵。
+
+## 异步：解耦、耐久、费脑
+
+异步通信斩断了时间上的绑定。你把消息交给 消息代理，转身就走。消费者什么时候有空什么时候处理。生产者和消费者这辈子都不需要同时活着。
+
+这买到了两样花钱也买不到的东西：耐久和独立。消息在消费者崩溃后还活着，意味着凌晨两点不用起床补数据。而拥有接收方的团队周二想发版就发版，不用跟发送方的团队对齐发版窗口——这就是组织级的速度，比任何延迟数字都值钱。康威定律在这里是正向的：通信方式决定了团队的协作方式，异步让团队真正独立。
+
+代价付在推理上。没有请求-响应了，只有请求和祈祷。调用方不知道活儿什么时候干完，干得对不对。你得为 至少一次 投递、幂等处理器、死信队列做准备，还得接受一个不舒服的事实：“已发送”和“已收到”是两个独立的事实，各有各的失败模式。堆栈跟踪过不了 消息代理 的边界，调试变成考古：一个订单没发货，你要从生产者的发送日志、消息代理 的投递记录、消费者的处理日志里拼出真相。
+
+还有心智负担：异步系统里没有“当前状态”，只有“最终一致”。产品经理问“用户现在到底扣没扣款”，你的回答是“消息已发送，消费者应该快处理完了”。这种不确定性会渗进需求、测试、客服话术的每一个角落。选择异步，就是选择把“不确定”当成一等公民来设计。
+
+## 各自适合什么，以及代码长什么样
+
+用同步，当调用方是真需要答案才能继续往下走。登录校验、权限检查、“这张券存在吗”——这些是问题，问题就想要答案。两边都简单、都挨着、都归一个团队时也用同步：耦合真实存在，但爆炸半径可控，一个团队能兜得住。
+
+用异步，当干的活是命令而不是问题。“订单已下”“款已收到”“把收据发出去”——调用方不需要等收据也能继续。生产者和消费者扩缩容节奏不同、各自独立失败、或者分属必须独立发版的团队时，异步也赢。
+
+有个试金石：下游挂了，调用方还能不能做点有用的事？能——比如先接单、晚点再履约——那同步调用就是一笔你本不必付的耦合税。
+
+代码上，两种同步方言长这样。Spring MVC 回答“问题”，gRPC 收紧“契约”：
+
+```java
+package ch090;
+
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+// REST：最通用的问题——"这张券存在吗？"
+// 任何人拿 curl 就能调，这就是它的全部优点，也是它的全部约束。
+class SyncRestGrpcVsAsync01 {
+
+    @RestController
+    @RequestMapping("/coupons")
+    static class CouponController {
+        private final CouponStore store;
+
+        CouponController(CouponStore store) {
+            this.store = store;
+        }
+
+        @GetMapping("/{code}")
+        ResponseEntity<Coupon> get(@PathVariable String code) {
+            Coupon coupon = store.find(code);
+            return coupon == null
+                ? ResponseEntity.notFound().build()
+                : ResponseEntity.ok(coupon);
+        }
+    }
+
+    interface CouponStore {
+        Coupon find(String code);
+    }
+
+    record Coupon(String code, int discountPercent) {}
+}
+```
+
+```java
+package ch090;
+
+import io.grpc.stub.StreamObserver;
+
+// gRPC：类型化的契约——生成客户端，二进制传输。
+// 两端都归你管时，它比 REST 更快、更严格，错字段编译期就拦下。
+//
+// 注意：真实项目里 CouponRequest / CouponReply / CouponServiceBase
+// 由 protoc 从 .proto 文件生成，这里手写示意其形状。
+class SyncRestGrpcVsAsync02 {
+
+    // proto：
+    //   message CouponRequest { string code = 1; }
+    //   message CouponReply { bool valid = 1; int32 discount = 2; }
+    record CouponRequest(String code) {}
+    record CouponReply(boolean valid, int discount) {}
+
+    // 生成基类：proto 的 service 定义变成抽象类，业务实现继承它。
+    static abstract class CouponServiceBase {
+        abstract void validate(CouponRequest request,
+                               StreamObserver<CouponReply> responseObserver);
+    }
+
+    static class CouponService extends CouponServiceBase {
+        private final CouponStore store;
+
+        CouponService(CouponStore store) {
+            this.store = store;
+        }
+
+        @Override
+        void validate(CouponRequest request, StreamObserver<CouponReply> responseObserver) {
+            Coupon coupon = store.find(request.code());
+            responseObserver.onNext(new CouponReply(
+                coupon != null,
+                coupon == null ? 0 : coupon.discountPercent()));
+            responseObserver.onCompleted();
+        }
+    }
+
+    interface CouponStore {
+        Coupon find(String code);
+    }
+
+    record Coupon(String code, int discountPercent) {}
+}
+```
+
+至于命令——“订单已下”——上面两种都不对。那条消息属于 消息代理，调用方不该等答案。下一节讲的就是它的归宿。
+
+## 反模式
+
+反模式：同步是默认选项。
+
+写同步代码太舒服了。请求，响应，断言，一行行往下读。测试好写，演示 好看，新人第一天就能上手。于是很多团队不知不觉把同步当成默认：查库存调一下，扣款调一下，发通知调一下，一次下单穿过七个服务，全是 HTTP。没人决定过要这么干，它只是最顺手的写法。
+
+诱人之处在于它把代价藏起来了。开发环境里七个服务都在本机，延迟两毫秒。代价只在生产环境、只在凌晨两点结账：支付网关抖一下，你的下单接口跟着超时；超时引发重试，重试堆积连接，堆积吃掉线程池，最后整条链一起死。值班的人看到的不是"支付慢了"，是"全站挂了"。而起因只是当初写代码时顺手用了最容易的那种调用。
+
+更贵的是组织代价。同步链把七个团队绑进同一个发版节奏：下游改个超时，上游全得跟着调、跟着发版。微服务拆了，节奏还是单体的——耦合从代码搬到了时间里，更难拆。
+
+治法不复杂：写每个同步调用前，先回答"对方挂掉时我能不能跟着挂"。答"能"，用。答"不能"，换异步，或者先把超时预算、熔断、舱壁配好再上线。默认同步的团队，最后都会在凌晨两点学会这句话，区别只是学费多少。
+
+**权衡：** 同步用脆弱换清晰——每一次调用都是在赌对方活着，而连环的赌注总在最糟的时刻输光，你还得为这份脆弱买超时、熔断、舱壁全套保险。异步用复杂换韧性——你拿考古代替堆栈跟踪，拿“大概、最终”代替确定性，还要把不确定性写进需求和测试。选哪个，不看哪个在 演示 里更好看，看谁需要答案、什么时候需要，以及对方挂掉时你想不想一起死。

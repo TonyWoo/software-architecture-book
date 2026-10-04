@@ -1,0 +1,95 @@
+---
+title: "质量属性"
+description: "-ilities 是系统必须\"成为\"什么；量化不了的 -ility 是愿望，不是需求。"
+---
+
+功能需求告诉你系统做什么。质量属性——那些 "-ility"——告诉你它必须做得多好，以及在什么样的折磨之下。两个系统可以实现完全相同的功能，却是完全不同的架构，因为它们的 -ility 不同。原型和支付系统不是靠功能区分的，是靠可用性、安全性和可审计性区分的。
+
+## 真正驱动结构的 -ilities
+
+-ility 的完整清单长到没用。下面这些是会改变架构的：
+
+**可扩展性（Scalability）**——10 倍负载下系统的表现。驱动无状态、分区、异步处理。
+
+**可用性（Availability）**——系统能服务请求的时间占比。驱动冗余、故障转移，以及"请求路径上不放单点"的铁律。
+
+**可维护性（Maintainability）**——改系统的便宜程度。驱动模块边界、依赖规则，以及本书讲 整洁代码 的一切。
+
+**可测试性（Testability）**——验证行为的便宜程度。驱动依赖注入、接缝、策略与机制的分离。
+
+**可部署性（Deployability）**——发布的安全程度和频率。驱动可独立部署的单元、特性开关、向后兼容的契约。
+
+**安全性（Security）**——系统抵抗对手的能力。驱动认证边界、最小权限，以及"任何一层都不信任输入"的决定。
+
+**性能（Performance）**——通常指负载下的延迟有多快。驱动缓存、索引，以及把复杂度花在哪里的痛苦选择。
+
+注意每个 -ility 都把结构往不同方向推。可扩展性要无状态节点，安全性要关卡和检查。它们永远在打架，调停这场架就是架构师真正的工作。
+
+## 量化不了的，就不算拥有
+
+"系统必须快"不是需求，是愿望。-ility 只有被量化成场景之后才能驱动设计：刺激、环境、响应、度量。
+
+反面："系统必须可扩展。"
+正面："5000 个并发结账用户（刺激），在当前集群上（环境），结账 p99 延迟保持在 800ms 以内（度量）。"
+
+量化版告诉你该建什么：压测、弹性策略、结账路径上不许有同步调用慢依赖。模糊版什么都不告诉你，团队会在生产环境、凌晨两点、从愤怒的客户那里发现真正的数字。
+
+把它们写成质量属性场景，贴在团队看得见的地方。然后把关键的变成可执行的检查。不被测试的 -ility 是谣言。
+
+## 让 -ility 可执行
+
+下面是一个延迟预算——把 NFR 变成测试，架构漂移时构建直接变红：
+
+```java
+package ch020;
+
+import java.time.Duration;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+
+// 延迟预算：下单接口 p99 必须 < 800ms。
+// 每晚在预发布环境、用录制流量加压后运行。
+class QualityAttributesAndIlities01 {
+
+    private static final int P99_BUDGET_MS = 800;
+
+    @Test
+    void placeOrderP99UnderBudget() throws Exception {
+        List<Long> latencies = LoadDriver.placeOrders(500, Duration.ofMinutes(5));
+
+        var sorted = new ArrayList<>(latencies);
+        Collections.sort(sorted);
+        long p99 = sorted.get((int) (sorted.size() * 0.99));
+
+        Assertions.assertTrue(p99 < P99_BUDGET_MS,
+            "p99 延迟 " + p99 + "ms 超出预算 " + P99_BUDGET_MS + "ms。" +
+            "架构漂移嫌疑：检查下单热路径是否新增了同步依赖。");
+    }
+
+    // 压测驱动：真实实现对接压测平台，这里只保留签名示意调用形状。
+    static class LoadDriver {
+        static List<Long> placeOrders(int concurrentUsers, Duration duration) {
+            throw new UnsupportedOperationException("测试桩：对接真实压测平台");
+        }
+    }
+}
+```
+
+这个测试干两件事：验证 -ility，而且失败信息直接指向头号嫌疑人——有人在热路径里加了同步调用。架构靠测试守护，不靠没人读的文档。
+
+为什么重要：我调查过的每一次生产事故，背后都是一个没被量化的 -ility。系统"应该"是可用的、快的、安全的，但没人把这些词写成数字，所以没人发现它们什么时候不再是真的。
+
+## 反模式
+
+最常见的错误用法：售前式承诺——把所有 -ility 拉满写进方案。
+
+投标书写"99.99% 可用、毫秒级延迟、军工级安全"，没人敢质疑。立项后发现每个 -ility 都要花钱：可用性要多机房，安全要审计链，性能要压测。钱和人都不够，每个都做一半。
+
+为什么诱人：全都要，在会上永远正确。说"这个我们做不到"需要勇气，说"我们全都要"只需要一张嘴。
+
+真实代价：没有优先级等于没有架构。资源摊成薄饼，真正决定生死的 -ility 拿到的投入，和"管理后台配色"差不多。凌晨两点的事故不认投标书，只认实际建了什么。
+
+**陷阱：** 把每个 -ility 都拉满，就是什么都建不出来。你最大化的每个 -ility 都在吃掉别的：可用性吃复杂度，安全性吃速度，性能吃可维护性。挑出决定生死的两三个，量化它们，其他的做到"够用"就行。承诺"高可用、极快、还极好维护"的架构师在卖独角兽。把你的优先级排序写出来，这个排序本身就是架构。
