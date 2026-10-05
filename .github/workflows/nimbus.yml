@@ -54,12 +54,12 @@ jobs:
       - run: npm run build
         working-directory: site
 
-      - name: 检查页面数（每版 82：前言 1 + 10 章 × 8 + 落地页 1）
+      - name: 检查页面数（每版 90：前言 1 + 11 章 × 8 + 落地页 1）
         run: |
           n1=$(find src/content/docs/book -name '*.md' | wc -l)
           n2=$(find src/content/docs/book-java -name '*.md' | wc -l)
           echo "book pages: $n1, book-java pages: $n2"
-          test "$n1" -eq 82 && test "$n2" -eq 82
+          test "$n1" -eq 90 && test "$n2" -eq 90
         working-directory: site
 
       - uses: actions/upload-pages-artifact@v3
