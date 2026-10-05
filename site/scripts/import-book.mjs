@@ -31,12 +31,13 @@ function readBase() {
 }
 const SITE_BASE = readBase();
 
-// 章节插画：images/ch01-abstract.png … ch10-abstract.png 拷到 public/images/
+// 章节插画：images/ch01-abstract.png … ch11-abstract.png 拷到 public/images/
+// PlantUML 图：images/puml/*.png 拷到 public/images/puml/
 // （public 目录映射到站点根，构建后位于 <base>/images/）
 function copyChapterImages() {
   mkdirSync(PUBLIC_IMAGES_DIR, { recursive: true });
   let n = 0;
-  for (let i = 1; i <= 10; i++) {
+  for (let i = 1; i <= 11; i++) {
     const name = `ch${String(i).padStart(2, '0')}-abstract.png`;
     const src = join(IMAGES_DIR, name);
     if (existsSync(src)) {
@@ -44,7 +45,17 @@ function copyChapterImages() {
       n++;
     }
   }
-  console.log(`import-book: 拷贝章节插画 ${n} 张`);
+  // PlantUML 图
+  const pumlSrc = join(IMAGES_DIR, 'puml');
+  const pumlDst = join(PUBLIC_IMAGES_DIR, 'puml');
+  mkdirSync(pumlDst, { recursive: true });
+  for (const f of readdirSync(pumlSrc)) {
+    if (f.endsWith('.png')) {
+      writeFileSync(join(pumlDst, f), readFileSync(join(pumlSrc, f)));
+      n++;
+    }
+  }
+  console.log(`import-book: 拷贝图片 ${n} 张`);
 }
 // 正文里的 ../../images/xxx 改写为 <base>/images/xxx（Astro 不会自动给
 // markdown 里的根绝对路径加 base，必须手动带上）
