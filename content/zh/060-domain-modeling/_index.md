@@ -4,7 +4,7 @@ title: "第 5 章 领域建模"
 unit: chapter
 role: body
 status: draft
-synopsis: 把业务本身建模成软件 —— 战略 DDD、限界上下文、聚合、统一语言，以及防腐烂的边界。
+synopsis: 把业务本身建模成软件 —— 战略 DDD、限界上下文、聚合、统一语言，以及防止边界被侵蚀的手段。
 ---
 
 ![本章插画](../../images/ch05-abstract.png)

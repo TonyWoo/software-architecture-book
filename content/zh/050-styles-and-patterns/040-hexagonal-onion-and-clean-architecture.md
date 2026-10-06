@@ -11,7 +11,7 @@ unit: section
 
 这不是分层方案，这是依赖纪律。框架和数据库是细节，业务规则才是宇宙中心。细节围着中心转，绝不反过来。
 
-它之所以重要，是因为框架会死、数据库会被换掉，而业务规则是资产。核心不依赖任何外部东西，你测试它就不用起数据库；把 {{stack:Entity Framework|JPA/Hibernate}} 换成 {{stack:Dapper|JdbcTemplate}}，把 REST 换成 gRPC，用例连眼皮都不眨。变更的成本被赶到了边缘——便宜的地方，而不是中央——贵的地方。
+它之所以重要，是因为框架会过时、数据库会被换掉，而业务规则是资产。核心不依赖任何外部东西，你测试它就不用起数据库；把 {{stack:Entity Framework|JPA/Hibernate}} 换成 {{stack:Dapper|JdbcTemplate}}，把 REST 换成 gRPC，用例连眼皮都不眨。变更的成本被赶到了边缘——便宜的地方，而不是中央——贵的地方。
 
 # 依赖规则
 

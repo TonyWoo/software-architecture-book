@@ -4,7 +4,7 @@ title: "第 11 章 实践与沟通"
 unit: chapter
 role: body
 status: draft
-synopsis: 架构的生死取决于你如何练习它、如何沟通它——图、决策、评审，以及把开发者变成架构师的习惯。
+synopsis: 架构的成败取决于你如何练习它、如何沟通它——图、决策、评审，以及把开发者变成架构师的习惯。
 ---
 
 ![本章插画](../../images/ch11-abstract.png)
