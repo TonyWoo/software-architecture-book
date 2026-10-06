@@ -5,7 +5,7 @@ sidebar:
   order: 570
   label: "战争故事"
   group:
-    label: "Java 版 · 第7章 · 第 7 章 分布式系统"
+    label: "Java 版 · 第7章 · 分布式系统"
 ---
 
 ## 那次我们把一次抖动变成了十倍流量

@@ -5,7 +5,7 @@ sidebar:
   order: 210
   label: "依赖倒置 / 端口与适配器"
   group:
-    label: "Java 版 · 第3章 · 第 3 章 设计原则"
+    label: "Java 版 · 第3章 · 设计原则"
 ---
 
 ## 依赖抽象，而不是具体

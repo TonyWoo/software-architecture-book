@@ -5,7 +5,7 @@ sidebar:
   order: 250
   label: "战争故事"
   group:
-    label: "Java 版 · 第3章 · 第 3 章 设计原则"
+    label: "Java 版 · 第3章 · 设计原则"
 ---
 
 ## 那个抽象，我们叫它"纪念碑"

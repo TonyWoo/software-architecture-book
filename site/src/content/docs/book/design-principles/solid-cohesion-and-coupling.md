@@ -1,20 +1,24 @@
 ---
 title: "SOLID、内聚与耦合"
-description: "把五个 SOLID 规则讲成依赖管理，内聚与耦合才是底下真正的两股力量。"
+description: "把五个 SOLID 规则逐条讲透，每条配代码对比和类图，内聚与耦合才是底下真正的两股力量。"
 sidebar:
   order: 190
   label: "SOLID、内聚与耦合"
   group:
-    label: "C# 版 · 第3章 · 第 3 章 设计原则"
+    label: "C# 版 · 第3章 · 设计原则"
 ---
 
 ## 五条规则，底下是两股力量
 
 SOLID 是五条原则。很多人背得下缩写，却很少问它们到底在讲什么。它们只讲一件事：依赖。谁知道谁，一个模块变了，哪些模块会跟着坏。SOLID 的每个字母都是一条排列依赖的规则，目的是让改动的影响停留在局部。
 
-## 单一职责：只有一个改变的理由
+下面五条逐条讲透。每条都配反例和正例的代码对比，外加一张类图——图里左边是坏味道，右边是解法。
+
+## S：单一职责——只有一个改变的理由
 
 一个类应该有且只有一个改变的理由。注意：不是"只做一件事"，而是"只有一个改变的理由"。一个既算账又生成 PDF 的报表类，会因为两种完全不同的需求被修改——业务规则变了要改它，输出格式变了也要改它，改它的可能是两个团队、两种节奏。每次动手都有可能弄坏另一边。
+
+![单一职责](/software-architecture-book/images/puml/solid-s.png)
 
 ```csharp
 // 两个改变的理由：计算逻辑和报表格式。
@@ -37,13 +41,13 @@ public class InvoicePdfRenderer
 }
 ```
 
-## 开闭、里氏替换、接口隔离：扩展的三条规则
+判断方法很简单：描述这个类是干什么的，如果你用了"和"、"同时"、"顺便"，它大概率扛了两个职责。拆开的代价是多一个类，收益是以后改计算逻辑的人永远不用担心弄坏 PDF 生成。
 
-开闭原则说，软件实体应该对扩展开放、对修改关闭。加行为靠加代码，而不是改旧代码。下面的策略模式就是教科书做法：新的折扣政策以新类的形式到来，永远不需要在那个神圣方法里加 `if` 分支。
+## O：开闭原则——对扩展开放，对修改关闭
 
-里氏替换说，子类型必须能在不破坏调用者的前提下替换基类型。如果你的 `ReadOnlyFile` 在 `Write` 时抛 `NotSupportedException`，那它就是在谎称自己是个 `File`。这个继承关系是个谎言，每个调用者都得防着它。
+软件实体应该对扩展开放、对修改关闭。加行为靠加代码，而不是改旧代码。最经典的场景是策略：新的折扣政策以新类的形式到来，永远不需要在那个神圣方法里加 `if` 分支。
 
-接口隔离说，客户端不应该依赖它不用的方法。一个臃肿的 `IWorker` 同时有 `Work()` 和 `Eat()`，会逼着机器人实现类去实现"吃午饭"。把接口拆开，客户端只依赖它真正调用的东西。
+![开闭原则](/software-architecture-book/images/puml/solid-o.png)
 
 ```csharp
 public interface IDiscountPolicy
@@ -72,11 +76,134 @@ public class Checkout
 }
 ```
 
+关键点：`OrderService` 只认识 `IDiscountPolicy` 这个抽象。来一个新的"满 300 减 50"政策，你新建一个类实现接口，旧代码一个字不动。测试也不用重跑——旧政策的测试依然有效，因为旧代码没被碰过。
+
+违反开闭原则的代码都有一个特征：改需求 = 改旧文件。每改一次旧文件，就有一次引入回归 bug 的机会。开闭原则就是把"加功能"和"碰旧代码"解绑。
+
+## L：里氏替换——子类型必须真能替换父类型
+
+子类型必须能在不破坏调用者的前提下替换父类型。听起来像废话，但违反它的代码满地都是：一个 `ReadOnlyFile` 继承自 `File`，却在 `Write` 时抛 `NotSupportedException`——它在谎称自己是个 `File`，每个调用者都得防着它。
+
+![里氏替换](/software-architecture-book/images/puml/solid-l.png)
+
+```csharp
+// 反例：ReadOnlyFile 谎称自己是 File，Write 时抛异常。
+public class File
+{
+    public virtual string Read() => "";
+    public virtual void Write(string data) { }
+}
+
+public class ReadOnlyFile : File
+{
+    public override void Write(string data)
+        => throw new NotSupportedException("只读文件不能写");
+}
+
+// 正例：拆成两个接口，类按需实现，契约诚实。
+public interface IReadable { string Read(); }
+public interface IWritable { void Write(string data); }
+
+public class ReadOnlyFile2 : IReadable
+{
+    public string Read() => "";
+}
+
+public class ReadWriteFile : IReadable, IWritable
+{
+    public string Read() => "";
+    public void Write(string data) { }
+}
+```
+
+里氏替换的本质是**契约**：父类型承诺了什么，子类型就得做到什么，只能做得更多，不能做得更少。`ReadOnlyFile` 违背了 `File` 的"可写"契约，所以它根本不该是 `File` 的子类型。正确的做法是把"可读"和"可写"拆成两个接口，让类按需实现。
+
+这个原则最容易在继承滥用时被违反。记住：继承说的是"是一个"，不是"有点像"。如果子类型需要阉割父类型的行为，继承关系就是错的。
+
+## I：接口隔离——不依赖你不用的方法
+
+客户端不应该依赖它不用的方法。一个臃肿的 `IWorker` 同时有 `Work()` 和 `Eat()`，会逼着机器人实现类去实现"吃午饭"。把接口拆开，客户端只依赖它真正调用的东西。
+
+![接口隔离](/software-architecture-book/images/puml/solid-i.png)
+
+```csharp
+// 反例：胖接口逼着 Robot 实现"吃午饭"。
+public interface IWorker
+{
+    void Work();
+    void Eat();
+}
+
+public class Robot : IWorker
+{
+    public void Work() { }
+    public void Eat() => throw new NotSupportedException("机器人不吃午饭");
+}
+
+// 正例：接口拆分，客户端只依赖它用的。
+public interface IWorkable { void Work(); }
+public interface IEatable { void Eat(); }
+
+public class Human : IWorkable, IEatable
+{
+    public void Work() { }
+    public void Eat() { }
+}
+
+public class Robot2 : IWorkable
+{
+    public void Work() { }
+}
+```
+
+接口隔离的反面是"胖接口"：一个接口塞了十个方法，十个客户端各用其中两三个。结果是改任何一个方法，所有实现类都要重新编译、重新测试——明明只改了 A 客户端用的方法，B 客户端也被拖下水。
+
+拆接口的判断标准：看客户端。如果两个客户端用的方法集合不一样，这个接口就该拆。接口是给客户端看的，不是给实现类看的。
+
+## D：依赖倒置——高层和低层都依赖抽象
+
+高层模块不应该依赖低层模块，两者都应该依赖抽象。说人话：业务代码不应该直接 `new` 一个 SQL 仓库类，而应该依赖一个"仓库"接口，具体用 SQL 还是 Mongo，由外层决定。
+
+![依赖倒置](/software-architecture-book/images/puml/solid-d.png)
+
+```csharp
+// 反例：业务代码直接依赖 SQL 实现，换数据库要改业务层。
+public class OrderService
+{
+    private readonly SqlOrderRepository _repo = new();
+    public void Place(Order order) => _repo.Save(order);
+}
+
+// 正例：高层和低层都依赖抽象。
+public interface IOrderRepository { void Save(Order order); }
+
+public class OrderService2
+{
+    private readonly IOrderRepository _repo;
+    public OrderService2(IOrderRepository repo) => _repo = repo;
+    public void Place(Order order) => _repo.Save(order);
+}
+
+public class SqlOrderRepository : IOrderRepository
+{
+    public void Save(Order order) { }
+}
+
+public class MongoOrderRepository : IOrderRepository
+{
+    public void Save(Order order) { }
+}
+```
+
+依赖倒置是整套 SOLID 里对架构影响最大的一条。它把依赖的方向拧过来了：传统写法里，业务层 → 数据访问层（高层依赖低层细节）；倒置之后，业务层 → 抽象 ← 数据访问层（两边都依赖抽象）。换数据库时，业务代码一个字不用改。
+
+这也是整洁架构、六边形架构、端口适配器模式的理论地基。第 4 章后面讲的那些架构风格，本质上都是在不同尺度上实践依赖倒置。
+
 ## 内聚与耦合：真正的两股力量
 
 先把缩写忘掉。真正主宰设计的只有两股力量。内聚：一起变的东西住在一起。耦合：一个东西变了，会坏掉多少东西。
 
-高内聚意味着模块的各部分朝着同一个目标协作，一次变更请求只动一个模块。低耦合意味着模块之间彼此了解得很少，一个模块的改动不会涟漪般扩散到十个模块。SOLID 的每个字母都是战术：提高内聚、降低耦合，或者两者兼顾。单一职责提高内聚，依赖倒置降低耦合，开闭原则两者都做。哪天你忘了那些字母，记住这两股力量就行：一起变的东西放一起，依赖关系能少则少。
+高内聚意味着模块的各部分朝着同一个目标协作，一次变更请求只动一个模块。低耦合意味着模块之间彼此了解得很少，一个模块的改动不会涟漪般扩散到十个模块。SOLID 的每个字母都是战术：单一职责提高内聚，依赖倒置降低耦合，开闭原则两者都做。哪天你忘了那些字母，记住这两股力量就行：一起变的东西放一起，依赖关系能少则少。
 
 ```csharp
 // 低内聚、高耦合：Order 什么都懂——支付、邮件、库存。
@@ -113,7 +240,7 @@ public class OrderProcessor
 
 ## 反模式
 
-最常见的错误用法是 SOLID 仪式化：把原则当 检查清单，每个新类都要套一遍拆分、接口、策略，然后宣布"符合 SOLID"。这很诱人：它看起来专业，评审时没人敢反对——毕竟谁愿意承认自己反对"好原则"？它还给了你一个躲起来的地方：不确定需求到底怎么变的时候，"为了可扩展"是最安全的说辞。
+最常见的错误用法是 SOLID 仪式化：把原则当检查清单，每个新类都要套一遍拆分、接口、策略，然后宣布"符合 SOLID"。这很诱人：它看起来专业，评审时没人敢反对——毕竟谁愿意承认自己反对"好原则"？它还给了你一个躲起来的地方：不确定需求到底怎么变的时候，"为了可扩展"是最安全的说辞。
 
 真实的代价是改动变贵了。读代码的人要穿过五六个类才能找到那行真正干活的逻辑，调试时栈追踪跨十层接口，新同学三天才看懂一个本来半天能交付的功能。更讽刺的是，真需要扩展的那一天，你会发现抽象的方向根本不对——你预测的扩展轴从来没发生，发生的变全是当初没拆的那边。
 

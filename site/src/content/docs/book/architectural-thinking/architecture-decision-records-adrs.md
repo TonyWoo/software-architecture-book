@@ -5,7 +5,7 @@ sidebar:
   order: 120
   label: "架构决策记录"
   group:
-    label: "C# 版 · 第2章 · 第 2 章 架构思维"
+    label: "C# 版 · 第2章 · 架构思维"
 ---
 
 每个项目都有一座坟场，埋着没人能解释的决策。为什么这个是微服务、那个不是？为什么这里用 Postgres、那里用 Mongo？为什么账单模块直连那台上古主机？
@@ -61,37 +61,9 @@ CockroachDB（否决——本季度没有人手扛住它的运维复杂度）。
 
 ## 把决策当数据
 
-ADR 本质上就是文件夹里按序号排列的 Markdown 文件。既然结构固定，你也可以给它建模——想查询决策历史、想给审计生成决策日志时，这就派上用场了。
+ADR 本质上就是文件夹里按序号排列的 Markdown 文件。既然结构固定，它天然就是"数据"——给每个文件加上统一的文件头（编号、标题、状态、日期），你就能回答审计的问题：今年做了多少个"已接受"的决策？哪些决策标记了"后果：10 倍流量时重审"，现在流量到了吗？
 
-```csharp
-// 最小的 ADR 模型：决策是数据，而不只是文档。
-public enum AdrStatus { Proposed, Accepted, Deprecated, Superseded }
-
-public record Adr(
-    int Number,
-    string Title,
-    AdrStatus Status,
-    string Context,
-    string Decision,
-    string Consequences,
-    DateOnly DecidedOn,
-    string[] Supersedes = null!
-);
-
-// 上面那份 ADR，用代码表示：
-var adr42 = new Adr(
-    Number: 42,
-    Title: "订单服务使用 PostgreSQL 作为事务存储",
-    Status: AdrStatus.Accepted,
-    Context: "订单服务需要 ACID：扣款 + 锁库存同成功同失败。" +
-             "峰值 200 单/分钟，单节点够用。团队已在运维 Postgres。",
-    Decision: "PostgreSQL 16，部署在现有托管集群上。",
-    Consequences: "好：ACID、工具链熟悉。坏：纵向扩展天花板，" +
-                 "10 倍流量时重审。风险：共享集群的邻居噪音。",
-    DecidedOn: new DateOnly(2026, 9, 14));
-```
-
-这不是必读内容——Markdown 才是真正的工件。但这个模型说明了一件事：决策是架构的一等公民，一等公民配得上一个类型。
+不需要专门的工具。一个约定好的文件夹结构，加上偶尔跑一遍的脚本，就能生成决策日志。决策是架构的一等公民——一等公民值得被检索，而不是躺在文件夹里发霉。
 
 ## 反模式
 

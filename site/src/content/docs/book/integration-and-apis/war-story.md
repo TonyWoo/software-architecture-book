@@ -5,7 +5,7 @@ sidebar:
   order: 650
   label: "战争故事"
   group:
-    label: "C# 版 · 第8章 · 第 8 章 集成与 API"
+    label: "C# 版 · 第8章 · 集成与 API"
 ---
 
 改编自真实事件。公司名和数字做过处理，教训没有。

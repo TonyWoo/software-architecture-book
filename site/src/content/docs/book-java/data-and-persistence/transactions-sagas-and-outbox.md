@@ -5,7 +5,7 @@ sidebar:
   order: 460
   label: "事务、Saga 与发件箱模式"
   group:
-    label: "Java 版 · 第6章 · 第 6 章 数据与持久化"
+    label: "Java 版 · 第6章 · 数据与持久化"
 ---
 
 ## ACID 在边界处终结

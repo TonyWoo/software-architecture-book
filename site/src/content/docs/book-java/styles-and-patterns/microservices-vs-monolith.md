@@ -5,7 +5,7 @@ sidebar:
   order: 290
   label: "微服务与单体"
   group:
-    label: "Java 版 · 第4章 · 第 4 章 风格与模式"
+    label: "Java 版 · 第4章 · 风格与模式"
 ---
 
 微服务不是一种架构。它是一种组织扩展策略，碰巧用到了网络。

@@ -5,7 +5,7 @@ sidebar:
   order: 610
   label: "API 设计、契约与版本管理"
   group:
-    label: "C# 版 · 第8章 · 第 8 章 集成与 API"
+    label: "C# 版 · 第8章 · 集成与 API"
 ---
 
 ## 契约是给陌生人的承诺

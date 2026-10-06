@@ -5,7 +5,7 @@ sidebar:
   order: 620
   label: "编舞与编排"
   group:
-    label: "Java 版 · 第8章 · 第 8 章 集成与 API"
+    label: "Java 版 · 第8章 · 集成与 API"
 ---
 
 ## 谁来指挥业务流程

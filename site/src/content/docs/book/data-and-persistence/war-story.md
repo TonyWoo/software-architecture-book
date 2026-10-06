@@ -5,7 +5,7 @@ sidebar:
   order: 490
   label: "战争故事"
   group:
-    label: "C# 版 · 第6章 · 第 6 章 数据与持久化"
+    label: "C# 版 · 第6章 · 数据与持久化"
 ---
 
 ## 当 标签 变成炸弹

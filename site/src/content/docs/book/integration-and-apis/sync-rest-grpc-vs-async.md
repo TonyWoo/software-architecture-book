@@ -5,7 +5,7 @@ sidebar:
   order: 590
   label: "同步（REST、gRPC）与异步"
   group:
-    label: "C# 版 · 第8章 · 第 8 章 集成与 API"
+    label: "C# 版 · 第8章 · 集成与 API"
 ---
 
 ## 时间耦合才是真正的代价

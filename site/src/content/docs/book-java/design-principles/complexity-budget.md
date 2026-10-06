@@ -5,7 +5,7 @@ sidebar:
   order: 230
   label: "复杂度预算"
   group:
-    label: "Java 版 · 第3章 · 第 3 章 设计原则"
+    label: "Java 版 · 第3章 · 设计原则"
 ---
 
 ## 复杂度是有限资源

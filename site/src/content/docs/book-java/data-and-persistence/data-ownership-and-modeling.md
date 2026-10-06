@@ -5,7 +5,7 @@ sidebar:
   order: 430
   label: "数据所有权与数据建模"
   group:
-    label: "Java 版 · 第6章 · 第 6 章 数据与持久化"
+    label: "Java 版 · 第6章 · 数据与持久化"
 ---
 
 ## 一条数据，一个写入者

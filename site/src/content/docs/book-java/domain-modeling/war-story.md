@@ -5,7 +5,7 @@ sidebar:
   order: 410
   label: "战争故事"
   group:
-    label: "Java 版 · 第5章 · 第 5 章 领域建模"
+    label: "Java 版 · 第5章 · 领域建模"
 ---
 
 （改编自真实事件。）

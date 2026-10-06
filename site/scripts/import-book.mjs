@@ -164,16 +164,21 @@ function main() {
     const { head: chHead } = parseHead(readFileSync(join(MANUSCRIPT_DIR, g, idxFile), 'utf8'));
     const chNum = chapters.length + 1;
     const chSlug = gslug;
-    const groupLabel = `${VERSION_LABEL} · 第${chNum}章 · ${chHead.title}`;
-    chapters.push({ slug: chSlug, title: chHead.title });
+    // chHead.title 自带"第 N 章"前缀（如"第 1 章 地基与角色"），剥掉后拼分组名，
+    // 否则分组"第1章 · 第 1 章 xxx"和页标题里的章号重复
+    const chName = chHead.title.replace(/^第\s*\d+\s*章\s*/, '');
+    const groupLabel = `${VERSION_LABEL} · 第${chNum}章 · ${chName}`;
+    chapters.push({ slug: chSlug, title: chName });
 
     for (const f of files) {
       const { head, body } = parseHead(readFileSync(join(MANUSCRIPT_DIR, g, f), 'utf8'));
       const fslug = f === '_index.md' ? 'index' : stripNum(f).replace(/\.md$/, '');
+      const isChIndex = f === '_index.md';
       write(
         `${chSlug}/${fslug}.md`,
         frontmatter({
-          title: f === '_index.md' ? `${chHead.title} · 本章导读` : head.title,
+          title: isChIndex ? `第${chNum}章 ${chName} · 本章导读` : head.title,
+          label: isChIndex ? '本章导读' : undefined,
           description: head.synopsis,
           order: order += 10,
           group: groupLabel,

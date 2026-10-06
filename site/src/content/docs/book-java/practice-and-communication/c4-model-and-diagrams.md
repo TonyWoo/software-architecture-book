@@ -2,10 +2,10 @@
 title: "C4 模型与架构图"
 description: "C4 模型的四个缩放层级，以及画出真正能被人读懂的图的纪律。"
 sidebar:
-  order: 750
+  order: 830
   label: "C4 模型与架构图"
   group:
-    label: "Java 版 · 第10章 · 第 10 章 实践与沟通"
+    label: "Java 版 · 第11章 · 实践与沟通"
 ---
 
 ## 图为什么总是失败

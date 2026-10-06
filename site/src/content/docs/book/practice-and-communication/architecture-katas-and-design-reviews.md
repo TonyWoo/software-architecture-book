@@ -2,10 +2,10 @@
 title: "架构 Kata 与设计评审"
 description: "锻炼架构判断力的刻意练习，以及如何开一场能抓错而不是伤人的设计评审。"
 sidebar:
-  order: 770
+  order: 850
   label: "架构 Kata 与设计评审"
   group:
-    label: "C# 版 · 第10章 · 第 10 章 实践与沟通"
+    label: "C# 版 · 第11章 · 实践与沟通"
 ---
 
 ## Kata：给判断力做练习

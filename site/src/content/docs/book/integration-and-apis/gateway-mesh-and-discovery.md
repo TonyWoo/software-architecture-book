@@ -5,7 +5,7 @@ sidebar:
   order: 630
   label: "网关、服务网格与服务发现"
   group:
-    label: "C# 版 · 第8章 · 第 8 章 集成与 API"
+    label: "C# 版 · 第8章 · 集成与 API"
 ---
 
 ## 边缘是面镜子

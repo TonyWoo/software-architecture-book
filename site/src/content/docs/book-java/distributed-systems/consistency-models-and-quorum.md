@@ -5,7 +5,7 @@ sidebar:
   order: 520
   label: "一致性模型与仲裁"
   group:
-    label: "Java 版 · 第7章 · 第 7 章 分布式系统"
+    label: "Java 版 · 第7章 · 分布式系统"
 ---
 
 ## 保证的阶梯

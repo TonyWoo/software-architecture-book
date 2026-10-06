@@ -2,10 +2,10 @@
 title: "视图与决策的文档化"
 description: "面向不同干系人的视图、作为决策日志的 ADR，以及让文档活在代码旁边的办法。"
 sidebar:
-  order: 760
+  order: 840
   label: "视图与决策的文档化"
   group:
-    label: "Java 版 · 第10章 · 第 10 章 实践与沟通"
+    label: "Java 版 · 第11章 · 实践与沟通"
 ---
 
 ## 视图：一个系统，多种讲法
