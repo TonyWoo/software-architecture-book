@@ -1307,22 +1307,22 @@
       "id": "book-java/foundations-and-role/architect-vs-senior-vs-tech-lead",
       "surface": "markdown",
       "url": "/book-java/foundations-and-role/architect-vs-senior-vs-tech-lead/index.md",
-      "digest": "sha256:2629f2a4176ad9ef88d4f4070eded05417531597ebdde1d599db018d765dc5a8",
+      "digest": "sha256:3089304962c477d0ec7ce31ed71cdabd04c3ddc4aef577ec4689f3bce00ae795",
       "mediaType": "text/markdown; charset=utf-8",
-      "path": "assets/2629f2a4176ad9ef88d4f4070eded05417531597ebdde1d599db018d765dc5a8.md",
+      "path": "assets/3089304962c477d0ec7ce31ed71cdabd04c3ddc4aef577ec4689f3bce00ae795.md",
       "contentStart": 305,
-      "contentEnd": 2460
+      "contentEnd": 1943
     },
     {
       "collection": "docs",
       "id": "book-java/foundations-and-role/architect-vs-senior-vs-tech-lead",
       "surface": "source",
       "url": "/book-java/foundations-and-role/architect-vs-senior-vs-tech-lead/index.mdx",
-      "digest": "sha256:6fc373c3f4c1b6e1821dca735c6defb77bfc05b40c05fbcd9b1cafc4fd2e3b45",
+      "digest": "sha256:2235349858ac2cc3397bb081b715ae9e98e695e62bfa650761f5103d1a05b373",
       "mediaType": "text/mdx; charset=utf-8",
-      "path": "assets/6fc373c3f4c1b6e1821dca735c6defb77bfc05b40c05fbcd9b1cafc4fd2e3b45.mdx",
+      "path": "assets/2235349858ac2cc3397bb081b715ae9e98e695e62bfa650761f5103d1a05b373.mdx",
       "contentStart": 82,
-      "contentEnd": 2237
+      "contentEnd": 1720
     },
     {
       "collection": "docs",
@@ -1395,22 +1395,22 @@
       "id": "book-java/foundations-and-role/stakeholders-constraints-and-drivers",
       "surface": "markdown",
       "url": "/book-java/foundations-and-role/stakeholders-constraints-and-drivers/index.md",
-      "digest": "sha256:0ac18678a24dd5df9b8c618981016fe1189c637d458bc635bb5841c47674a356",
+      "digest": "sha256:a6d4c8c877f7708b79da8a6abb038369c8e3e0deaf2d84eecd5c83922236bd0f",
       "mediaType": "text/markdown; charset=utf-8",
-      "path": "assets/0ac18678a24dd5df9b8c618981016fe1189c637d458bc635bb5841c47674a356.md",
+      "path": "assets/a6d4c8c877f7708b79da8a6abb038369c8e3e0deaf2d84eecd5c83922236bd0f.md",
       "contentStart": 294,
-      "contentEnd": 2667
+      "contentEnd": 2194
     },
     {
       "collection": "docs",
       "id": "book-java/foundations-and-role/stakeholders-constraints-and-drivers",
       "surface": "source",
       "url": "/book-java/foundations-and-role/stakeholders-constraints-and-drivers/index.mdx",
-      "digest": "sha256:d05c418b3699b79d5a6c827d0e8cf922dc4474b21498c0ee5c9a25fcd7ed1d07",
+      "digest": "sha256:3e69afc53f66a119798ccd3336259d288f1f98a01f6fb65a3903d8c6846ee8d3",
       "mediaType": "text/mdx; charset=utf-8",
-      "path": "assets/d05c418b3699b79d5a6c827d0e8cf922dc4474b21498c0ee5c9a25fcd7ed1d07.mdx",
+      "path": "assets/3e69afc53f66a119798ccd3336259d288f1f98a01f6fb65a3903d8c6846ee8d3.mdx",
       "contentStart": 75,
-      "contentEnd": 2448
+      "contentEnd": 1975
     },
     {
       "collection": "docs",
@@ -1439,22 +1439,22 @@
       "id": "book-java/foundations-and-role/what-architecture-actually-is",
       "surface": "markdown",
       "url": "/book-java/foundations-and-role/what-architecture-actually-is/index.md",
-      "digest": "sha256:fabe49e3bbaec4d990b1592927965d4ff576621b12ffb49e74aba473cbf4b794",
+      "digest": "sha256:48884c0239880936a78e6b716400e695ba4a6706abbf4cd4c2dbd3086c8516cc",
       "mediaType": "text/markdown; charset=utf-8",
-      "path": "assets/fabe49e3bbaec4d990b1592927965d4ff576621b12ffb49e74aba473cbf4b794.md",
+      "path": "assets/48884c0239880936a78e6b716400e695ba4a6706abbf4cd4c2dbd3086c8516cc.md",
       "contentStart": 286,
-      "contentEnd": 2361
+      "contentEnd": 1917
     },
     {
       "collection": "docs",
       "id": "book-java/foundations-and-role/what-architecture-actually-is",
       "surface": "source",
       "url": "/book-java/foundations-and-role/what-architecture-actually-is/index.mdx",
-      "digest": "sha256:98a2426b74edb80a574bd5ead360fb68297aef7808da853d0e20329135b99eac",
+      "digest": "sha256:45ff8a4654294ffb2a16eee5f24e0ede5b6cfaad27ade345224c6720e53bada7",
       "mediaType": "text/mdx; charset=utf-8",
-      "path": "assets/98a2426b74edb80a574bd5ead360fb68297aef7808da853d0e20329135b99eac.mdx",
+      "path": "assets/45ff8a4654294ffb2a16eee5f24e0ede5b6cfaad27ade345224c6720e53bada7.mdx",
       "contentStart": 71,
-      "contentEnd": 2146
+      "contentEnd": 1702
     },
     {
       "collection": "docs",
@@ -3265,22 +3265,22 @@
       "id": "book/foundations-and-role/architect-vs-senior-vs-tech-lead",
       "surface": "markdown",
       "url": "/book/foundations-and-role/architect-vs-senior-vs-tech-lead/index.md",
-      "digest": "sha256:7819704751c883704246bf970982d1cb711d1438a9ff5efdc6b88df187f158ed",
+      "digest": "sha256:032eceb2bca492672a661be30e5af5a504710854ed6bc51c9af62bba1543cbae",
       "mediaType": "text/markdown; charset=utf-8",
-      "path": "assets/7819704751c883704246bf970982d1cb711d1438a9ff5efdc6b88df187f158ed.md",
+      "path": "assets/032eceb2bca492672a661be30e5af5a504710854ed6bc51c9af62bba1543cbae.md",
       "contentStart": 305,
-      "contentEnd": 2216
+      "contentEnd": 1940
     },
     {
       "collection": "docs",
       "id": "book/foundations-and-role/architect-vs-senior-vs-tech-lead",
       "surface": "source",
       "url": "/book/foundations-and-role/architect-vs-senior-vs-tech-lead/index.mdx",
-      "digest": "sha256:5196f28d4aa1ae7361c99da9d367a32a7c4421a800ba898bfb4448f50df7e1b7",
+      "digest": "sha256:3b0e99a0853c1aa3313d27a9e7fdc11ae01c72e10550cfe993737d22643987a8",
       "mediaType": "text/mdx; charset=utf-8",
-      "path": "assets/5196f28d4aa1ae7361c99da9d367a32a7c4421a800ba898bfb4448f50df7e1b7.mdx",
+      "path": "assets/3b0e99a0853c1aa3313d27a9e7fdc11ae01c72e10550cfe993737d22643987a8.mdx",
       "contentStart": 82,
-      "contentEnd": 1993
+      "contentEnd": 1717
     },
     {
       "collection": "docs",
@@ -3353,22 +3353,22 @@
       "id": "book/foundations-and-role/stakeholders-constraints-and-drivers",
       "surface": "markdown",
       "url": "/book/foundations-and-role/stakeholders-constraints-and-drivers/index.md",
-      "digest": "sha256:241a202783dde7e552175b03770e3bcebd380f00082d61a67d669671cb80c649",
+      "digest": "sha256:d4a9bc452228c68f05e41b9d71cde37d0041f735d18d6e59f03835b16be0b686",
       "mediaType": "text/markdown; charset=utf-8",
-      "path": "assets/241a202783dde7e552175b03770e3bcebd380f00082d61a67d669671cb80c649.md",
+      "path": "assets/d4a9bc452228c68f05e41b9d71cde37d0041f735d18d6e59f03835b16be0b686.md",
       "contentStart": 294,
-      "contentEnd": 2409
+      "contentEnd": 2194
     },
     {
       "collection": "docs",
       "id": "book/foundations-and-role/stakeholders-constraints-and-drivers",
       "surface": "source",
       "url": "/book/foundations-and-role/stakeholders-constraints-and-drivers/index.mdx",
-      "digest": "sha256:8a19c3c1008b7a50ce9e0c40272950c073f58762b15429b5faeb4810f0fc92bb",
+      "digest": "sha256:d50e22e56fb8d167e33bdf9f2f775a25e98961b4f826b9639790637b0acdc320",
       "mediaType": "text/mdx; charset=utf-8",
-      "path": "assets/8a19c3c1008b7a50ce9e0c40272950c073f58762b15429b5faeb4810f0fc92bb.mdx",
+      "path": "assets/d50e22e56fb8d167e33bdf9f2f775a25e98961b4f826b9639790637b0acdc320.mdx",
       "contentStart": 75,
-      "contentEnd": 2190
+      "contentEnd": 1975
     },
     {
       "collection": "docs",
@@ -3397,22 +3397,22 @@
       "id": "book/foundations-and-role/what-architecture-actually-is",
       "surface": "markdown",
       "url": "/book/foundations-and-role/what-architecture-actually-is/index.md",
-      "digest": "sha256:21c9f911459bd9e6000efc077e28d83a6fca3068e0b773e36146ef1468a7e184",
+      "digest": "sha256:c5028ee17dea12291591df053bba176bc635b7b3f3416848494d10ac32b80fef",
       "mediaType": "text/markdown; charset=utf-8",
-      "path": "assets/21c9f911459bd9e6000efc077e28d83a6fca3068e0b773e36146ef1468a7e184.md",
+      "path": "assets/c5028ee17dea12291591df053bba176bc635b7b3f3416848494d10ac32b80fef.md",
       "contentStart": 286,
-      "contentEnd": 2193
+      "contentEnd": 1917
     },
     {
       "collection": "docs",
       "id": "book/foundations-and-role/what-architecture-actually-is",
       "surface": "source",
       "url": "/book/foundations-and-role/what-architecture-actually-is/index.mdx",
-      "digest": "sha256:59ea8d1f64c2e9fadedd8b9fa6c00bd4509424c2fec1775d462f4e2aa84af438",
+      "digest": "sha256:12592fa11108007730291be3cbf6f0c0a585f2cfd56cd3df85614c379841db06",
       "mediaType": "text/mdx; charset=utf-8",
-      "path": "assets/59ea8d1f64c2e9fadedd8b9fa6c00bd4509424c2fec1775d462f4e2aa84af438.mdx",
+      "path": "assets/12592fa11108007730291be3cbf6f0c0a585f2cfd56cd3df85614c379841db06.mdx",
       "contentStart": 71,
-      "contentEnd": 1978
+      "contentEnd": 1702
     },
     {
       "collection": "docs",
@@ -3985,9 +3985,9 @@
     {
       "scope": "site",
       "surface": "full",
-      "digest": "sha256:76d72b8d8a9bfc6272edc36189e16dfe7cf4d24b1691c7b53950801ae101a86e",
+      "digest": "sha256:8ab345d121a6be38896638e5004695c45f1492b1e3ae5d65eb00ae2ab8b6e1aa",
       "mediaType": "text/plain; charset=utf-8",
-      "path": "assets/76d72b8d8a9bfc6272edc36189e16dfe7cf4d24b1691c7b53950801ae101a86e.txt"
+      "path": "assets/8ab345d121a6be38896638e5004695c45f1492b1e3ae5d65eb00ae2ab8b6e1aa.txt"
     },
     {
       "scope": "site",

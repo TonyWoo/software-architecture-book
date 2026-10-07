@@ -18,6 +18,9 @@ on:
       - 'images/**'
       - 'book.yaml'
       - 'export_manuscript.py'
+      - 'epub-meta.yaml'
+      - 'epub-style.css'
+      - 'cover.tex'
       - 'site/**'
       - '.github/workflows/nimbus.yml'
   workflow_dispatch:
@@ -65,6 +68,63 @@ jobs:
       - uses: actions/upload-pages-artifact@v3
         with:
           path: site/dist
+
+  # 构建 PDF 与 EPUB（双版），作为 workflow artifact 供下载
+  build-books:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: 安装 Pandoc
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq pandoc
+
+      - name: 安装 XeLaTeX + 中文支持
+        run: |
+          sudo apt-get install -y -qq texlive-xetex texlive-lang-chinese texlive-latex-extra latex-cjk-all
+
+      - name: 装配手稿（C# 版 + Java 版）
+        run: |
+          python3 tools/assemble.py --lang zh --stack csharp
+          python3 export_manuscript.py manuscript manuscript.md
+          mkdir -p /tmp/java-src
+          python3 tools/assemble.py --lang zh --stack java --out /tmp/java-src
+          python3 export_manuscript.py /tmp/java-src /tmp/manuscript-java.md
+          # Java 版封面
+          sed 's/C\\#版/Java 版/' cover.tex > /tmp/cover-java.tex
+
+      - name: 构建 PDF 双版
+        run: |
+          pandoc manuscript.md -o software-architecture-zh-csharp.pdf \
+            --toc --toc-depth=2 -V toc-title="目录" \
+            --include-before-body=cover.tex \
+            --pdf-engine=xelatex \
+            -V CJKmainfont="Noto Sans CJK SC" -V CJKmonofont="Noto Sans Mono CJK SC"
+          pandoc /tmp/manuscript-java.md -o software-architecture-zh-java-spring-boot.pdf \
+            --toc --toc-depth=2 -V toc-title="目录" \
+            --include-before-body=/tmp/cover-java.tex \
+            --pdf-engine=xelatex \
+            -V CJKmainfont="Noto Sans CJK SC" -V CJKmonofont="Noto Sans Mono CJK SC"
+
+      - name: 构建 EPUB 双版
+        run: |
+          pandoc manuscript.md epub-meta.yaml -o software-architecture-zh-csharp.epub \
+            --toc --toc-depth=2 --epub-cover-image=images/cover-blueprint.png \
+            --css=epub-style.css
+          pandoc /tmp/manuscript-java.md epub-meta.yaml -o software-architecture-zh-java-spring-boot.epub \
+            --toc --toc-depth=2 --epub-cover-image=images/cover-blueprint.png \
+            --css=epub-style.css
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: books-pdf-epub
+          path: |
+            software-architecture-zh-csharp.pdf
+            software-architecture-zh-java-spring-boot.pdf
+            software-architecture-zh-csharp.epub
+            software-architecture-zh-java-spring-boot.epub
+          retention-days: 90
 
   deploy:
     needs: build

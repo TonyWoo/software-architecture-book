@@ -339,3 +339,12 @@
   margin-left: 1rem;
   color: var(--nb-muted-foreground);
 }
+
+/* 中文段落首行缩进两字符（白话书排版要求） */
+.docs-content :where(p:not([class])) {
+  text-indent: 2em;
+}
+/* 列表、引用、表格内的段落不缩进 */
+.docs-content :where(li:not([class]) p, blockquote:not([class]) p, td:not([class]) p, th:not([class]) p) {
+  text-indent: 0;
+}

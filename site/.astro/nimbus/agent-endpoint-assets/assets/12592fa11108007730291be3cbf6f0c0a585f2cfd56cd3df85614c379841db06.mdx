@@ -3,12 +3,6 @@ title: "架构到底是什么"
 description: "架构是那组难以更改的设计决策；结构是你传达这些决策的方式。"
 ---
 
-> Documentation Index
-> Fetch the complete documentation index at: https://tonywoo.github.io/software-architecture-book/llms.txt
-> Use this file to discover all available pages before exploring further.
-
-# 架构到底是什么
-
 问十个开发者"软件架构是什么"，你会得到十一个答案，而且错法都一样：把架构和结构、和图纸、和框架搞混了。装满方框和箭头的文件夹不是架构，那只是架构的画像，就像户型图只是房子的画像。
 
 架构是决策。具体说，是那些一旦定下来就很难改的决策。
@@ -31,33 +25,15 @@ Ralph Johnson 说得好：架构就是重要的东西，不管那是什么。Gra
 
 有个小习惯能让看不见的东西看得见。把你的架构决策声明成数据——就放在代码库里，让它们没法被无视：
 
-```java
-package ch020;
+一份 ADR 只记六件事：编号、标题、状态（提议中 / 已接受 / 被取代）、背景、决策、后果。存在 `docs/adr` 目录下，代码评审时强制检查。
 
-// 架构决策记录（ADR）：存在 docs/adr，代码评审时强制执行
-class WhatArchitectureActuallyIs01 {
+比如第 4 号 ADR，长这样：
 
-    // 决策是数据，而不只是文档：结构化的 ADR 能被工具检查、被评审流程强制执行。
-    // Java record 天生适合这种"不可变数据载体"。
-    record ArchitectureDecision(
-        int number,
-        String title,
-        String status,      // proposed | accepted | superseded
-        String context,
-        String decision,
-        String consequences) {}
-
-    static void example() {
-        var adr4 = new ArchitectureDecision(
-            4,
-            "模块化单体优先于微服务",
-            "accepted",
-            "团队 6 人。没有专职运维。部署预算只有一条流水线。",
-            "限界上下文变成模块。模块之间不允许网络调用。",
-            "以后可以把某个模块拆成服务；反过来几乎不可能。");
-    }
-}
-```
+- **标题**：模块化单体，而非微服务
+- **状态**：已接受
+- **背景**：团队 6 人，没有专职运维，部署预算只有一条流水线
+- **决策**：限界上下文变成程序集，上下文之间不允许网络调用
+- **后果**：以后可以把某个模块拆成服务；反过来几乎不可能
 
 这就是 Architecture Decision Record，ADR。写它花十分钟，省的是几个月的考古时间。半年后有人问"当初为什么不用微服务"，答案不在某个 Slack 记录里，它是一个文件。
 
@@ -71,8 +47,6 @@ class WhatArchitectureActuallyIs01 {
 
 为什么诱人：文书看起来像严谨。写了五十份 ADR 的人，没法被指责不够认真。
 
-真实代价：仪式感让记录流于形式。难逆转的决策反而没人写——写一份要填十二个字段、等三个人评审。真正的架构决策退回走廊和聊天记录。更糟的是，团队把"写了 ADR"当成"做了决策"：纸面上有，现实里没有。
+真实代价：仪式感杀死了记录本身。难逆转的决策反而没人写——写一份要填十二个字段、等三个人评审。真正的架构决策退回走廊和聊天记录。更糟的是，团队把"写了 ADR"当成"做了决策"：纸面上有，现实里没有。
 
-**权衡：** 记录决策是有成本的。每个选择都写 ADR 的团队会被仪式感拖垮，最后啥也交付不了。ADR 只留给那些难以逆转的决策——选什么数据库、什么部署拓扑、模块边界划在哪。五个好的 ADR 胜过五十个琐碎的。陷阱是把架构做成文书工作，而不是判断力。
-
-Source: https://tonywoo.github.io/software-architecture-book/book-java/foundations-and-role/what-architecture-actually-is/index.mdx
+**权衡：** 记录决策是有成本的。每个选择都写 ADR 的团队会被仪式感淹死，最后啥也交付不了。ADR 只留给那些难以逆转的决策——选什么数据库、什么部署拓扑、模块边界划在哪。五个好的 ADR 胜过五十个琐碎的。陷阱是把架构做成文书工作，而不是判断力。

@@ -4329,32 +4329,11 @@ Source: https://tonywoo.github.io/software-architecture-book/book-java/foundatio
 
 归属模糊的地方，角色就名存实亡。下面这种紧凑的写法能把决策权说清楚，适合放进团队的工作协议里：
 
-```java
-package ch020;
-
-// 决策权归属：谁拍板、拍板前听谁的、管哪些事——写下来，评审时对表。
-class ArchitectVsSeniorVsTechLead01 {
-
-    enum DecisionScope { CODE, TEAM, ARCHITECTURE }
-
-    record DecisionRight(
-        DecisionScope scope,
-        String owner,      // 谁拍板
-        String consulted,  // 拍板前必须听谁的
-        String examples) {}
-
-    static void example() {
-        var rights = new DecisionRight[] {
-            new DecisionRight(DecisionScope.CODE, "资深开发", "技术负责人",
-                "命名、算法、测试策略、模块内部的重构"),
-            new DecisionRight(DecisionScope.TEAM, "技术负责人", "架构师",
-                "迭代排期、代码归属、结对轮换、合并策略"),
-            new DecisionRight(DecisionScope.ARCHITECTURE, "架构师", "技术负责人 + 资深开发",
-                "模块边界、数据库选型、跨服务契约、NFR 预算"),
-        };
-    }
-}
-```
+| 范围 | 谁拍板 | 拍板前必须听谁的 | 比如哪些事 |
+|------|--------|------------------|--------------|
+| 代码 | 资深开发 | 技术负责人 | 命名、算法、测试策略、模块内部的重构 |
+| 团队 | 技术负责人 | 架构师 | 迭代排期、代码归属、结对轮换、合并策略 |
+| 架构 | 架构师 | 技术负责人 + 资深开发 | 模块边界、数据库选型、跨服务契约、NFR 预算 |
 
 这是 RACI 表的骨架版。"Consulted" 这一列和 "Owner" 一样重要：不跟技术负责人通气就重划模块边界的架构师，会很疼地发现团队按新结构根本交付不出来。
 
@@ -4654,33 +4633,19 @@ Source: https://tonywoo.github.io/software-architecture-book/book-java/foundatio
 
 识别驱动力的方法：问"如果这个变了，架构要推倒重来吗？"如果答案是肯定的，它就是驱动力。
 
-```java
-package ch020;
+只记那两三个真正说了算的，每个写清三件事：叫什么、来自谁、逼着架构长成什么样。
 
-// 架构驱动力登记：只记那两三个真正说了算的
-class StakeholdersConstraintsAndDrivers01 {
+1. **上线前必须通过等保三级**
+   - 来自：法规约束（合规团队）
+   - 逼着架构：所有用户数据落盘加密；管理后台独立部署、独立鉴权；全链路审计日志进不可变存储
 
-    record ArchitecturalDriver(
-        String name,
-        String source,          // 来自哪个干系人 / 哪条约束
-        String structuralImpact // 它逼着架构长成什么样
-    ) {}
+2. **大促 10 倍流量，p99 下单 < 800ms**
+   - 来自：业务方需求 + 非功能需求
+   - 逼着架构：下单路径无同步第三方调用；outbox + 异步扣款；读多写少的商品页走缓存
 
-    static void example() {
-        var drivers = new ArchitecturalDriver[] {
-            new ArchitecturalDriver("上线前必须通过等保三级",
-                "约束：法规（合规团队）",
-                "所有用户数据落盘加密；管理后台独立部署、独立鉴权；全链路审计日志进不可变存储。"),
-            new ArchitecturalDriver("大促 10 倍流量，p99 下单 < 800ms",
-                "需求：业务方 + NFR",
-                "下单路径无同步第三方调用；outbox + 异步扣款；读多写少的商品页走缓存。"),
-            new ArchitecturalDriver("团队 4 人，无专职运维",
-                "约束：业务（管理层）",
-                "单体优先，单条流水线部署；任何需要多集群、多中间件的方案直接出局。"),
-        };
-    }
-}
-```
+3. **团队 4 人，无专职运维**
+   - 来自：业务约束（管理层）
+   - 逼着架构：单体优先，单条流水线部署；任何需要多集群、多中间件的方案直接出局
 
 看这三个驱动力怎么塑造决策：等保三级逼出独立的管理后台和加密；延迟预算逼出 outbox；四人团队一票否决了微服务。架构图还没画，架构已经定了七成。剩下的只是把这三个驱动力的后果画出来、写成代码。
 
@@ -4750,33 +4715,15 @@ Ralph Johnson 说得好：架构就是重要的东西，不管那是什么。Gra
 
 有个小习惯能让看不见的东西看得见。把你的架构决策声明成数据——就放在代码库里，让它们没法被无视：
 
-```java
-package ch020;
+一份 ADR 只记六件事：编号、标题、状态（提议中 / 已接受 / 被取代）、背景、决策、后果。存在 `docs/adr` 目录下，代码评审时强制检查。
 
-// 架构决策记录（ADR）：存在 docs/adr，代码评审时强制执行
-class WhatArchitectureActuallyIs01 {
+比如第 4 号 ADR，长这样：
 
-    // 决策是数据，而不只是文档：结构化的 ADR 能被工具检查、被评审流程强制执行。
-    // Java record 天生适合这种"不可变数据载体"。
-    record ArchitectureDecision(
-        int number,
-        String title,
-        String status,      // proposed | accepted | superseded
-        String context,
-        String decision,
-        String consequences) {}
-
-    static void example() {
-        var adr4 = new ArchitectureDecision(
-            4,
-            "模块化单体优先于微服务",
-            "accepted",
-            "团队 6 人。没有专职运维。部署预算只有一条流水线。",
-            "限界上下文变成模块。模块之间不允许网络调用。",
-            "以后可以把某个模块拆成服务；反过来几乎不可能。");
-    }
-}
-```
+- **标题**：模块化单体，而非微服务
+- **状态**：已接受
+- **背景**：团队 6 人，没有专职运维，部署预算只有一条流水线
+- **决策**：限界上下文变成程序集，上下文之间不允许网络调用
+- **后果**：以后可以把某个模块拆成服务；反过来几乎不可能
 
 这就是 Architecture Decision Record，ADR。写它花十分钟，省的是几个月的考古时间。半年后有人问"当初为什么不用微服务"，答案不在某个 Slack 记录里，它是一个文件。
 
@@ -10766,25 +10713,11 @@ Source: https://tonywoo.github.io/software-architecture-book/book/foundations-an
 
 模糊的归属是角色死亡的地方。下面这种紧凑的写法能把决策权说清楚，适合放进团队的工作协议里：
 
-```csharp
-public enum DecisionScope { Code, Team, Architecture }
-
-public record DecisionRight(
-    DecisionScope Scope,
-    string Owner,        // 谁拍板
-    string Consulted,   // 拍板前必须听谁的
-    string Examples);
-
-var rights = new DecisionRight[]
-{
-    new(DecisionScope.Code, "资深开发", "技术负责人",
-        "命名、算法、测试策略、模块内部的重构"),
-    new(DecisionScope.Team, "技术负责人", "架构师",
-        "迭代排期、代码归属、结对轮换、合并策略"),
-    new(DecisionScope.Architecture, "架构师", "技术负责人 + 资深开发",
-        "模块边界、数据库选型、跨服务契约、NFR 预算"),
-};
-```
+| 范围 | 谁拍板 | 拍板前必须听谁的 | 比如哪些事 |
+|------|--------|------------------|--------------|
+| 代码 | 资深开发 | 技术负责人 | 命名、算法、测试策略、模块内部的重构 |
+| 团队 | 技术负责人 | 架构师 | 迭代排期、代码归属、结对轮换、合并策略 |
+| 架构 | 架构师 | 技术负责人 + 资深开发 | 模块边界、数据库选型、跨服务契约、NFR 预算 |
 
 这是 RACI 表的骨架版。"Consulted" 这一列和 "Owner" 一样重要：不跟技术负责人通气就重划模块边界的架构师，会很疼地发现团队按新结构根本交付不出来。
 
@@ -11048,27 +10981,19 @@ Source: https://tonywoo.github.io/software-architecture-book/book/foundations-an
 
 识别驱动力的方法：问"如果这个变了，架构要推倒重来吗？"如果答案是肯定的，它就是驱动力。
 
-```csharp
-// 架构驱动力登记：只记那两三个真正说了算的
-public record ArchitecturalDriver(
-    string Name,
-    string Source,          // 来自哪个干系人 / 哪条约束
-    string StructuralImpact // 它逼着架构长成什么样
-);
+只记那两三个真正说了算的，每个写清三件事：叫什么、来自谁、逼着架构长成什么样。
 
-var drivers = new ArchitecturalDriver[]
-{
-    new("上线前必须通过等保三级",
-        "约束：法规（合规团队）",
-        "所有用户数据落盘加密；管理后台独立部署、独立鉴权；全链路审计日志进不可变存储。"),
-    new("大促 10 倍流量，p99 下单 < 800ms",
-        "需求：业务方 + NFR",
-        "下单路径无同步第三方调用；outbox + 异步扣款；读多写少的商品页走缓存。"),
-    new("团队 4 人，无专职运维",
-        "约束：业务（管理层）",
-        "单体优先，单条流水线部署；任何需要多集群、多中间件的方案直接出局。"),
-};
-```
+1. **上线前必须通过等保三级**
+   - 来自：法规约束（合规团队）
+   - 逼着架构：所有用户数据落盘加密；管理后台独立部署、独立鉴权；全链路审计日志进不可变存储
+
+2. **大促 10 倍流量，p99 下单 < 800ms**
+   - 来自：业务方需求 + 非功能需求
+   - 逼着架构：下单路径无同步第三方调用；outbox + 异步扣款；读多写少的商品页走缓存
+
+3. **团队 4 人，无专职运维**
+   - 来自：业务约束（管理层）
+   - 逼着架构：单体优先，单条流水线部署；任何需要多集群、多中间件的方案直接出局
 
 看这三个驱动力怎么塑造决策：等保三级逼出独立的管理后台和加密；延迟预算逼出 outbox；四人团队一票否决了微服务。架构图还没画，架构已经定了七成。剩下的只是把这三个驱动力的后果画出来、写成代码。
 
@@ -11138,24 +11063,15 @@ Ralph Johnson 说得好：架构就是重要的东西，不管那是什么。Gra
 
 有个小习惯能让看不见的东西看得见。把你的架构决策声明成数据——就放在代码库里，让它们没法被无视：
 
-```csharp
-// 架构决策记录（ADR）：存在 docs/adr，代码评审时强制执行
-public record ArchitectureDecision(
-    int Number,
-    string Title,
-    string Status,      // proposed | accepted | superseded
-    string Context,
-    string Decision,
-    string Consequences);
+一份 ADR 只记六件事：编号、标题、状态（提议中 / 已接受 / 被取代）、背景、决策、后果。存在 `docs/adr` 目录下，代码评审时强制检查。
 
-var adr4 = new ArchitectureDecision(
-    Number: 4,
-    Title: "Modular monolith over microservices",
-    Status: "accepted",
-    Context: "团队 6 人。没有专职运维。部署预算只有一条流水线。",
-    Decision: "限界上下文变成程序集。上下文之间不允许网络调用。",
-    Consequences: "以后可以把某个模块拆成服务；反过来几乎不可能。");
-```
+比如第 4 号 ADR，长这样：
+
+- **标题**：模块化单体，而非微服务
+- **状态**：已接受
+- **背景**：团队 6 人，没有专职运维，部署预算只有一条流水线
+- **决策**：限界上下文变成程序集，上下文之间不允许网络调用
+- **后果**：以后可以把某个模块拆成服务；反过来几乎不可能
 
 这就是 Architecture Decision Record，ADR。写它花十分钟，省的是几个月的考古时间。半年后有人问"当初为什么不用微服务"，答案不在某个 Slack 记录里，它是一个文件。
 

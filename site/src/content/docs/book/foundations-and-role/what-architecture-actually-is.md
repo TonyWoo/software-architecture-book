@@ -30,24 +30,15 @@ Ralph Johnson 说得好：架构就是重要的东西，不管那是什么。Gra
 
 有个小习惯能让看不见的东西看得见。把你的架构决策声明成数据——就放在代码库里，让它们没法被无视：
 
-```csharp
-// 架构决策记录（ADR）：存在 docs/adr，代码评审时强制执行
-public record ArchitectureDecision(
-    int Number,
-    string Title,
-    string Status,      // proposed | accepted | superseded
-    string Context,
-    string Decision,
-    string Consequences);
+一份 ADR 只记六件事：编号、标题、状态（提议中 / 已接受 / 被取代）、背景、决策、后果。存在 `docs/adr` 目录下，代码评审时强制检查。
 
-var adr4 = new ArchitectureDecision(
-    Number: 4,
-    Title: "Modular monolith over microservices",
-    Status: "accepted",
-    Context: "团队 6 人。没有专职运维。部署预算只有一条流水线。",
-    Decision: "限界上下文变成程序集。上下文之间不允许网络调用。",
-    Consequences: "以后可以把某个模块拆成服务；反过来几乎不可能。");
-```
+比如第 4 号 ADR，长这样：
+
+- **标题**：模块化单体，而非微服务
+- **状态**：已接受
+- **背景**：团队 6 人，没有专职运维，部署预算只有一条流水线
+- **决策**：限界上下文变成程序集，上下文之间不允许网络调用
+- **后果**：以后可以把某个模块拆成服务；反过来几乎不可能
 
 这就是 Architecture Decision Record，ADR。写它花十分钟，省的是几个月的考古时间。半年后有人问"当初为什么不用微服务"，答案不在某个 Slack 记录里，它是一个文件。
 

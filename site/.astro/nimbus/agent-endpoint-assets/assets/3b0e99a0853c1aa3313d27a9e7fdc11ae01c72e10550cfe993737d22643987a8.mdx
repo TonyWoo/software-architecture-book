@@ -19,25 +19,11 @@ description: "三个角色，三种不同的职责与决策权——以及界线
 
 模糊的归属是角色死亡的地方。下面这种紧凑的写法能把决策权说清楚，适合放进团队的工作协议里：
 
-```csharp
-public enum DecisionScope { Code, Team, Architecture }
-
-public record DecisionRight(
-    DecisionScope Scope,
-    string Owner,        // 谁拍板
-    string Consulted,   // 拍板前必须听谁的
-    string Examples);
-
-var rights = new DecisionRight[]
-{
-    new(DecisionScope.Code, "资深开发", "技术负责人",
-        "命名、算法、测试策略、模块内部的重构"),
-    new(DecisionScope.Team, "技术负责人", "架构师",
-        "迭代排期、代码归属、结对轮换、合并策略"),
-    new(DecisionScope.Architecture, "架构师", "技术负责人 + 资深开发",
-        "模块边界、数据库选型、跨服务契约、NFR 预算"),
-};
-```
+| 范围 | 谁拍板 | 拍板前必须听谁的 | 比如哪些事 |
+|------|--------|------------------|--------------|
+| 代码 | 资深开发 | 技术负责人 | 命名、算法、测试策略、模块内部的重构 |
+| 团队 | 技术负责人 | 架构师 | 迭代排期、代码归属、结对轮换、合并策略 |
+| 架构 | 架构师 | 技术负责人 + 资深开发 | 模块边界、数据库选型、跨服务契约、NFR 预算 |
 
 这是 RACI 表的骨架版。"Consulted" 这一列和 "Owner" 一样重要：不跟技术负责人通气就重划模块边界的架构师，会很疼地发现团队按新结构根本交付不出来。
 
