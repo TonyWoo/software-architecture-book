@@ -31,6 +31,15 @@ jobs:
       - run: python3 tools/assemble.py --lang zh --stack csharp
       - run: npm run build
         working-directory: site
+      # release 包改相对路径：按文件深度把 /software-architecture-book/ 改写，
+      # 解压到任意位置（本地直接打开/任意网站子路径）都能用
+      - name: 相对路径化
+        run: python3 tools/relativize.py site/dist /software-architecture-book/
+      - name: 打包网站
+        run: |
+          cd site/dist
+          zip -qr ../../site-dist.zip .
+          cd ../..
       - name: 打包网站
         run: |
           cd site/dist
