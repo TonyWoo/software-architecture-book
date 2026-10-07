@@ -110,10 +110,10 @@ jobs:
       - name: 构建 EPUB 双版
         run: |
           pandoc manuscript.md epub-meta.yaml -o software-architecture-zh-csharp.epub \
-            --toc --toc-depth=2 --epub-cover-image=images/cover-csharp.png \
+            --toc --toc-depth=2 --epub-cover-image=images/cover-csharp.jpg \
             --css=epub-style.css
           pandoc /tmp/manuscript-java.md epub-meta.yaml -o software-architecture-zh-java-spring-boot.epub \
-            --toc --toc-depth=2 --epub-cover-image=images/cover-java.png \
+            --toc --toc-depth=2 --epub-cover-image=images/cover-java.jpg \
             --css=epub-style.css
 
       - uses: actions/upload-artifact@v4
