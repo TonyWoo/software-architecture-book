@@ -8,7 +8,8 @@ sidebar:
     label: "Java 版 · 第1章 · 地基与角色"
 ---
 
-![本章插画](/software-architecture-book/images/ch01-abstract.png)
+<iframe src="/software-architecture-book/figures/hairline-footings.html" width="400" height="320" loading="lazy" title="本章插画" style="border:none;max-width:100%;display:block;margin:0 auto;"></iframe>
+<p style="text-align:center;"><small>💡 鼠标悬停可交互</small></p>
 
 架构不是挂在墙上的那张图。它是那组难以更改的决策：谁依赖谁、承重墙砌在哪里、无人值守时系统必须如何表现。
 

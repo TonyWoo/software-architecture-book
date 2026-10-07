@@ -8,7 +8,8 @@ sidebar:
     label: "Java 版 · 第2章 · 架构思维"
 ---
 
-![本章插画](/software-architecture-book/images/ch02-abstract.png)
+<iframe src="/software-architecture-book/figures/hairline-scales.html" width="400" height="320" loading="lazy" title="本章插画" style="border:none;max-width:100%;display:block;margin:0 auto;"></iframe>
+<p style="text-align:center;"><small>💡 鼠标悬停可交互</small></p>
 
 架构不是画方框和箭头。谁都会画图。架构是做决策——而在真实世界里，每个决策都要付出代价。
 

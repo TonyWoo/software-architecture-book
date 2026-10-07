@@ -8,7 +8,8 @@ sidebar:
     label: "C# 版 · 第6章 · 数据与持久化"
 ---
 
-![本章插画](/software-architecture-book/images/ch06-abstract.png)
+<iframe src="/software-architecture-book/figures/hairline-drawers.html" width="400" height="320" loading="lazy" title="本章插画" style="border:none;max-width:100%;display:block;margin:0 auto;"></iframe>
+<p style="text-align:center;"><small>💡 鼠标悬停可交互</small></p>
 
 数据是你系统里唯一无法被重构掉的部分。服务可以重写，框架可以换，限界上下文可以改名，数据会留下来。你在建模、所有权、一致性上走的每一条捷径，都会陪伴你很多年，悄悄地复利，直到有一天，数据库成了你发不了版的理由。
 

@@ -8,7 +8,8 @@ sidebar:
     label: "Java 版 · 第4章 · 风格与模式"
 ---
 
-![本章插画](/software-architecture-book/images/ch04-abstract.png)
+<iframe src="/software-architecture-book/figures/hairline-layers.html" width="400" height="320" loading="lazy" title="本章插画" style="border:none;max-width:100%;display:block;margin:0 auto;"></iframe>
+<p style="text-align:center;"><small>💡 鼠标悬停可交互</small></p>
 
 每个团队都会继承一种架构风格，不管当初有没有主动选择。问题在于，这个选择是不是深思熟虑的结果。
 

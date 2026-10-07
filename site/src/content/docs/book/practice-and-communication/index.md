@@ -8,7 +8,8 @@ sidebar:
     label: "C# 版 · 第11章 · 实践与沟通"
 ---
 
-![本章插画](/software-architecture-book/images/ch11-abstract.png)
+<iframe src="/software-architecture-book/figures/hairline-drafting.html" width="400" height="320" loading="lazy" title="本章插画" style="border:none;max-width:100%;display:block;margin:0 auto;"></iframe>
+<p style="text-align:center;"><small>💡 鼠标悬停可交互</small></p>
 
 大多数系统不是被设计坏的，而是被*悄悄*设计坏的——一个又一个没有文档的决定，诞生在走廊的闲聊里，藏在某个开发者的脑子里。然后这个开发者离职了，那些悄悄的决定就开始大声地崩坏。
 

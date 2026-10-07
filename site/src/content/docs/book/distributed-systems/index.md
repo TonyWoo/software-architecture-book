@@ -8,7 +8,8 @@ sidebar:
     label: "C# 版 · 第7章 · 分布式系统"
 ---
 
-![本章插画](/software-architecture-book/images/ch07-abstract.png)
+<iframe src="/software-architecture-book/figures/hairline-ballot.html" width="400" height="320" loading="lazy" title="本章插画" style="border:none;max-width:100%;display:block;margin:0 auto;"></iframe>
+<p style="text-align:center;"><small>💡 鼠标悬停可交互</small></p>
 
 单台服务器是诚实的：它要么工作，要么宕机，出了问题你知道尸体在哪。可一旦加上第二台机器，世界就变了——网络会撒谎，时钟会吵架，"它成功了"的含金量远不如你以为。
 

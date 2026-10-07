@@ -1,0 +1,100 @@
+---
+title: "CAP / PACELC：直观理解"
+description: "CAP 说的是分区发生时你保不住一致性和可用性——而 PACELC 说，分区场景只是故事的一半。"
+---
+
+> Documentation Index
+> Fetch the complete documentation index at: https://tonywoo.github.io/software-architecture-book/llms.txt
+> Use this file to discover all available pages before exploring further.
+
+# CAP / PACELC：直观理解
+
+## CAP 到底在说什么
+
+CAP 定理只有三个字母、一个意思：当网络发生分区——机器之间断联、互相说不上话的时候——你必须在一致性（Consistency，所有人看到相同的数据）和可用性（Availability，每个节点继续响应请求）之间二选一。两者不能兼得。这是分区的属性，不是你聪不聪明的问题。
+
+危险的是那个流传最广的误读："CAP 就是三选二。" 于是有人宣称自己的系统是"CA"，然后停止思考。CA 根本不是分布式系统，CA 就是一台单机。你一旦真正做分布式，分区就不是假设题——它是排期好的事故，谬论那一章会讲到。实际上，CAP 只约束你"分区发生的那一刻"。真正有意思的问题是另外 99.9% 的时间，网络好好的时候，CAP 对此一字未提。而这恰恰是大多数人设计时两眼一抹黑的地方。
+
+## PACELC：更完整的图景
+
+PACELC 把这句话补完整了：**P**artition（分区）→ **A**vailability 和 **C**onsistency 二选一；**E**lse（没分区时）→ **L**atency 和 **C**onsistency 二选一。即使没有分区，权衡依然存在：强一致性要花延迟买单，你的写入必须先到达仲裁或领导者才能确认；最终一致性快，但真相传播需要时间。
+
+这个视角把决策从"罕见灾难场景"拉回到"日常工程选择"。你服务的每一个请求，都落在 PACELC 光谱的某个位置上。这条写入路径，你是花延迟买一致性，还是接受一个滞后窗口换速度？一旦这么看，你就不会再问"我们是 AP 还是 CP？"这种像公司宗教一样的问题，而是按操作、按场景逐个问。这才是正确的粒度。
+
+更重要的是，PACELC 解释了平时那 99.9% 时间里的持续税：Else 分支的延迟-一致性权衡不是灾难税，是日常税。读多写少的场景，把一致性成本集中在少数写操作上，读路径就可以飞起来；写多读少的场景则反过来。架构评审时最有用的问题不是"我们选 AP 还是 CP"，而是"这条路径的延迟预算是多少，我们愿意为它买多少一致性"。
+
+## 一个具体的选择：AP 还是 CP
+
+看两个产品。产品一：购物车。两个区域之间网络分区了，你有两个选项。CP：在分区愈合之前拒绝接受购物车更新——半个地球的用户 实质上 下不了单。AP：两边都接受更新，事后合并——也许顾客会多买一件，你赔个退款了事。
+
+产品二：银行账本。AP 意味着两个分区各自把最后那 1000 块钱取走。这不是道个歉就能合并的冲突。银行选 CP，宁可停服。
+
+同一个定理，相反的答案，因为"搞错的代价"不同。购物车选 AP，是因为购物车数据过期的代价是一笔退款；账本选 CP，是因为余额过期的代价是欺诈。CAP 从来不是技术决策，它是穿着技术外衣的业务决策。在你选之前，先让产品方把"不一致的代价"亲口说出来。
+
+```java
+package ch080;
+
+import java.util.concurrent.CompletableFuture;
+
+// 按操作选择一致性或可用性，而不是按系统一刀切。
+class CapPacelcIntuition01 {
+
+    static class CartWriter {
+        private final LocalStore localStore;
+        private final Quorum quorum;
+
+        CartWriter(LocalStore localStore, Quorum quorum) {
+            this.localStore = localStore;
+            this.quorum = quorum;
+        }
+
+        // 购物车：AP 选择——本地先接受写入，事后复制。
+        // 延迟低；合并冲突靠策略兜底（最后写入胜出 + 退款预算）。
+        CompletableFuture<Void> addToCart(String userId, String itemId) {
+            return localStore.write(userId, itemId); // 复制完成前就确认
+        }
+
+        // 账本：CP 选择——宁可拒绝写入，也不冒双花风险。
+        // 牺牲可用性；错误是显式的，不是悄悄错的。
+        CompletableFuture<WriteResult> postToLedger(LedgerEntry entry) {
+            if (!quorum.isReachable())
+                return CompletableFuture.completedFuture(
+                    WriteResult.reject("检测到分区：拒绝写入，不冒不一致的风险"));
+            return quorum.append(entry).thenApply(v -> WriteResult.accept());
+        }
+    }
+
+    interface LocalStore {
+        CompletableFuture<Void> write(String userId, String itemId);
+    }
+
+    interface Quorum {
+        boolean isReachable();
+        CompletableFuture<Void> append(LedgerEntry entry);
+    }
+
+    record LedgerEntry(String id, long amountCents) {}
+
+    record WriteResult(boolean accepted, String reason) {
+        static WriteResult accept() {
+            return new WriteResult(true, null);
+        }
+
+        static WriteResult reject(String reason) {
+            return new WriteResult(false, reason);
+        }
+    }
+}
+```
+
+## 反模式
+
+最常见的误用，是把 CAP 当成公司的宗教。"我们是 AP 系统"——说完这句话，思考就结束了。于是每个接口都按最终一致做，账本也"最终一致"：用户充值的 100 块钱，读出来 50，客服电话被打爆。诱人之处在于它给了你一个万能答案：任何关于一致性的质疑，都可以用"我们是 AP"挡回去，不用再为每个用例想一遍。
+
+第二个误用正好相反：把 CAP 只当成"分区灾难那天"的事。平时网络好好的，写路径为了"简单"全部走强一致，每个请求多付 80 毫秒跨区延迟，用户在加载动画前流失——PACELC 的 Else 分支在默默收税，你却以为 CAP 跟你没关系。
+
+两种误用的代价都一样：你替网络做了它最擅长的选择——在你最不希望的时刻替你选。购物车用 AP 是精明，账本用 AP 是事故；登录页用强一致是浪费，扣库存用最终一致是欺诈。标签解决不了问题，粒度才能。
+
+**权衡：** 一致性要用每个请求的延迟来买，可用性要用分区期间的正确性来买。PACELC 曲线上没有免费的位置，只有 深思熟虑 的位置。如果你说不清每个操作站在曲线哪一边，网络会在最糟糕的时刻替你选。
+
+Source: https://tonywoo.github.io/software-architecture-book/book-java/distributed-systems/cap-pacelc-intuition/index.mdx

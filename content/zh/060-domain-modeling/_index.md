@@ -7,7 +7,8 @@ status: draft
 synopsis: 把业务本身建模成软件 —— 战略 DDD、限界上下文、聚合、统一语言，以及防止边界被侵蚀的手段。
 ---
 
-![本章插画](../../images/ch05-abstract.png)
+<iframe src="/software-architecture-book/figures/hairline-fence.html" width="400" height="320" loading="lazy" title="本章插画" style="border:none;max-width:100%;display:block;margin:0 auto;"></iframe>
+<p style="text-align:center;"><small>💡 鼠标悬停可交互</small></p>
 
 大多数系统失败，不是因为技术选错了，而是因为没人真正理解业务。
 

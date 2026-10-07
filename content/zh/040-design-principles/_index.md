@@ -7,7 +7,8 @@ role: body
 unit: chapter
 ---
 
-![本章插画](../../images/ch03-abstract.png)
+<iframe src="/software-architecture-book/figures/hairline-dividers.html" width="400" height="320" loading="lazy" title="本章插画" style="border:none;max-width:100%;display:block;margin:0 auto;"></iframe>
+<p style="text-align:center;"><small>💡 鼠标悬停可交互</small></p>
 
 设计原则不是装饰品，是生存策略。你写的每一个系统都会被改，而改它的人就是六个月后的你自己——凌晨两点，盯着一段你曾发誓只是"临时方案"的代码。
 

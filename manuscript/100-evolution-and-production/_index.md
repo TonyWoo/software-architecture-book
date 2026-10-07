@@ -7,7 +7,8 @@ status: draft
 synopsis: 系统的寿命比蓝图长；本章讲如何在生产环境中有纪律地演进系统。
 ---
 
-![本章插画](../../images/ch09-abstract.png)
+<iframe src="/software-architecture-book/figures/hairline-breaker.html" width="400" height="320" loading="lazy" title="本章插画" style="border:none;max-width:100%;display:block;margin:0 auto;"></iframe>
+<p style="text-align:center;"><small>💡 鼠标悬停可交互</small></p>
 
 架构并不在部署时结束。恰恰相反，它从部署那一刻才真正开始。
 

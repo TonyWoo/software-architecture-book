@@ -8,7 +8,8 @@ sidebar:
     label: "C# 版 · 第5章 · 领域建模"
 ---
 
-![本章插画](/software-architecture-book/images/ch05-abstract.png)
+<iframe src="/software-architecture-book/figures/hairline-fence.html" width="400" height="320" loading="lazy" title="本章插画" style="border:none;max-width:100%;display:block;margin:0 auto;"></iframe>
+<p style="text-align:center;"><small>💡 鼠标悬停可交互</small></p>
 
 大多数系统失败，不是因为技术选错了，而是因为没人真正理解业务。
 

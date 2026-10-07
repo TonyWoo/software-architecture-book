@@ -7,7 +7,8 @@ status: draft
 synopsis: 部署不是运维的事，是架构的事；本章讲如何设计一条值得信任的交付流水线。
 ---
 
-![本章插画](../../images/ch10-abstract.png)
+<iframe src="/software-architecture-book/figures/hairline-locks.html" width="400" height="320" loading="lazy" title="本章插画" style="border:none;max-width:100%;display:block;margin:0 auto;"></iframe>
+<p style="text-align:center;"><small>💡 鼠标悬停可交互</small></p>
 
 很多架构图画到"服务"就停了，好像代码写完、服务画出来，工作就结束了。但用户用的不是架构图，是跑起来的软件。代码从你的笔记本到用户手里，中间那条路——构建、测试、发布、部署——本身就是架构的一部分，而且是出故障最多的部分。
 

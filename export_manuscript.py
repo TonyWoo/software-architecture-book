@@ -130,6 +130,28 @@ def main():
         # manuscript/<chapter>/; the single-file manuscript.md lives at the
         # repo root, so rewrite to images/ for the export only.
         body = body.replace("](../../images/", "](images/")
+        # Hairline interactive figures: for PDF export, replace the iframe
+        # embed with the static PNG. Maps figure name -> chapter image.
+        _fig_to_ch = {
+            "footings": "ch01", "scales": "ch02", "dividers": "ch03",
+            "layers": "ch04", "fence": "ch05", "drawers": "ch06",
+            "ballot": "ch07", "net": "ch08", "breaker": "ch09",
+            "locks": "ch10", "drafting": "ch11",
+        }
+        def _iframe_to_img(m):
+            fig = m.group(1)
+            ch = _fig_to_ch.get(fig, None)
+            if not ch:
+                return m.group(0)
+            # Remove the following hint paragraph too (matched separately)
+            return f"![本章插画](images/{ch}-abstract.png)"
+        body = re.sub(
+            r'<iframe src="/software-architecture-book/figures/hairline-([a-z]+)\.html"[^>]*></iframe>\s*',
+            _iframe_to_img, body)
+        # Remove the "hover to interact" hint (web-only)
+        body = re.sub(
+            r'<p style="text-align:center;"><small>💡 鼠标悬停可交互</small></p>\s*',
+            "", body)
         body = shift_headings(body, depth + 1)
 
         if not first_node and unit in ("part", "chapter", "section"):
