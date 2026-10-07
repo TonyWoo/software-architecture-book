@@ -1,0 +1,90 @@
+# 打 Release：tag 推送时（v*），构建网站静态包 + PDF 双版 + EPUB 双版，
+# 创建 GitHub Release 并上传所有文件。
+#
+# 用法：git tag v1.0.0 && git push origin v1.0.0
+# 或在 GitHub 网页上创建 Release（选 tag）。
+
+name: release
+
+on:
+  push:
+    tags: ['v*']
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build-all:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      # ---- 网站 ----
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: site/package-lock.json
+      - run: npm ci
+        working-directory: site
+      - run: python3 tools/assemble.py --lang zh --stack csharp
+      - run: npm run build
+        working-directory: site
+      - name: 打包网站
+        run: |
+          cd site/dist
+          zip -qr ../../site-dist.zip .
+          cd ../..
+
+      # ---- PDF/EPUB ----
+      - name: 安装 Pandoc
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq pandoc
+      - name: 安装 XeLaTeX + 中文支持
+        run: |
+          sudo apt-get install -y -qq texlive-xetex texlive-lang-chinese \
+            texlive-latex-extra latex-cjk-all fonts-noto-cjk
+      - name: 装配手稿
+        run: |
+          python3 tools/assemble.py --lang zh --stack csharp
+          python3 export_manuscript.py manuscript manuscript.md
+          mkdir -p /tmp/java-src
+          python3 tools/assemble.py --lang zh --stack java --out /tmp/java-src
+          python3 export_manuscript.py /tmp/java-src /tmp/manuscript-java.md
+          sed 's/C\\#版/Java 版/' cover.tex > /tmp/cover-java.tex
+      - name: 构建 PDF 双版
+        run: |
+          pandoc manuscript.md -o software-architecture-zh-csharp.pdf \
+            --toc --toc-depth=2 -V toc-title="目录" \
+            --include-before-body=cover.tex \
+            --pdf-engine=xelatex \
+            -V CJKmainfont="Noto Sans CJK SC" -V CJKmonofont="Noto Sans Mono CJK SC"
+          pandoc /tmp/manuscript-java.md -o software-architecture-zh-java-spring-boot.pdf \
+            --toc --toc-depth=2 -V toc-title="目录" \
+            --include-before-body=/tmp/cover-java.tex \
+            --pdf-engine=xelatex \
+            -V CJKmainfont="Noto Sans CJK SC" -V CJKmonofont="Noto Sans Mono CJK SC"
+      - name: 构建 EPUB 双版
+        run: |
+          pandoc manuscript.md epub-meta.yaml -o software-architecture-zh-csharp.epub \
+            --toc --toc-depth=2 --epub-cover-image=images/cover-blueprint.png \
+            --css=epub-style.css
+          pandoc /tmp/manuscript-java.md epub-meta.yaml -o software-architecture-zh-java-spring-boot.epub \
+            --toc --toc-depth=2 --epub-cover-image=images/cover-blueprint.png \
+            --css=epub-style.css
+
+      - name: 创建 Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            site-dist.zip
+            software-architecture-zh-csharp.pdf
+            software-architecture-zh-java-spring-boot.pdf
+            software-architecture-zh-csharp.epub
+            software-architecture-zh-java-spring-boot.epub
+          body: |
+            白话软件架构设计 ${{ github.ref_name }}
+
+            - 网站静态包：site-dist.zip（解压即用）
+            - PDF：C# 版 / Java 版
+            - EPUB：C# 版 / Java 版
