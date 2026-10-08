@@ -64,28 +64,12 @@ def shift_headings(body, depth):
 
 def make_cover(title, subtitle, author, contact):
     B = chr(92)  # 反斜杠，避开多层转义
-    main_title, version = title, ""
-    if "\uff08" in title and title.endswith("\uff09"):
-        main_title, version = title.split("\uff08", 1)
-        version = version[:-1]
-    version_tex = version.replace("#", B + "#")
-    author_tex = author.replace("#", B + "#")
+    # 水墨整页封面：jpg 自带书名/副标题/作者，tex 只放整页图，不再排文字标题页
+    # Java 版由 workflow 的 sed 把 cover-csharp.jpg 换成 cover-java.jpg
     L = [
         B + "begin{titlepage}",
         B + "centering",
-        B + "vspace*{0.8cm}",
-        "{" + B + "fontsize{36}{44}" + B + "selectfont" + B + "bfseries " + main_title + B + "par}",
-        B + "vspace{0.6cm}",
-        "{" + B + "large " + subtitle + B + "par}",
-        B + "vspace{0.8cm}",
-        B + "includegraphics[width=0.55" + B + "textwidth]{images/cover-blueprint.png}" + B + "par",
-        B + "vspace{0.8cm}",
-        "{" + B + "Large" + B + "bfseries " + version_tex + B + "par}",
-        B + "vfill",
-        "{" + B + "large \u8457" + B + "quad " + author_tex + B + "par}",
-        B + "vspace{0.3cm}",
-        "{" + B + "normalsize " + contact + B + "par}",
-        B + "vspace{1.2cm}",
+        B + "includegraphics[width=" + B + "paperwidth,height=" + B + "paperheight,keepaspectratio]{images/cover-csharp.jpg}",
         B + "end{titlepage}",
         "",
     ]
