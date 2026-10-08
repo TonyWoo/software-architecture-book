@@ -10,6 +10,11 @@ on:
   push:
     tags: ['v*']
   workflow_dispatch:
+    inputs:
+      tag:
+        description: '要发布/重跑的 tag（如 v1.0.0），留空则用触发 ref'
+        required: false
+        default: ''
 
 permissions:
   contents: write
@@ -60,7 +65,8 @@ jobs:
           mkdir -p /tmp/java-src
           python3 tools/assemble.py --lang zh --stack java --out /tmp/java-src
           python3 export_manuscript.py /tmp/java-src /tmp/manuscript-java.md
-          sed 's/C\\#版/Java 版/' cover.tex > /tmp/cover-java.tex
+          # Java 版封面：水墨整页封面只需换图（旧写法 s/C\#版/ 在新封面是空操作）
+          sed 's/cover-csharp\.jpg/cover-java.jpg/' cover.tex > /tmp/cover-java.tex
       - name: 构建 PDF 双版
         run: |
           pandoc manuscript.md -o software-architecture-zh-csharp.pdf \
@@ -85,6 +91,8 @@ jobs:
       - name: 创建 Release
         uses: softprops/action-gh-release@v2
         with:
+          # tag 推送时用 ref 名；workflow_dispatch 手动重跑时用输入的 tag
+          tag_name: ${{ inputs.tag || github.ref_name }}
           files: |
             site-dist.zip
             software-architecture-zh-csharp.pdf
@@ -92,7 +100,7 @@ jobs:
             software-architecture-zh-csharp.epub
             software-architecture-zh-java-spring-boot.epub
           body: |
-            白话软件架构设计 ${{ github.ref_name }}
+            白话软件架构设计 ${{ inputs.tag || github.ref_name }}
 
             - 网站静态包：site-dist.zip（解压即用）
             - PDF：C# 版 / Java 版
