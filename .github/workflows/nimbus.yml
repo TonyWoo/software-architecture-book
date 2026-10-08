@@ -91,8 +91,8 @@ jobs:
           mkdir -p /tmp/java-src
           python3 tools/assemble.py --lang zh --stack java --out /tmp/java-src
           python3 export_manuscript.py /tmp/java-src /tmp/manuscript-java.md
-          # Java 版封面
-          sed 's/C\\#版/Java 版/' cover.tex > /tmp/cover-java.tex
+          # Java 版封面：水墨整页封面只需换图
+          sed 's/cover-csharp\.jpg/cover-java.jpg/' cover.tex > /tmp/cover-java.tex
 
       - name: 构建 PDF 双版
         run: |
